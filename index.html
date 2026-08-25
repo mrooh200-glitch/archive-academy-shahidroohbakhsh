@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>آرشیو منابع</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آرشیو منابع دروس اعتقادی</title>
 
   <style>
     * {
@@ -13,221 +13,308 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #f5efe4;
-      color: #34281f;
+      background: #f4f7fb;
+      color: #1f2937;
       font-family: Tahoma, Arial, sans-serif;
       line-height: 1.9;
     }
 
     .container {
-      width: min(920px, calc(100% - 32px));
+      width: min(960px, calc(100% - 32px));
       margin: 0 auto;
+      padding: 42px 0 64px;
     }
 
     header {
-      background: #5c3420;
-      color: #fff9ed;
-      padding: 48px 0 40px;
-      border-bottom: 7px solid #bd8b4c;
+      text-align: center;
+      margin-bottom: 30px;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      font-weight: 700;
+      color: #173b63;
+      font-size: clamp(1.55rem, 4vw, 2.35rem);
     }
 
     .subtitle {
       margin: 8px 0 0;
-      color: #f1dac0;
-      font-size: 1.05rem;
-    }
-
-    main {
-      padding: 30px 0 56px;
-    }
-
-    .section-title {
-      margin: 0 0 14px;
-      color: #5c3420;
-      font-size: 1.4rem;
+      color: #64748b;
+      font-size: 0.98rem;
     }
 
     .search-box {
+      display: block;
       width: 100%;
-      padding: 14px 16px;
-      margin: 0 0 26px;
-      border: 1px solid #d6bf9f;
-      border-radius: 10px;
-      background: #fffdf8;
-      color: #34281f;
+      margin: 22px 0 28px;
+      padding: 14px 18px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      background: #fff;
+      color: #1f2937;
       font: inherit;
       font-size: 1rem;
-      outline: none;
     }
 
     .search-box:focus {
-      border-color: #a66c31;
-      box-shadow: 0 0 0 3px rgba(166, 108, 49, 0.18);
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
-    .resources {
+    .tree {
+      background: #fff;
+      border: 1px solid #dbe3ee;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    details {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    details:last-child {
+      border-bottom: 0;
+    }
+
+    summary {
+      padding: 17px 20px;
+      cursor: pointer;
       list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 14px;
-    }
-
-    .resources li {
-      margin: 0;
-    }
-
-    .resources a {
-      display: block;
-      padding: 18px 20px;
-      background: #fffdf8;
-      color: #63391f;
-      text-decoration: none;
-      font-size: 1.08rem;
       font-weight: bold;
-      border: 1px solid #e2d2bd;
-      border-right: 6px solid #bd8b4c;
+      color: #173b63;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: "＋";
+      display: inline-block;
+      width: 28px;
+      color: #2563eb;
+      font-size: 1.25rem;
+      vertical-align: middle;
+    }
+
+    details[open] > summary::before {
+      content: "−";
+    }
+
+    .branch-content {
+      padding: 0 20px 20px;
+    }
+
+    .empty-message {
+      margin: 0;
+      padding: 15px;
+      border: 1px dashed #cbd5e1;
       border-radius: 10px;
-      box-shadow: 0 4px 14px rgba(77, 48, 25, 0.08);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      background: #f8fafc;
+      color: #64748b;
     }
 
-    .resources a::after {
-      content: "↗";
-      float: left;
-      color: #a66c31;
-      font-size: 1.2rem;
+    .folder {
+      margin-top: 8px;
+      border: 1px solid #dbe3ee;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #fbfdff;
     }
 
-    .resources a:hover,
-    .resources a:focus {
-      transform: translateY(-2px);
-      background: #fff6e7;
-      box-shadow: 0 8px 20px rgba(77, 48, 25, 0.14);
-      outline: none;
+    .folder > summary {
+      padding: 13px 15px;
+      color: #1d4f7a;
+    }
+
+    .folder > summary::before {
+      content: "📁";
+      width: 34px;
+      font-size: 1rem;
+    }
+
+    .folder[open] > summary::before {
+      content: "📂";
+    }
+
+    .book-list {
+      margin: 0;
+      padding: 0 20px 14px 0;
+      list-style: none;
+    }
+
+    .book-list li {
+      border-top: 1px solid #edf2f7;
+    }
+
+    .book-list a {
+      display: block;
+      padding: 11px 10px;
+      color: #1d4ed8;
+      text-decoration: none;
+      border-radius: 7px;
+    }
+
+    .book-list a:hover {
+      background: #eff6ff;
+      text-decoration: underline;
+    }
+
+    .book-list a::before {
+      content: "PDF";
+      display: inline-block;
+      margin-left: 9px;
+      padding: 1px 7px;
+      border-radius: 5px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.72rem;
+      font-weight: bold;
+      direction: ltr;
     }
 
     .hidden {
       display: none !important;
     }
 
-    .no-results {
+    #noResults {
       display: none;
       margin: 18px 0 0;
-      color: #7c4f31;
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #9a3412;
     }
 
     footer {
-      padding: 18px 0 28px;
-      color: #806957;
-      font-size: 0.9rem;
+      margin-top: 26px;
       text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="container">
-      <h1>آرشیو منابع</h1>
-      <p class="subtitle">تاریخ تمدن ویل دورانت</p>
-    </div>
-  </header>
-
   <main class="container">
+    <header>
+      <h1>آرشیو منابع دروس اعتقادی</h1>
+      <p class="subtitle">دسترسی و جست‌وجو در عنوان منابع آرشیو</p>
+    </header>
+
     <input
-      id="searchInput"
+      id="titleSearch"
       class="search-box"
       type="search"
-      placeholder="جست‌وجو در عنوان مجلدات…"
-      aria-label="جست‌وجو در عنوان مجلدات">
+      placeholder="جست‌وجو در عنوان کتاب‌ها و پوشه‌ها…"
+      aria-label="جست‌وجو در عنوان منابع">
 
-    <h2 class="section-title">تاریخ تمدن ویل دورانت</h2>
+    <section class="tree" aria-label="فهرست منابع">
 
-    <ul class="resources">
-      <li data-search="۰۱ مشرق زمین گاهواره تمدن">
-        <a href="will-durant-history/۰۱ مشرق زمین،گاهواره تمدن .pdf" target="_blank" rel="noopener">
-          ۰۱ — مشرق زمین، گاهواره تمدن
-        </a>
-      </li>
+      <!-- شاخهٔ منابع داخلی: فعلاً خالی -->
+      <details class="main-branch" open>
+        <summary>منابع داخلی</summary>
 
-      <li data-search="۰۲ یونان باستان">
-        <a href="will-durant-history/۰۲ یونان باستان.pdf" target="_blank" rel="noopener">
-          ۰۲ — یونان باستان
-        </a>
-      </li>
+        <div class="branch-content">
+          <p class="empty-message">
+            منابع این بخش هنوز اضافه نشده‌اند.
+          </p>
+        </div>
+      </details>
 
-      <li data-search="۰۳ قیصر و مسیح">
-        <a href="will-durant-history/۰۳ قیصر و مسیح.pdf" target="_blank" rel="noopener">
-          ۰۳ — قیصر و مسیح
-        </a>
-      </li>
+      <!-- شاخهٔ منابع خارجی -->
+      <details class="main-branch" open>
+        <summary>منابع خارجی</summary>
 
-      <li data-search="۰۴ عصر ایمان">
-        <a href="will-durant-history/۰۴ عصر ایمان.pdf" target="_blank" rel="noopener">
-          ۰۴ — عصر ایمان
-        </a>
-      </li>
+        <div class="branch-content">
+          <details class="folder">
+            <summary>تاریخ تمدن، ویل دورانت</summary>
 
-      <li data-search="۰۵ رنسانس">
-        <a href="will-durant-history/۰۵ رنسانس.pdf" target="_blank" rel="noopener">
-          ۰۵ — رنسانس
-        </a>
-      </li>
+            <ul class="book-list">
+              <li>
+                <a href="will-durant-history/01.pdf" target="_blank" rel="noopener">
+                  ۰۱ — مشرق زمین، گاهوارهٔ تمدن
+                </a>
+              </li>
 
-      <li data-search="۰۶ اصلاح دینی">
-        <a href="will-durant-history/۰۶ اصلاح دینی.pdf" target="_blank" rel="noopener">
-          ۰۶ — اصلاح دینی
-        </a>
-      </li>
+              <li>
+                <a href="will-durant-history/02.pdf" target="_blank" rel="noopener">
+                  ۰۲ — یونان باستان
+                </a>
+              </li>
 
-      <li data-search="۰۷ آغاز عصر خرد">
-        <a href="will-durant-history/۰۷ آغاز عصر خرد.pdf" target="_blank" rel="noopener">
-          ۰۷ — آغاز عصر خرد
-        </a>
-      </li>
+              <li>
+                <a href="will-durant-history/03.pdf" target="_blank" rel="noopener">
+                  ۰۳ — قیصر و مسیح
+                </a>
+              </li>
 
-      <li data-search="۰۸ عصر لویی چهاردهم">
-        <a href="will-durant-history/۰۸ عصر لویی چهاردهم.pdf" target="_blank" rel="noopener">
-          ۰۸ — عصر لویی چهاردهم
-        </a>
-      </li>
+              <li>
+                <a href="will-durant-history/04.pdf" target="_blank" rel="noopener">
+                  ۰۴ — عصر ایمان
+                </a>
+              </li>
 
-      <li data-search="۰۹ عصر ولتر والتر">
-        <a href="will-durant-history/۰۹ عصر ولتر.pdf" target="_blank" rel="noopener">
-          ۰۹ — عصر ولتر
-        </a>
-      </li>
+              <li>
+                <a href="will-durant-history/05.pdf" target="_blank" rel="noopener">
+                  ۰۵ — رنسانس
+                </a>
+              </li>
 
-      <li data-search="۱۰ روسو و انقلاب">
-        <a href="will-durant-history/۱۰ روسو و انقلاب.pdf" target="_blank" rel="noopener">
-          ۱۰ — روسو و انقلاب
-        </a>
-      </li>
+              <li>
+                <a href="will-durant-history/06.pdf" target="_blank" rel="noopener">
+                  ۰۶ — اصلاح دینی
+                </a>
+              </li>
 
-      <li data-search="۱۱ عصر ناپلئون">
-        <a href="will-durant-history/۱۱ عصر ناپلئون.pdf" target="_blank" rel="noopener">
-          ۱۱ — عصر ناپلئون
-        </a>
-      </li>
-    </ul>
+              <li>
+                <a href="will-durant-history/07.pdf" target="_blank" rel="noopener">
+                  ۰۷ — عصر خرد
+                </a>
+              </li>
 
-    <p id="noResults" class="no-results">مجلدی با این عنوان پیدا نشد.</p>
+              <li>
+                <a href="will-durant-history/08.pdf" target="_blank" rel="noopener">
+                  ۰۸ — عصر لویی چهاردهم
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/09.pdf" target="_blank" rel="noopener">
+                  ۰۹ — عصر ولتر
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/10.pdf" target="_blank" rel="noopener">
+                  ۱۰ — روسو و انقلاب
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/11.pdf" target="_blank" rel="noopener">
+                  ۱۱ — عصر ناپلئون
+                </a>
+              </li>
+            </ul>
+          </details>
+        </div>
+      </details>
+    </section>
+
+    <p id="noResults">عنوانی مطابق عبارت جست‌وجوی شما پیدا نشد.</p>
+
+    <footer>
+      برای باز کردن هر منبع، روی عنوان آن کلیک کنید.
+    </footer>
   </main>
 
-  <footer>
-    <div class="container">آرشیو منابع</div>
-  </footer>
-
   <script>
-    const searchInput = document.getElementById("searchInput");
-    const items = Array.from(document.querySelectorAll(".resources li"));
+    const searchInput = document.getElementById("titleSearch");
+    const folders = document.querySelectorAll(".folder");
+    const books = document.querySelectorAll(".book-list li");
     const noResults = document.getElementById("noResults");
 
     function normalize(text) {
@@ -235,27 +322,40 @@
         .toLowerCase()
         .replace(/[يى]/g, "ی")
         .replace(/ك/g, "ک")
+        .replace(/ۀ/g, "ه")
         .replace(/\s+/g, " ")
         .trim();
     }
 
-    searchInput.addEventListener("input", () => {
-      const query = normalize(searchInput.value);
-      let visibleCount = 0;
+    searchInput.addEventListener("input", function () {
+      const query = normalize(this.value);
+      let resultCount = 0;
 
-      items.forEach((item) => {
-        const text = normalize(item.dataset.search || item.textContent);
-        const match = !query || text.includes(query);
+      books.forEach(book => {
+        const title = normalize(book.textContent);
+        const matched = !query || title.includes(query);
 
-        item.classList.toggle("hidden", !match);
+        book.classList.toggle("hidden", !matched);
 
-        if (match) {
-          visibleCount++;
+        if (matched) {
+          resultCount++;
+        }
+      });
+
+      folders.forEach(folder => {
+        const hasVisibleBook = [...folder.querySelectorAll(".book-list li")]
+          .some(book => !book.classList.contains("hidden"));
+
+        folder.classList.toggle("hidden", query && !hasVisibleBook);
+
+        if (query && hasVisibleBook) {
+          folder.open = true;
+          folder.closest(".main-branch").open = true;
         }
       });
 
       noResults.style.display =
-        query && visibleCount === 0 ? "block" : "none";
+        query && resultCount === 0 ? "block" : "none";
     });
   </script>
 </body>
