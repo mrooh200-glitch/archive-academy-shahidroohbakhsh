@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>آرشیو منابع</title>
+  <title>تاریخ تمدن ویل دورانت</title>
 
   <style>
     * {
@@ -27,7 +27,7 @@
     header {
       background: #5c3420;
       color: #fff9ed;
-      padding: 54px 0 46px;
+      padding: 48px 0 40px;
       border-bottom: 7px solid #bd8b4c;
     }
 
@@ -38,18 +38,31 @@
     }
 
     .subtitle {
-      margin: 10px 0 0;
+      margin: 8px 0 0;
       color: #f1dac0;
       font-size: 1.05rem;
     }
 
     main {
-      padding: 34px 0 56px;
+      padding: 30px 0 56px;
     }
 
-    .intro {
-      margin: 0 0 22px;
-      color: #6a574a;
+    .search-box {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 0 0 26px;
+      border: 1px solid #d6bf9f;
+      border-radius: 10px;
+      background: #fffdf8;
+      color: #34281f;
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: #a66c31;
+      box-shadow: 0 0 0 3px rgba(166, 108, 49, 0.18);
     }
 
     .resources {
@@ -94,6 +107,16 @@
       outline: none;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
+    .no-results {
+      display: none;
+      margin: 18px 0 0;
+      color: #7c4f31;
+    }
+
     footer {
       padding: 18px 0 28px;
       color: #806957;
@@ -106,32 +129,122 @@
 <body>
   <header>
     <div class="container">
-      <h1>آرشیو منابع</h1>
-      <p class="subtitle">فهرست فایل‌ها و مستندات قابل دسترس</p>
+      <h1>تاریخ تمدن ویل دورانت</h1>
+      <p class="subtitle">مجلدات موجود در آرشیو</p>
     </div>
   </header>
 
+  <main class="container">
+    <input
+      id="searchInput"
+      class="search-box"
+      type="search"
+      placeholder="جست‌وجو در عنوان مجلدات…"
+      aria-label="جست‌وجو در عنوان مجلدات">
+
     <ul class="resources">
-      <li>
-        <a href="%DA%A9%DB%8C%D9%88%D8%A2%D8%B1%20(%D9%85%D8%B3%D8%AA%D9%86%D8%AF%D8%A7%D8%AA).pdf"
-           target="_blank"
-           rel="noopener">
-          کیوآر (مستندات)
+      <li data-search="۰۱ مشرق زمین گاهواره تمدن">
+        <a href="will-durant-history/%DB%B0%DB%B1%20%D9%85%D8%B4%D8%B1%D9%82%20%D8%B2%D9%85%DB%8C%D9%86%D8%8C%DA%AF%D8%A7%D9%87%D9%88%D8%A7%D8%B1%D9%87%20%D8%AA%D9%85%D8%AF%D9%86%20.pdf" target="_blank" rel="noopener">
+          ۰۱ — مشرق زمین، گاهواره تمدن
         </a>
       </li>
 
-      <li>
-        <a href="فصل اول (مارک مپ).html"
-           target="_blank"
-           rel="noopener">
-          مارک مپ
+      <li data-search="۰۲ یونان باستان">
+        <a href="will-durant-history/%DB%B0%DB%B2%20%DB%8C%D9%88%D9%86%D8%A7%D9%86%20%D8%A8%D8%A7%D8%B3%D8%AA%D8%A7%D9%86.pdf" target="_blank" rel="noopener">
+          ۰۲ — یونان باستان
+        </a>
+      </li>
+
+      <li data-search="۰۳ قیصر و مسیح">
+        <a href="will-durant-history/%DB%B0%DB%B3%20%D9%82%DB%8C%D8%B5%D8%B1%20%D9%88%20%D9%85%D8%B3%DB%8C%D8%AD.pdf" target="_blank" rel="noopener">
+          ۰۳ — قیصر و مسیح
+        </a>
+      </li>
+
+      <li data-search="۰۴ عصر ایمان">
+        <a href="will-durant-history/%DB%B0%DB%B4%20%D8%B9%D8%B5%D8%B1%20%D8%A7%DB%8C%D9%85%D8%A7%D9%86.pdf" target="_blank" rel="noopener">
+          ۰۴ — عصر ایمان
+        </a>
+      </li>
+
+      <li data-search="۰۵ رنسانس">
+        <a href="will-durant-history/%DB%B0%DB%B5%20%D8%B1%D9%86%D8%B3%D8%A7%D9%86%D8%B3.pdf" target="_blank" rel="noopener">
+          ۰۵ — رنسانس
+        </a>
+      </li>
+
+      <li data-search="۰۶ اصلاح دینی">
+        <a href="will-durant-history/%DB%B0%DB%B6%20%D8%A7%D8%B5%D9%84%D8%A7%D8%AD%20%D8%AF%DB%8C%D9%86%DB%8C.pdf" target="_blank" rel="noopener">
+          ۰۶ — اصلاح دینی
+        </a>
+      </li>
+
+      <li data-search="۰۷ آغاز عصر خرد">
+        <a href="will-durant-history/%DB%B0%DB%B7%20%D8%A2%D8%BA%D8%A7%D8%B2%20%D8%B9%D8%B5%D8%B1%20%D8%AE%D8%B1%D8%AF.pdf" target="_blank" rel="noopener">
+          ۰۷ — آغاز عصر خرد
+        </a>
+      </li>
+
+      <li data-search="۰۸ عصر لویی چهاردهم">
+        <a href="will-durant-history/%DB%B0%DB%B8%20%D8%B9%D8%B5%D8%B1%20%D9%84%D9%88%DB%8C%DB%8C%20%DA%86%D9%87%D8%A7%D8%B1%D8%AF%D9%87%D9%85.pdf" target="_blank" rel="noopener">
+          ۰۸ — عصر لویی چهاردهم
+        </a>
+      </li>
+
+      <li data-search="۰۹ عصر ولتر والتر">
+        <a href="will-durant-history/%DB%B0%DB%B9%20%D8%B9%D8%B5%D8%B1%20%D9%88%D9%84%D8%AA%D8%B1.pdf" target="_blank" rel="noopener">
+          ۰۹ — عصر ولتر
+        </a>
+      </li>
+
+      <li data-search="۱۰ روسو و انقلاب">
+        <a href="will-durant-history/%DB%B1%DB%B0%20%D8%B1%D9%88%D8%B3%D9%88%20%D9%88%20%D8%A7%D9%86%D9%82%D9%84%D8%A7%D8%A8.pdf" target="_blank" rel="noopener">
+          ۱۰ — روسو و انقلاب
+        </a>
+      </li>
+
+      <li data-search="۱۱ عصر ناپلئون">
+        <a href="will-durant-history/%DB%B1%DB%B1%20%D8%B9%D8%B5%D8%B1%20%D9%86%D8%A7%D9%BE%D9%84%D8%A6%D9%88%D9%86.pdf" target="_blank" rel="noopener">
+          ۱۱ — عصر ناپلئون
         </a>
       </li>
     </ul>
+
+    <p id="noResults" class="no-results">مجلدی با این عنوان پیدا نشد.</p>
   </main>
 
   <footer>
     <div class="container">آرشیو منابع</div>
   </footer>
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const items = Array.from(document.querySelectorAll(".resources li"));
+    const noResults = document.getElementById("noResults");
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .replace(/[يى]/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    searchInput.addEventListener("input", () => {
+      const query = normalize(searchInput.value);
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const text = normalize(item.dataset.search || item.textContent);
+        const match = !query || text.includes(query);
+
+        item.classList.toggle("hidden", !match);
+        if (match) visibleCount++;
+      });
+
+      noResults.style.display = query && visibleCount === 0 ? "block" : "none";
+    });
+  </script>
 </body>
 </html>
