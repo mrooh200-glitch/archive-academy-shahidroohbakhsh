@@ -4,28 +4,137 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>آرشیو منابع</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f5efe4;
+      color: #34281f;
+      font-family: Tahoma, Arial, sans-serif;
+      line-height: 1.9;
+    }
+
+    .container {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      background: #5c3420;
+      color: #fff9ed;
+      padding: 54px 0 46px;
+      border-bottom: 7px solid #bd8b4c;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: #f1dac0;
+      font-size: 1.05rem;
+    }
+
+    main {
+      padding: 34px 0 56px;
+    }
+
+    .intro {
+      margin: 0 0 22px;
+      color: #6a574a;
+    }
+
+    .resources {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .resources li {
+      margin: 0;
+    }
+
+    .resources a {
+      display: block;
+      padding: 18px 20px;
+      background: #fffdf8;
+      color: #63391f;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: bold;
+      border: 1px solid #e2d2bd;
+      border-right: 6px solid #bd8b4c;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(77, 48, 25, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .resources a::after {
+      content: "↗";
+      float: left;
+      color: #a66c31;
+      font-size: 1.2rem;
+    }
+
+    .resources a:hover,
+    .resources a:focus {
+      transform: translateY(-2px);
+      background: #fff6e7;
+      box-shadow: 0 8px 20px rgba(77, 48, 25, 0.14);
+      outline: none;
+    }
+
+    footer {
+      padding: 18px 0 28px;
+      color: #806957;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>آرشیو منابع</h1>
-  <p>برای باز کردن هر منبع، روی نام آن کلیک کنید.</p>
+  <header>
+    <div class="container">
+      <h1>آرشیو منابع</h1>
+      <p class="subtitle">فهرست فایل‌ها و مستندات قابل دسترس</p>
+    </div>
+  </header>
 
-  <ul>
-    <li>
-      <a href="%DA%A9%DB%8C%D9%88%D8%A2%D8%B1%20(%D9%85%D8%B3%D8%AA%D9%86%D8%AF%D8%A7%D8%AA).pdf"
-         target="_blank"
-         rel="noopener">
-        کیوآر (مستندات)
-      </a>
-    </li>
+  <main class="container">
+    <p class="intro">برای باز کردن هر منبع، روی عنوان آن کلیک کنید. هر فایل در زبانه‌ای جدید باز می‌شود.</p>
 
-    <li>
-      <a href="فصل اول (مارک مپ).html"
-         target="_blank"
-         rel="noopener">
-        مارک مپ
-      </a>
-    </li>
-  </ul>
+    <ul class="resources">
+      <li>
+        <a href="%DA%A9%DB%8C%D9%88%D8%A2%D8%B1%20(%D9%85%D8%B3%D8%AA%D9%86%D8%AF%D8%A7%D8%AA).pdf"
+           target="_blank"
+           rel="noopener">
+          کیوآر (مستندات)
+        </a>
+      </li>
+
+      <li>
+        <a href="فصل اول (مارک مپ).html"
+           target="_blank"
+           rel="noopener">
+          مارک مپ
+        </a>
+      </li>
+    </ul>
+  </main>
+
+  <footer>
+    <div class="container">آرشیو منابع</div>
+  </footer>
 </body>
 </html>
