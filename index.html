@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آرشیو منابع دروس اعتقادی</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f7fb;
+      color: #1f2937;
+      font-family: Tahoma, Arial, sans-serif;
+      line-height: 1.9;
+    }
+
+    .container {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 64px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #173b63;
+      font-size: clamp(1.55rem, 4vw, 2.35rem);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: #64748b;
+      font-size: 0.98rem;
+    }
+
+    .search-box {
+      display: block;
+      width: 100%;
+      margin: 22px 0 28px;
+      padding: 14px 18px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      background: #fff;
+      color: #1f2937;
+      font: inherit;
+      font-size: 1rem;
+    }
+
+    .search-box:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .tree {
+      background: #fff;
+      border: 1px solid #dbe3ee;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    details {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    details:last-child {
+      border-bottom: 0;
+    }
+
+    summary {
+      padding: 17px 20px;
+      cursor: pointer;
+      list-style: none;
+      font-weight: bold;
+      color: #173b63;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: "＋";
+      display: inline-block;
+      width: 28px;
+      color: #2563eb;
+      font-size: 1.25rem;
+      vertical-align: middle;
+    }
+
+    details[open] > summary::before {
+      content: "−";
+    }
+
+    .branch-content {
+      padding: 0 20px 20px;
+    }
+
+    .empty-message {
+      margin: 0;
+      padding: 15px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #64748b;
+    }
+
+    .folder {
+      margin-top: 8px;
+      border: 1px solid #dbe3ee;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #fbfdff;
+    }
+
+    .folder > summary {
+      padding: 13px 15px;
+      color: #1d4f7a;
+    }
+
+    .folder > summary::before {
+      content: "📁";
+      width: 34px;
+      font-size: 1rem;
+    }
+
+    .folder[open] > summary::before {
+      content: "📂";
+    }
+
+    .book-list {
+      margin: 0;
+      padding: 0 20px 14px 0;
+      list-style: none;
+    }
+
+    .book-list li {
+      border-top: 1px solid #edf2f7;
+    }
+
+    .book-list a {
+      display: block;
+      padding: 11px 10px;
+      color: #1d4ed8;
+      text-decoration: none;
+      border-radius: 7px;
+    }
+
+    .book-list a:hover {
+      background: #eff6ff;
+      text-decoration: underline;
+    }
+
+    .book-list a::before {
+      content: "PDF";
+      display: inline-block;
+      margin-left: 9px;
+      padding: 1px 7px;
+      border-radius: 5px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.72rem;
+      font-weight: bold;
+      direction: ltr;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #noResults {
+      display: none;
+      margin: 18px 0 0;
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    footer {
+      margin-top: 26px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <h1>آرشیو منابع دروس اعتقادی</h1>
+      <p class="subtitle">دسترسی و جست‌وجو در عنوان منابع آرشیو</p>
+    </header>
+
+    <input
+      id="titleSearch"
+      class="search-box"
+      type="search"
+      placeholder="جست‌وجو در عنوان کتاب‌ها و پوشه‌ها…"
+      aria-label="جست‌وجو در عنوان منابع">
+
+    <section class="tree" aria-label="فهرست منابع">
+
+     <!-- شاخهٔ منابع داخلی -->
+<details class="main-branch" open>
+  <summary>منابع داخلی</summary>
+
+  <div class="branch-content">
+    <ul class="book-list">
+      <li>
+        <a
+          href="%D9%81%D8%B1%D8%A7%D8%AA%D8%B1%20%D8%A7%D8%B2%20%D8%B9%D8%B1%D9%81%D8%A7%D9%86-%DA%86%D8%A7%D9%BE%20%D8%AC%D8%AF%DB%8C%D8%AF.pdf"
+          target="_blank"
+          rel="noopener">
+          فراتر از عرفان — چاپ جدید
+        </a>
+      </li>
+    </ul>
+  </div>
+</details>
+
+      <!-- شاخهٔ منابع خارجی -->
+      <details class="main-branch" open>
+        <summary>منابع خارجی</summary>
+
+        <div class="branch-content">
+          <details class="folder">
+            <summary>تاریخ تمدن، ویل دورانت</summary>
+
+            <ul class="book-list">
+              <li>
+                <a href="will-durant-history/01.pdf" target="_blank" rel="noopener">
+                  ۰۱ — مشرق زمین، گاهوارهٔ تمدن
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/02.pdf" target="_blank" rel="noopener">
+                  ۰۲ — یونان باستان
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/03.pdf" target="_blank" rel="noopener">
+                  ۰۳ — قیصر و مسیح
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/04.pdf" target="_blank" rel="noopener">
+                  ۰۴ — عصر ایمان
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/05.pdf" target="_blank" rel="noopener">
+                  ۰۵ — رنسانس
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/06.pdf" target="_blank" rel="noopener">
+                  ۰۶ — اصلاح دینی
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/07.pdf" target="_blank" rel="noopener">
+                  ۰۷ — عصر خرد
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/08.pdf" target="_blank" rel="noopener">
+                  ۰۸ — عصر لویی چهاردهم
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/09.pdf" target="_blank" rel="noopener">
+                  ۰۹ — عصر ولتر
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/10.pdf" target="_blank" rel="noopener">
+                  ۱۰ — روسو و انقلاب
+                </a>
+              </li>
+
+              <li>
+                <a href="will-durant-history/11.pdf" target="_blank" rel="noopener">
+                  ۱۱ — عصر ناپلئون
+                </a>
+              </li>
+            </ul>
+          </details>
+        </div>
+      </details>
+    </section>
+
+    <p id="noResults">عنوانی مطابق عبارت جست‌وجوی شما پیدا نشد.</p>
+
+    <footer>
+      برای باز کردن هر منبع، روی عنوان آن کلیک کنید.
+    </footer>
+  </main>
+
+  <script>
+    const searchInput = document.getElementById("titleSearch");
+    const folders = document.querySelectorAll(".folder");
+    const books = document.querySelectorAll(".book-list li");
+    const noResults = document.getElementById("noResults");
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .replace(/[يى]/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/ۀ/g, "ه")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    searchInput.addEventListener("input", function () {
+      const query = normalize(this.value);
+      let resultCount = 0;
+
+      books.forEach(book => {
+        const title = normalize(book.textContent);
+        const matched = !query || title.includes(query);
+
+        book.classList.toggle("hidden", !matched);
+
+        if (matched) {
+          resultCount++;
+        }
+      });
+
+      folders.forEach(folder => {
+        const hasVisibleBook = [...folder.querySelectorAll(".book-list li")]
+          .some(book => !book.classList.contains("hidden"));
+
+        folder.classList.toggle("hidden", query && !hasVisibleBook);
+
+        if (query && hasVisibleBook) {
+          folder.open = true;
+          folder.closest(".main-branch").open = true;
+        }
+      });
+
+      noResults.style.display =
+        query && resultCount === 0 ? "block" : "none";
+    });
+  </script>
+</body>
+</html>
