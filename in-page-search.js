@@ -7060,7 +7060,7 @@
     return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
   }
 
-  function findMatchIndexForFragment(fragmentText, occurrenceIndex) {
+  function findMatchIndexForFragment(fragmentText, occurrenceIndex, matchesToSearch) {
     if (!fragmentText) {
       return -1;
     }
@@ -7069,8 +7069,8 @@
     const wantedOccurrence = occurrenceIndex > 0 ? occurrenceIndex : 1;
     let seen = 0;
 
-    for (let i = 0; i < matches.length; i++) {
-      if (getMatchFragmentText(matches[i]) === normalizedFragment) {
+    for (let i = 0; i < matchesToSearch.length; i++) {
+      if (getMatchFragmentText(matchesToSearch[i]) === normalizedFragment) {
         seen++;
 
         if (seen === wantedOccurrence) {
@@ -7082,7 +7082,7 @@
     // Fewer matching occurrences here than the "occ" the link expected
     // (page content drifted, etc.) - fall back to the last one found
     // rather than missing entirely.
-    return seen > 0 ? matches.findIndex(
+    return seen > 0 ? matchesToSearch.findIndex(
       mark => getMatchFragmentText(mark) === normalizedFragment
     ) : -1;
   }
@@ -7250,7 +7250,8 @@
     if (targetIndex === -1) {
       targetIndex = findMatchIndexForFragment(
         getTextFragmentFromHash(),
-        getOccurrenceFromUrl()
+        getOccurrenceFromUrl(),
+        allMatchesForTarget
       );
     }
 
