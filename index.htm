@@ -890,22 +890,6 @@
       min-height: 110px;
     }
 
-    .contact-topic-options {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .contact-topic-options label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: normal;
-      font-size: 0.86rem;
-      color: #334155;
-      cursor: pointer;
-    }
-
     .contact-submit-btn {
       width: 100%;
       padding: 11px;
@@ -3032,13 +3016,6 @@
         <div class="contact-header">ارتباط با ما</div>
         <div class="contact-body">
           <form id="contactForm">
-            <div class="contact-field">
-              <label>موضوع پیام</label>
-              <div class="contact-topic-options">
-                <label><input type="radio" name="contactTopic" value="site" checked> دربارهٔ سایت</label>
-                <label><input type="radio" name="contactTopic" value="books"> دربارهٔ کتب استاد</label>
-              </div>
-            </div>
             <div class="contact-field">
               <label for="contactName">نام شما</label>
               <input type="text" id="contactName" required maxlength="200">
@@ -8812,8 +8789,8 @@
     trackEvent("pageview");
 
     // فرم «ارتباط با ما»: باز/بسته‌کردن مودال + ارسال به همون Worker
-    // (endpoint جدید /contact) که topic (site/books) رو با خودش می‌بره
-    // تا Worker تصمیم بگیره پیام به کدوم مقصد(ها) بره.
+    // (endpoint /contact) - این سایت برخلاف سایت میلانی بخش کتب جداگانه
+    // نداره، پس فقط یک مقصد (مدیر سایت) داره و نیازی به انتخاب موضوع نیست.
     (function setupContactForm() {
       const toggleBtn = document.getElementById("contactToggle");
       const overlay = document.getElementById("contactOverlay");
@@ -8846,10 +8823,6 @@
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const topic =
-          form.querySelector('input[name="contactTopic"]:checked')?.value === "books"
-            ? "books"
-            : "site";
         const name = document.getElementById("contactName").value.trim();
         const contact = document.getElementById("contactContact").value.trim();
         const message = document.getElementById("contactMessage").value.trim();
@@ -8868,7 +8841,7 @@
           const res = await fetch(`${STATS_WORKER_URL}/contact`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ topic, name, contact, message }),
+            body: JSON.stringify({ name, contact, message }),
           });
 
           const data = await res.json().catch(() => ({}));
