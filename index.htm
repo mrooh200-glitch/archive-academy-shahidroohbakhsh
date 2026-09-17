@@ -1,369 +1,269 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>آرشیو منابع دروس اعتقادی</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وب‌سایت پژوهشی شهید روحبخش</title>
+<meta name="description" content="وب‌سایت پژوهشی شهید روحبخش — آرشیو مقالات و محتوای پژوهشی، قابل جست‌وجوی معنایی و گفت‌وگو با هوش مصنوعی.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#4c1d95">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-bg: #faf9fc;
+    --c-surface: #ffffff;
+    --c-ink: #201a2b;
+    --c-ink-soft: #5b5468;
+    --c-purple-deep: #4c1d95;
+    --c-purple: #7c3aed;
+    --c-purple-soft: #ede9fe;
+    --c-line: #e6e1f0;
+    --c-gold: #f4d35e;
+    --radius: 18px;
+    --wrap: 880px;
+  }
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #f4f7fb;
-      color: #1f2937;
-      font-family: Tahoma, Arial, sans-serif;
-      line-height: 1.9;
-    }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    background: var(--c-bg);
+    color: var(--c-ink);
+    line-height: 1.9;
+  }
 
-    .container {
-      width: min(960px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 42px 0 64px;
-    }
+  a { color: inherit; }
 
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+  .wrap {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
 
-    h1 {
-      margin: 0;
-      color: #173b63;
-      font-size: clamp(1.55rem, 4vw, 2.35rem);
-    }
+  /* ---------- هدر ---------- */
+  header.site-head {
+    background: linear-gradient(135deg, var(--c-purple-deep), var(--c-purple) 65%, #9d5cf0);
+    color: #fff;
+    padding: 54px 0 70px;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .subtitle {
-      margin: 8px 0 0;
-      color: #64748b;
-      font-size: 0.98rem;
-    }
+  header.site-head::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,.10), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255,255,255,.08), transparent 45%);
+    pointer-events: none;
+  }
 
-    .search-box {
-      display: block;
-      width: 100%;
-      margin: 22px 0 28px;
-      padding: 14px 18px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      outline: none;
-      background: #fff;
-      color: #1f2937;
-      font: inherit;
-      font-size: 1rem;
-    }
+  .site-head-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
 
-    .search-box:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
+  .site-title {
+    font-size: clamp(28px, 4.2vw, 40px);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
 
-    .tree {
-      background: #fff;
-      border: 1px solid #dbe3ee;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-    }
+  .site-subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,.82);
+    max-width: 46ch;
+    margin: 0;
+  }
 
-    details {
-      border-bottom: 1px solid #e5e7eb;
-    }
+  /* ---------- کادر جست‌وجو ---------- */
+  .search-shell {
+    position: relative;
+    margin-top: 26px;
+    width: 100%;
+    max-width: 520px;
+  }
 
-    details:last-child {
-      border-bottom: 0;
-    }
+  #site-search {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 999px;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    background: rgba(255,255,255,.96);
+    color: var(--c-ink);
+    outline: none;
+    box-shadow: 0 10px 30px rgba(30, 10, 60, .25);
+  }
 
-    summary {
-      padding: 17px 20px;
-      cursor: pointer;
-      list-style: none;
-      font-weight: bold;
-      color: #173b63;
-      user-select: none;
-    }
+  #site-search::placeholder { color: #9c93ad; }
 
-    summary::-webkit-details-marker {
-      display: none;
-    }
+  /* ---------- محتوای اصلی ---------- */
+  main { padding: 46px 0 80px; }
 
-    summary::before {
-      content: "＋";
-      display: inline-block;
-      width: 28px;
-      color: #2563eb;
-      font-size: 1.25rem;
-      vertical-align: middle;
-    }
+  .section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--c-purple);
+    margin: 0 0 6px;
+  }
 
-    details[open] > summary::before {
-      content: "−";
-    }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 28px;
+  }
 
-    .branch-content {
-      padding: 0 20px 20px;
-    }
+  .articles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
 
-    .empty-message {
-      margin: 0;
-      padding: 15px;
-      border: 1px dashed #cbd5e1;
-      border-radius: 10px;
-      background: #f8fafc;
-      color: #64748b;
-    }
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
 
-    .folder {
-      margin-top: 8px;
-      border: 1px solid #dbe3ee;
-      border-radius: 11px;
-      overflow: hidden;
-      background: #fbfdff;
-    }
+  .article-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(76, 29, 149, .12);
+    border-color: var(--c-purple);
+  }
 
-    .folder > summary {
-      padding: 13px 15px;
-      color: #1d4f7a;
-    }
+  .article-card .tag {
+    display: inline-flex;
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--c-purple-deep);
+    background: var(--c-purple-soft);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
 
-    .folder > summary::before {
-      content: "📁";
-      width: 34px;
-      font-size: 1rem;
-    }
+  .article-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--c-ink);
+  }
 
-    .folder[open] > summary::before {
-      content: "📂";
-    }
+  .article-card p {
+    font-size: 14px;
+    color: var(--c-ink-soft);
+    margin: 0;
+    flex: 1;
+  }
 
-    .book-list {
-      margin: 0;
-      padding: 0 20px 14px 0;
-      list-style: none;
-    }
+  .article-card .byline {
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: #8b83a0;
+  }
 
-    .book-list li {
-      border-top: 1px solid #edf2f7;
-    }
+  .empty-note {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+    color: var(--c-ink-soft);
+    font-size: 15px;
+  }
 
-    .book-list a {
-      display: block;
-      padding: 11px 10px;
-      color: #1d4ed8;
-      text-decoration: none;
-      border-radius: 7px;
-    }
+  /* ---------- فوتر ---------- */
+  footer {
+    border-top: 1px solid var(--c-line);
+    padding: 26px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #948ca4;
+  }
 
-    .book-list a:hover {
-      background: #eff6ff;
-      text-decoration: underline;
-    }
-
-    .book-list a::before {
-      content: "PDF";
-      display: inline-block;
-      margin-left: 9px;
-      padding: 1px 7px;
-      border-radius: 5px;
-      background: #fee2e2;
-      color: #b91c1c;
-      font-size: 0.72rem;
-      font-weight: bold;
-      direction: ltr;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    #noResults {
-      display: none;
-      margin: 18px 0 0;
-      padding: 13px 15px;
-      border-radius: 10px;
-      background: #fff7ed;
-      color: #9a3412;
-    }
-
-    footer {
-      margin-top: 26px;
-      text-align: center;
-      color: #94a3b8;
-      font-size: 0.85rem;
-    }
-  </style>
+  @media (max-width: 520px) {
+    header.site-head { padding: 42px 0 58px; }
+  }
+</style>
 </head>
-
 <body>
-  <main class="container">
-    <header>
-      <h1>آرشیو منابع دروس اعتقادی</h1>
-      <p class="subtitle">دسترسی و جست‌وجو در عنوان منابع آرشیو</p>
-    </header>
 
-    <input
-      id="titleSearch"
-      class="search-box"
-      type="search"
-      placeholder="جست‌وجو در عنوان کتاب‌ها و پوشه‌ها…"
-      aria-label="جست‌وجو در عنوان منابع">
-
-    <section class="tree" aria-label="فهرست منابع">
-
-     <!-- شاخهٔ منابع داخلی -->
-<details class="main-branch" open>
-  <summary>منابع داخلی</summary>
-
-  <div class="branch-content">
-    <ul class="book-list">
-      <li>
-        <a
-          href="%D9%81%D8%B1%D8%A7%D8%AA%D8%B1%20%D8%A7%D8%B2%20%D8%B9%D8%B1%D9%81%D8%A7%D9%86-%DA%86%D8%A7%D9%BE%20%D8%AC%D8%AF%DB%8C%D8%AF.pdf"
-          target="_blank"
-          rel="noopener">
-          فراتر از عرفان — چاپ جدید
-        </a>
-      </li>
-    </ul>
+<header class="site-head">
+  <div class="wrap site-head-inner">
+    <h1 class="site-title">وب‌سایت پژوهشی شهید روحبخش</h1>
+    <p class="site-subtitle">آرشیوی برای جست‌وجو، مطالعه و گفت‌وگوی هوشمند با محتوای پژوهشی آکادمی روح‌بخش</p>
+    <div class="search-shell">
+      <input id="site-search" type="text" placeholder="جست‌وجو در عنوان مقاله‌ها…" autocomplete="off">
+    </div>
   </div>
-</details>
+</header>
 
-      <!-- شاخهٔ منابع خارجی -->
-      <details class="main-branch" open>
-        <summary>منابع خارجی</summary>
+<main class="wrap">
+  <p class="section-label">محتوای منتشرشده</p>
+  <h2 class="section-title">مقاله‌ها</h2>
 
-        <div class="branch-content">
-          <details class="folder">
-            <summary>تاریخ تمدن، ویل دورانت</summary>
+  <div class="articles" id="articles-list">
+    <a class="article-card"
+       href="Seyed_Kazem_Roohbakhsh/Cheshm_Cherani_va_Rahe_Nejat.htm"
+       data-title="چشم چرانی(voyeurism)| ۰ تا ۱۰۰؛ از علت تا راه نجات!">
+      <span class="tag">توسعه فردی</span>
+      <h3>چشم چرانی(voyeurism)| ۰ تا ۱۰۰؛ از علت تا راه نجات!</h3>
+      <p>مرز دقیق بین نگاه سالم و طبیعی با نگاه هیز و مخرب کجاست؟ از علت‌شناسی تا راهکارهای عملی برای عبور از این آسیب.</p>
+      <span class="byline">نویسنده: سید کاظم روحبخش</span>
+    </a>
+  </div>
 
-            <ul class="book-list">
-              <li>
-                <a href="will-durant-history/01.pdf" target="_blank" rel="noopener">
-                  ۰۱ — مشرق زمین، گاهوارهٔ تمدن
-                </a>
-              </li>
+  <p class="empty-note" id="empty-note">مقاله‌ای با این عنوان پیدا نشد.</p>
+</main>
 
-              <li>
-                <a href="will-durant-history/02.pdf" target="_blank" rel="noopener">
-                  ۰۲ — یونان باستان
-                </a>
-              </li>
+<footer>
+  <div class="wrap">© وب‌سایت پژوهشی شهید روحبخش</div>
+</footer>
 
-              <li>
-                <a href="will-durant-history/03.pdf" target="_blank" rel="noopener">
-                  ۰۳ — قیصر و مسیح
-                </a>
-              </li>
+<script>
+  // فیلتر ساده‌ی عنوان مقاله‌ها بر اساس data-title، هماهنگ با همان
+  // الگویی که برای فهرست کتاب‌ها در سایت‌های مشابه استفاده می‌شود.
+  const searchInput = document.getElementById("site-search");
+  const cards = Array.from(document.querySelectorAll(".article-card"));
+  const emptyNote = document.getElementById("empty-note");
 
-              <li>
-                <a href="will-durant-history/04.pdf" target="_blank" rel="noopener">
-                  ۰۴ — عصر ایمان
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/05.pdf" target="_blank" rel="noopener">
-                  ۰۵ — رنسانس
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/06.pdf" target="_blank" rel="noopener">
-                  ۰۶ — اصلاح دینی
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/07.pdf" target="_blank" rel="noopener">
-                  ۰۷ — عصر خرد
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/08.pdf" target="_blank" rel="noopener">
-                  ۰۸ — عصر لویی چهاردهم
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/09.pdf" target="_blank" rel="noopener">
-                  ۰۹ — عصر ولتر
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/10.pdf" target="_blank" rel="noopener">
-                  ۱۰ — روسو و انقلاب
-                </a>
-              </li>
-
-              <li>
-                <a href="will-durant-history/11.pdf" target="_blank" rel="noopener">
-                  ۱۱ — عصر ناپلئون
-                </a>
-              </li>
-            </ul>
-          </details>
-        </div>
-      </details>
-    </section>
-
-    <p id="noResults">عنوانی مطابق عبارت جست‌وجوی شما پیدا نشد.</p>
-
-    <footer>
-      برای باز کردن هر منبع، روی عنوان آن کلیک کنید.
-    </footer>
-  </main>
-
-  <script>
-    const searchInput = document.getElementById("titleSearch");
-    const folders = document.querySelectorAll(".folder");
-    const books = document.querySelectorAll(".book-list li");
-    const noResults = document.getElementById("noResults");
-
-    function normalize(text) {
-      return text
-        .toLowerCase()
-        .replace(/[يى]/g, "ی")
-        .replace(/ك/g, "ک")
-        .replace(/ۀ/g, "ه")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-
-    searchInput.addEventListener("input", function () {
-      const query = normalize(this.value);
-      let resultCount = 0;
-
-      books.forEach(book => {
-        const title = normalize(book.textContent);
-        const matched = !query || title.includes(query);
-
-        book.classList.toggle("hidden", !matched);
-
-        if (matched) {
-          resultCount++;
-        }
-      });
-
-      folders.forEach(folder => {
-        const hasVisibleBook = [...folder.querySelectorAll(".book-list li")]
-          .some(book => !book.classList.contains("hidden"));
-
-        folder.classList.toggle("hidden", query && !hasVisibleBook);
-
-        if (query && hasVisibleBook) {
-          folder.open = true;
-          folder.closest(".main-branch").open = true;
-        }
-      });
-
-      noResults.style.display =
-        query && resultCount === 0 ? "block" : "none";
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim();
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const title = card.getAttribute("data-title") || "";
+      const match = !q || title.includes(q);
+      card.style.display = match ? "" : "none";
+      if (match) visibleCount++;
     });
-  </script>
+    emptyNote.style.display = visibleCount === 0 ? "block" : "none";
+  });
+
+  // ثبت سرویس‌ورکر برای حالت آفلاین/PWA.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(err =>
+        console.warn("Service worker registration failed:", err)
+      );
+    });
+  }
+</script>
+
 </body>
 </html>
