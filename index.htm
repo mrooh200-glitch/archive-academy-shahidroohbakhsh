@@ -6638,7 +6638,8 @@
                 class="result-title"
                 href="${escapeHtml(resultHrefWithDerivFilter(result))}"
                 target="_blank"
-                rel="noopener">
+                rel="noopener"
+                onclick="return openFileResult(event, this.href)">
                 ${escapeHtml(result.title)}
               </a>
 
@@ -6651,7 +6652,8 @@
               class="result-snippet-link"
               href="${escapeHtml(resultHrefWithDerivFilter(result))}"
               target="_blank"
-              rel="noopener">${
+              rel="noopener"
+              onclick="return openFileResult(event, this.href)">${
               currentProximityMode ?
                 highlightProximityText(result.snippet, currentProximityWords, currentProximityDistance) :
                 currentRootMode ?
@@ -8207,6 +8209,59 @@
     }
 
     // Item جدید (رفع بخشی از باگ ۲: کلیک روی نتیجه هنگام فعال‌بودن یک
+    // Item جدید (رفع اتلاف وقت روی فایل‌های چندصدصفحه‌ای): قبلاً هر
+    // کلیک روی نتیجهٔ جست‌وجوی متنی - حتی وقتی همون فایل از یک نتیجهٔ
+    // قبلی همین جلسه از قبل باز بود - یک تبِ کاملاً تازه باز می‌کرد که
+    // باید از صفر بارگذاری می‌شد. حالا یک نگاشتِ «آدرسِ پایهٔ فایل →
+    // پنجرهٔ بازشدهٔ همون فایل» نگه‌داری می‌شه: اگه اون تب هنوز باز
+    // باشه، به‌جای بازکردن تبِ تازه، یک پیام مستقیم (بدون رفرش) براش
+    // فرستاده می‌شه تا خودش (رجوع کنید به listener تو in-page-search.js)
+    // بدون بارگذاری مجدد به رخداد جدید بپره - این اتلاف چند ثانیه‌ای
+    // رو به چند میلی‌ثانیه کاهش می‌ده. فقط برای بازِ اول (یا وقتی تبِ
+    // قبلی بسته شده) واقعاً یک تب تازه باز می‌شه.
+    const openFileWindows = new Map();
+
+    function openFileResult(event, url) {
+      // کلیک‌های تغییریافته (Ctrl/Cmd/Shift/میانی و غیره) رو دست‌نمی‌زنیم
+      // تا رفتار استاندارد مرورگر (باز کردن در تب پس‌زمینه و غیره) حفظ بشه.
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return true;
+      }
+
+      event.preventDefault();
+
+      let target;
+      try {
+        target = new URL(url, location.href);
+      } catch {
+        window.open(url, "_blank");
+        return false;
+      }
+
+      const baseUrl = target.origin + target.pathname;
+      const params = {};
+      for (const [key, value] of target.searchParams) params[key] = value;
+
+      const existing = openFileWindows.get(baseUrl);
+      if (existing && !existing.closed) {
+        try {
+          existing.postMessage({ type: "in-page-navigate", params }, target.origin);
+          existing.focus();
+        } catch {
+          // پیام نرسید (مثلاً تب هنوز کامل لود نشده) - با بارگذاریِ
+          // مستقیمِ آدرس جدید تو همون تب ادامه بده؛ بازم بهتر از باز
+          // کردنِ یه تبِ کاملاً تازه‌ست.
+          existing.location.href = url;
+          existing.focus();
+        }
+        return false;
+      }
+
+      const win = window.open(url, "_blank");
+      if (win) openFileWindows.set(baseUrl, win);
+      return false;
+    }
+
     // مشتق خاص، فایل مقصد را با هایلایت *همهٔ* مشتقات باز می‌کرد، نه
     // فقط همان مشتق انتخاب‌شده): وقتی دقیقاً یک مشتق فعال است، کلید آن
     // را به‌عنوان derivKey به آدرس اضافه می‌کند تا صفحهٔ مقصد
