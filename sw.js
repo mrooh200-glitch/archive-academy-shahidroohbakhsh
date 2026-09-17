@@ -23,7 +23,7 @@
 // Item جدید (به‌روزرسانی خودکار): این مقدار با هر تغییری در index.htm،
 // search-widget.js یا in-page-search.js، توسط workflow
 // .github/workflows/update-sw-version.yml خودکار به‌روزرسانی می‌شود.
-const CACHE_VERSION = "roohbakhsh-cache-init";
+const CACHE_VERSION = "roohbakhsh-cache-55785b92";
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
