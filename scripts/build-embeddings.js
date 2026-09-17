@@ -49,13 +49,14 @@ function findHtmFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   let files = [];
   for (const entry of entries) {
-    // پوشه‌های node_modules، .git و غیره رو نادیده بگیر. پوشه‌ی «refs»
+    // پوشه‌های node_modules، .git و غیره رو نادیده بگیر. پوشه‌ی «r»
     // هم عمداً همین‌جا کنار گذاشته می‌شه: توش فایل‌های HTMLِ مستقلِ
-    // ارجاع/مستندات (مخصوص کیوآرِ کتابِ چاپی) نگه‌داری می‌شن که قراره
-    // فقط با لینکِ مستقیم در دسترس باشن، نه این‌که تو جست‌وجوی سایت
-    // (متنی/مفهومی) یا فهرستِ مقاله‌ها ظاهر بشن.
+    // ارجاع/مستندات (مخصوص کیوآر/پاورقیِ کتابِ چاپی، با آدرسِ کوتاهِ
+    // عددی مثل r/1.html) نگه‌داری می‌شن که قراره فقط با لینکِ مستقیم
+    // در دسترس باشن، نه این‌که تو جست‌وجوی سایت (متنی/مفهومی) یا
+    // فهرستِ مقاله‌ها ظاهر بشن.
     if (entry.isDirectory()) {
-      if (["node_modules", ".git", ".github", "scripts", "refs"].includes(entry.name)) continue;
+      if (["node_modules", ".git", ".github", "scripts", "r"].includes(entry.name)) continue;
       files = files.concat(findHtmFiles(path.join(dir, entry.name)));
     } else if (entry.name.toLowerCase() === "index.htm" || entry.name.toLowerCase() === "index.html") {
       // فایل index.htm/index.html که خود سایته رو رد کن، نه یه کتاب
