@@ -1,0 +1,35 @@
+name: Update Service Worker cache version
+permissions:
+  contents: write
+on:
+  push:
+    branches: [main]
+    # عمداً sw.js خودش این‌جا نیست: این workflow قراره نسخهٔ کش رو از
+    # روی همین سه فایل بسازه، نه این‌که به تغییر خودش واکنش نشون بده -
+    # اگه sw.js هم این‌جا بود، commitِ خودکارِ همین workflow دوباره
+    # خودش رو trigger می‌کرد (حلقهٔ بی‌پایان). به‌عنوان یک لایهٔ ایمنیِ
+    # دوم، گیت‌هاب هم به‌طور پیش‌فرض commitهایی که با همون GITHUB_TOKEN
+    # پیش‌فرض push می‌شن رو دوباره trigger نمی‌کنه - ولی حذفِ sw.js از
+    # این لیست، منطق رو هم روشن‌تر و مستقل از اون رفتارِ ضمنی می‌کنه.
+    paths:
+      - "index.htm"
+      - "search-widget.js"
+      - "in-page-search.js"
+jobs:
+  bump-sw-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update CACHE_VERSION in sw.js from commit SHA
+        run: |
+          SHORT_SHA=$(git rev-parse --short=8 HEAD)
+          sed -i "s/const CACHE_VERSION = \"roohbakhsh-cache-[^\"]*\";/const CACHE_VERSION = \"roohbakhsh-cache-${SHORT_SHA}\";/" sw.js
+          echo "New CACHE_VERSION: roohbakhsh-cache-${SHORT_SHA}"
+
+      - name: Commit sw.js back to repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: به‌روزرسانی خودکار نسخهٔ کش Service Worker"
+          file_pattern: "sw.js"

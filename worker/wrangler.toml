@@ -1,0 +1,19 @@
+name = "roohbakhsh-archive-ai"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# کش مشترک بین کاربران برای عبارت‌های جست‌وجوی تکراری (KV namespace).
+# این خط باعث می‌شه بایندینگ حتی بعد از هر بار wrangler deploy (از طریق
+# GitHub Action) هم باقی بمونه و پاک نشه.
+kv_namespaces = [
+  { binding = "EMBEDDING_CACHE", id = "ac67f8bccea843628b561174918a7599" },
+  { binding = "STATS_KV", id = "b9f41a41d6a648ddae8d22edc72c0ed5" }
+]
+
+# اتصال به Workers AI (برای مدل BGE-M3) -- نیازی به کلید نداره
+[ai]
+binding = "AI"
+
+# کلید Gemini به‌صورت secret اضافه می‌شه (نه اینجا در فایل)
+# با این دستور در ترمینال (یا GitHub Actions):
+# wrangler secret put GEMINI_API_KEY
