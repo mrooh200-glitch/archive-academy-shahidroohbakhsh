@@ -141,23 +141,52 @@ async function handleEmbed(request, env) {
 // ---------- تلاش دوباره برای خطاهای موقتی Gemini (کد 503 / status UNAVAILABLE) ----------
 // این فقط دورِ خودِ تماس با Gemini رو می‌گیره؛ به بقیهٔ کد کاری نداره.
 // اگه بار اول موفق بشه (حالت معمول)، هیچ تأخیر اضافه‌ای ایجاد نمی‌کنه.
+//
+// Item جدید (رفع معطلیِ طولانی و نامشخص): قبلاً اگه اتصال به Gemini به
+// هر دلیلی (مشکل شبکه، گیر کردن سرویس) گیر می‌کرد، هیچ محدودیت زمانی‌ای
+// نبود - کاربر ده‌ها ثانیه بدون هیچ بازخوردی منتظر می‌موند تا بالاخره
+// یه خطای نامشخص ببینه. حالا هر تلاش حداکثر TIMEOUT_MS صبر می‌کنه و
+// اگه جواب نداد، به‌جای گیرکردن، همون تلاش رو شکست‌خورده حساب می‌کنه
+// (و طبق منطق قبلی، فقط برای 503 دوباره امتحان می‌کنه).
+const GEMINI_TIMEOUT_MS = 20000;
+
 async function fetchGeminiWithRetry(geminiUrl, requestBody, maxAttempts = 3) {
   let lastRes;
+  let lastErr;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    lastRes = await fetch(geminiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: requestBody,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+    try {
+      lastRes = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: requestBody,
+        signal: controller.signal,
+      });
+      lastErr = null;
+    } catch (err) {
+      lastErr = err;
+      lastRes = null;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
-    if (lastRes.ok) return lastRes;
+    if (lastRes && lastRes.ok) return lastRes;
 
-    // فقط برای خطای 503 (شلوغی موقت مدل) دوباره تلاش کن؛ بقیهٔ خطاها
-    // (مثلاً کلید نامعتبر) با تلاش دوباره درست نمی‌شن، پس فوراً برگردون.
-    if (lastRes.status !== 503 || attempt === maxAttempts) return lastRes;
+    // فقط برای خطای واقعیِ 503 (شلوغی موقت مدل) دوباره تلاش کن. برای
+    // تایم‌اوت/قطعیِ اتصال دوباره تلاش نمی‌کنیم - چون این‌جور خطاها
+    // معمولاً به این زودی‌ها درست نمی‌شن و تلاش دوباره فقط باعث می‌شه
+    // کاربر ۳ برابر بیشتر (تا ~۶۰ ثانیه) بی‌خبر منتظر بمونه؛ بهتره سریع
+    // خطای روشن بدیم تا کاربر بتونه دوباره تلاش کنه.
+    const isRetryable503 = !lastErr && lastRes && lastRes.status === 503;
+    if (!isRetryable503 || attempt === maxAttempts) {
+      if (lastErr) throw lastErr;
+      return lastRes;
+    }
 
     await new Promise((r) => setTimeout(r, 500 * attempt)); // کمی صبر قبل از تلاش بعدی
   }
+  if (lastErr) throw lastErr;
   return lastRes;
 }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>چشم چرانی(voyeurism)| ۰ تا ۱۰۰؛ از علت تا راه نجات!</title>
+<title>چشم چرانی | ۰ تا ۱۰۰؛ از علت تا راه نجات!</title>
 <meta name="description" content="اگر میخوای هرچیزی در مورد چشم چرانی بدونی، جوابت اینجاست، از ریشه و راه درمان گرفته تا طرز برخورد با افراد چشم چران!">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,18 +45,11 @@
   }
 
   main.wrap{
-    max-width:1200px;margin:0 auto;padding:28px 16px 60px;
-    display:flex;gap:28px;align-items:flex-start;
+    max-width:820px;margin:0 auto;padding:28px 16px 60px;
+    display:flex;flex-direction:column;gap:28px;
   }
-  article.content-col{flex:1;min-width:0;}
-  aside.toc-col{
-    width:270px;flex-shrink:0;position:sticky;top:80px;
-    max-height:calc(100vh - 100px);overflow-y:auto;
-  }
-  @media (max-width:920px){
-    main.wrap{flex-direction:column;}
-    aside.toc-col{position:static;width:100%;max-height:none;order:-1;}
-  }
+  article.content-col{width:100%;}
+  aside.toc-col{width:100%;}
 
   .toc-box{
     background:#f3ecd8;
@@ -68,8 +61,11 @@
     border-bottom:1px solid var(--border);
     font-weight:700;color:var(--text-1);
   }
-  .toc-box ul{list-style:none;margin:0;padding:0;font-size:.92rem;}
-  .toc-box li{margin:2px 0;}
+  .toc-box ul{list-style:none;margin:0;padding:0;font-size:.92rem;columns:2;column-gap:24px;}
+  .toc-box li{margin:2px 0;break-inside:avoid;}
+  @media (max-width:600px){
+    .toc-box ul{columns:1;}
+  }
   .toc-box li.sub{padding-right:14px;}
   .toc-box a{display:block;padding:6px 8px;border-radius:6px;color:var(--text-2);}
   .toc-box a:hover{background:rgba(0,163,144,.15);color:var(--primary-100);text-decoration:none;}
@@ -165,7 +161,7 @@
 <main class="wrap">
   <article class="content-col">
     <div class="article-header">
-      <h1>چشم چرانی(voyeurism)| ۰ تا ۱۰۰؛ از علت تا راه نجات!</h1>
+      <h1>چشم چرانی | ۰ تا ۱۰۰؛ از علت تا راه نجات!</h1>
       <div class="byline">نویسنده: سید کاظم روحبخش</div>
     </div>
 
