@@ -49,9 +49,13 @@ function findHtmFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   let files = [];
   for (const entry of entries) {
-    // پوشه‌های node_modules، .git و غیره رو نادیده بگیر
+    // پوشه‌های node_modules، .git و غیره رو نادیده بگیر. پوشه‌ی «refs»
+    // هم عمداً همین‌جا کنار گذاشته می‌شه: توش فایل‌های HTMLِ مستقلِ
+    // ارجاع/مستندات (مخصوص کیوآرِ کتابِ چاپی) نگه‌داری می‌شن که قراره
+    // فقط با لینکِ مستقیم در دسترس باشن، نه این‌که تو جست‌وجوی سایت
+    // (متنی/مفهومی) یا فهرستِ مقاله‌ها ظاهر بشن.
     if (entry.isDirectory()) {
-      if (["node_modules", ".git", ".github", "scripts"].includes(entry.name)) continue;
+      if (["node_modules", ".git", ".github", "scripts", "refs"].includes(entry.name)) continue;
       files = files.concat(findHtmFiles(path.join(dir, entry.name)));
     } else if (entry.name.toLowerCase() === "index.htm" || entry.name.toLowerCase() === "index.html") {
       // فایل index.htm/index.html که خود سایته رو رد کن، نه یه کتاب
@@ -270,18 +274,8 @@ async function main() {
     const { title: bookName, paragraphs } = extractBookContent(file, titleIndex);
     const chunks = chunkParagraphs(paragraphs);
     console.log(`  ${bookName}: ${paragraphs.length} پاراگراف → ${chunks.length} تکه`);
-    // Item جدید (رفع باگ ۴۰۴): قبلاً اینجا فقط اسم خودِ فایل ذخیره می‌شد
-    // (path.basename)، بدون مسیر پوشه‌ی زیرمجموعه‌اش - وقتی همه‌ی کتاب‌ها
-    // مستقیم در ریشه‌ی مخزن بودن مشکلی نداشت، ولی به‌محض این‌که فایلی
-    // داخل یه پوشه (مثلاً Seyed_Kazem_Roohbakhsh/) قرار گرفت، لینک‌های
-    // نتایج جست‌وجوی معنایی/گفتگو به یه آدرس نادرست (بدون اون پوشه)
-    // اشاره می‌کردن و ۴۰۴ می‌دادن. حالا مسیر نسبی از ریشه‌ی مخزن ذخیره
-    // می‌شه (با اسلش رو به جلو، مستقل از سیستم‌عامل) تا با ساختار پوشه‌ای
-    // واقعیِ سایت (که search-widget.js با location.href ترکیبش می‌کنه)
-    // مطابقت داشته باشه.
-    const relativeSource = path.relative(REPO_ROOT, file).split(path.sep).join("/");
     for (const chunk of chunks) {
-      allChunks.push({ book: bookName, source: relativeSource, text: chunk.text, page: chunk.page });
+      allChunks.push({ book: bookName, source: path.basename(file), text: chunk.text, page: chunk.page });
     }
   }
 
