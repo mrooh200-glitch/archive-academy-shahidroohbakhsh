@@ -237,7 +237,7 @@ REFERENCES: 1,3
 متن‌های مرتبط:
 ${contextText}`;
 
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+  const geminiStreamUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
 
   // Item جدید (گفتگوی ادامه‌دار): هر تبادل قبلیِ همین نشست، به‌صورت یک
   // نوبت واقعی user + یک نوبت واقعی model قبل از سؤال فعلی اضافه می‌شه -
@@ -270,36 +270,137 @@ ${contextText}`;
 
   const geminiRequestBody = JSON.stringify({ contents });
 
-  const geminiRes = await fetchGeminiWithRetry(geminiUrl, geminiRequestBody);
+  // Item جدید (پخش تدریجیِ پاسخ - streaming): به‌جای صبر برای کل پاسخ
+  // و برگردوندنش یک‌جا، از همون لحظه‌ای که Gemini شروع به تولید متن
+  // می‌کنه، تکه‌تکه برای کاربر می‌فرستیم - این حس کندیِ «صفحه ساکته تا
+  // کل پاسخ آماده بشه» رو از بین می‌بره (دقیقاً مثل چت‌های رسمی گوگل).
+  //
+  // فرمت خروجی: هر خط یک JSON مستقل (ndjson)، یکی از این سه نوع:
+  //   {"type":"delta","text":"..."}   یک تکه‌ی تازه از متنِ پاسخ
+  //   {"type":"done","references":[1,3]|null}   پایان پاسخ + مآخذ واقعی
+  //   {"type":"error","message":"..."}   خطا (قبل یا حین پخش)
+  //
+  // نکته‌ی مهم (پنهان‌ماندنِ خط REFERENCES از دیدِ کاربر حین پخش): چون
+  // خط «REFERENCES: ...» همیشه دقیقاً در همون چند ده کاراکتر آخرِ کل
+  // پاسخه، آخرین HOLD_BACK کاراکترِ رسیده رو همیشه نگه می‌داریم و ارسال
+  // نمی‌کنیم تا مطمئن بشیم اون خط هیچ‌وقت به‌صورت خام دیده نمی‌شه؛ در
+  // پایانِ پخش، همون منطق قبلیِ استخراج REFERENCES رو روی کل متن اجرا
+  // می‌کنیم و فقط باقی‌ماندهٔ واقعیِ پاسخ (بدون خط REFERENCES) رو در یک
+  // «delta» نهایی می‌فرستیم.
+  const HOLD_BACK = 80;
 
-  if (!geminiRes.ok) {
-    const errText = await geminiRes.text();
-    return jsonResponse({ error: "خطا در تماس با Gemini", detail: errText }, 502);
-  }
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      const send = (obj) => controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
 
-  const geminiJson = await geminiRes.json();
-  const rawAnswer =
-    geminiJson.candidates?.[0]?.content?.parts?.[0]?.text || "پاسخی دریافت نشد.";
+      let geminiRes;
+      try {
+        geminiRes = await fetchGeminiWithRetry(geminiStreamUrl, geminiRequestBody);
+      } catch (err) {
+        send({ type: "error", message: "خطا در برقراری ارتباط با Gemini" });
+        controller.close();
+        return;
+      }
 
-  // آیتم ۱۰ (فیلتر ارتباط): خط REFERENCES رو از متنِ دیده‌شده توسط
-  // کاربر جدا می‌کنیم و اندیس‌های استفاده‌شده رو استخراج می‌کنیم - تا
-  // فقط منابعی که واقعاً استفاده شدن (نه هرچی که جست‌وجوی معنایی
-  // برگردونده) به کاربر نشون داده بشه.
-  let answer = rawAnswer;
-  let usedReferences = null; // null یعنی "نمی‌دونیم" (مثلاً حالت general)
+      if (!geminiRes.ok) {
+        const errText = await geminiRes.text().catch(() => "");
+        send({ type: "error", message: "خطا در تماس با Gemini", detail: errText });
+        controller.close();
+        return;
+      }
 
-  if (mode === "grounded") {
-    const match = rawAnswer.match(/\n?REFERENCES:\s*([^\n]*)\s*$/i);
-    if (match) {
-      answer = rawAnswer.slice(0, match.index).trim();
-      const refsRaw = match[1].trim().toLowerCase();
-      usedReferences = refsRaw === "none" || refsRaw === ""
-        ? []
-        : refsRaw.split(",").map(s => parseInt(s.trim(), 10)).filter(n => Number.isInteger(n) && n > 0);
-    }
-  }
+      const reader = geminiRes.body.getReader();
+      const decoder = new TextDecoder();
+      let sseBuffer = "";
+      let fullText = "";
+      let pendingTail = ""; // آخرین چند ده کاراکترِ هنوز نفرستاده
 
-  return jsonResponse({ answer, usedReferences });
+      const flushSafe = () => {
+        // فقط تو حالت grounded (که خط REFERENCES وجود داره) نگه‌داری
+        // می‌کنیم؛ تو حالت general کل متن بی‌درنگ فرستاده می‌شه.
+        if (mode !== "grounded") {
+          if (pendingTail) {
+            send({ type: "delta", text: pendingTail });
+            pendingTail = "";
+          }
+          return;
+        }
+        if (pendingTail.length > HOLD_BACK) {
+          const safeToSend = pendingTail.slice(0, pendingTail.length - HOLD_BACK);
+          pendingTail = pendingTail.slice(pendingTail.length - HOLD_BACK);
+          if (safeToSend) send({ type: "delta", text: safeToSend });
+        }
+      };
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          sseBuffer += decoder.decode(value, { stream: true });
+          const lines = sseBuffer.split("\n");
+          sseBuffer = lines.pop(); // خطِ ناتمومِ احتمالی رو برای دورِ بعد نگه دار
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith("data:")) continue;
+            const jsonPart = trimmed.slice(5).trim();
+            if (!jsonPart) continue;
+            let chunk;
+            try {
+              chunk = JSON.parse(jsonPart);
+            } catch {
+              continue; // خطِ ناقص/غیرمنتظره - نادیده بگیر
+            }
+            const deltaText = chunk?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            if (deltaText) {
+              fullText += deltaText;
+              pendingTail += deltaText;
+              flushSafe();
+            }
+          }
+        }
+      } catch (err) {
+        send({ type: "error", message: "خطا حین دریافت پاسخ از Gemini" });
+        controller.close();
+        return;
+      }
+
+      // ---------- پایان پخش: استخراج REFERENCES از کل متن ----------
+      let finalAnswer = fullText;
+      let usedReferences = null;
+
+      if (mode === "grounded") {
+        const match = fullText.match(/\n?REFERENCES:\s*([^\n]*)\s*$/i);
+        if (match) {
+          finalAnswer = fullText.slice(0, match.index).trim();
+          const refsRaw = match[1].trim().toLowerCase();
+          usedReferences = refsRaw === "none" || refsRaw === ""
+            ? []
+            : refsRaw.split(",").map(s => parseInt(s.trim(), 10)).filter(n => Number.isInteger(n) && n > 0);
+        } else {
+          finalAnswer = fullText.trim();
+        }
+
+        // هرچی از finalAnswer هنوز فرستاده نشده (یعنی تو pendingTail
+        // نگه‌داشته شده بود) رو الان به‌صورت یک تکهٔ نهایی می‌فرستیم.
+        const alreadySentLength = fullText.length - pendingTail.length;
+        if (alreadySentLength < finalAnswer.length) {
+          send({ type: "delta", text: finalAnswer.slice(alreadySentLength) });
+        }
+      } else if (pendingTail) {
+        send({ type: "delta", text: pendingTail });
+      }
+
+      send({ type: "done", references: usedReferences });
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: { "Content-Type": "application/x-ndjson; charset=utf-8", ...CORS_HEADERS },
+  });
 }
 
 // ---------- /track و /stats : آمار سایت (مورد ۸، + فیلتر روزانه) ----------

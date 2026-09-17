@@ -332,7 +332,7 @@ function textFragmentUrl(baseUrl, text, page) {
 // تاریخچه را به پرامپت Gemini اضافه کند) پاسخ بعدی واقعاً با در نظر
 // گرفتن سؤال‌های قبلی همین گفتگو ساخته شود - نه این‌که هر پرسش، بی‌خبر
 // از پرسش‌های قبلی، از صفر پاسخ داده شود.
-async function askQuestion(question, history = [], mode = "grounded", image = null, bookFilter = null) {
+async function askQuestion(question, history = [], mode = "grounded", image = null, bookFilter = null, onDelta = null) {
   // آمار سایت: این تابع تنها نقطه‌ای‌ست که واقعاً سؤال کاربر رو به
   // Worker می‌فرسته (یک نقطه‌ی فراخوانی، رجوع کنید به renderChatTurns)،
   // پس بهترین جا برای ثبتِ «یک پرسشِ تبِ گفتگو»ست.
@@ -355,14 +355,11 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
       history,
       mode,
       image,
-      // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد) -
-      // نکتهٔ مهم: اعمال واقعیِ این متن در پاسخ، به تغییری در سمتِ
-      // Worker نیاز دارد (اضافه‌شدنش به system prompt)؛ فایل worker در
-      // این گفتگو موجود نیست، پس فعلاً فقط فرستاده می‌شود بدون تضمین
-      // این‌که Worker فعلی از آن استفاده می‌کند.
+      // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
       customInstructions: getAiCustomInstructionsAi() || undefined,
     }),
   });
+
   if (!chatRes.ok) {
     let message = "خطا در دریافت پاسخ از دستیار";
     try {
@@ -373,7 +370,48 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
     }
     throw new Error(message);
   }
-  const { answer, usedReferences } = await chatRes.json();
+
+  // Item جدید (پخش تدریجی): Worker پاسخ رو به‌صورت چند خط JSON مستقل
+  // (ndjson) پخش می‌کنه - هر خط یکی از {type:"delta"}, {type:"done"},
+  // {type:"error"}. اینجا خط‌به‌خط می‌خونیم، برای هر «delta» بلافاصله
+  // onDelta (اگه داده شده) رو صدا می‌زنیم تا حباب پاسخ تو رابط کاربری
+  // همون لحظه به‌روز بشه، و در پایان متن کامل رو برمی‌گردونیم - دقیقاً
+  // مثل قبل، برای این‌که بقیهٔ کد (منابع، آرشیو گفتگو و غیره) بدون
+  // تغییر کار کنه.
+  const reader = chatRes.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let answer = "";
+  let usedReferences = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      let msg;
+      try {
+        msg = JSON.parse(trimmed);
+      } catch {
+        continue;
+      }
+
+      if (msg.type === "delta" && typeof msg.text === "string") {
+        answer += msg.text;
+        if (typeof onDelta === "function") onDelta(msg.text, answer);
+      } else if (msg.type === "done") {
+        usedReferences = msg.references ?? null;
+      } else if (msg.type === "error") {
+        throw new Error(msg.message || "خطا در دریافت پاسخ از دستیار");
+      }
+    }
+  }
 
   // آیتم ۱۰ (فیلتر ارتباط): اگه Worker گفته کدوم بخش‌ها رو واقعاً
   // استفاده کرده، فقط همونا رو به‌عنوان منبع برمی‌گردونیم - نه کل
@@ -1969,7 +2007,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const history = chatTurns.map((turn) => ({ question: turn.question, answer: turn.answer }));
         const chatModeInput = document.querySelector('input[name="aiChatMode"]:checked');
         const chatMode = chatModeInput ? chatModeInput.value : "grounded";
-        const { answer, sources } = await askQuestion(question, history, chatMode, attachmentForThisMessage, aiChatBookScope);
+
+        // Item جدید (پخش تدریجی): از همون لحظه‌ای که اولین تکه‌ی پاسخ
+        // می‌رسه، متن «در حال بررسی و تنظیم پاسخ…» رو با متنِ در حال
+        // شکل‌گیریِ پاسخ جایگزین می‌کنیم - دیگه لازم نیست کاربر صبر کنه
+        // تا کل پاسخ یک‌جا آماده بشه.
+        let streamedBubbleEl = null;
+        const onDelta = (_chunk, soFar) => {
+          if (myToken !== chatToken) return;
+          if (!streamedBubbleEl) {
+            const pendingTurnEl = document.getElementById(`aiChatPending-${myToken}`);
+            streamedBubbleEl = pendingTurnEl ? pendingTurnEl.querySelector(".ai-chat-pending") : null;
+            if (streamedBubbleEl) streamedBubbleEl.classList.remove("ai-chat-pending");
+          }
+          if (streamedBubbleEl) streamedBubbleEl.textContent = soFar;
+        };
+
+        const { answer, sources } = await askQuestion(question, history, chatMode, attachmentForThisMessage, aiChatBookScope, onDelta);
         if (myToken !== chatToken) return; // پرسش جدیدتری در همین حین ارسال شده
 
         // Item جدید: فهرست یکتای کتاب‌هایی که پاسخ از آن‌ها گرفته شده -
