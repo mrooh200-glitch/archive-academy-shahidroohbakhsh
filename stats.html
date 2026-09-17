@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آمار سایت - آرشیو شهید روحبخش</title>
+<!--
+  Item ۸ (آمار سایت): این صفحه فقط داده‌های آماده‌شده توسط Worker را
+  (از endpoint GET /stats) نمایش می‌دهد؛ هیچ منطق شمارشی این‌جا نیست.
+
+  نکته‌ی امنیتی مهم: این صفحه فعلاً هیچ رمز/محدودیتی ندارد - هرکسی
+  آدرسش را بداند می‌تواند آمار را ببیند (نه چیز خطرناکی مثل کلید API،
+  ولی شاید نخواهید عمومی باشد). اگر خواستید محدودش کنید، ساده‌ترین راه
+  این است که در همین فایل یک رمز عبور ساده (که فقط خودتان می‌دانید)
+  اضافه شود - در صورت نیاز بگویید تا اضافه کنم.
+-->
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1f2937;
+    padding: 24px 16px 60px;
+  }
+
+  h1 {
+    color: #173b63;
+    font-size: 1.3rem;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    max-width: 720px;
+    margin: 0 auto 32px;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  }
+
+  .stat-card .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #0f766e;
+  }
+
+  .stat-card .label {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  .tables-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    justify-content: center;
+  }
+
+  .table-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    flex: 1 1 380px;
+    max-width: 420px;
+  }
+
+  .table-card h2 {
+    font-size: 1rem;
+    color: #173b63;
+    margin: 0 0 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th, td {
+    text-align: right;
+    padding: 6px 8px;
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  th {
+    color: #64748b;
+    font-weight: normal;
+  }
+
+  td.count {
+    text-align: left;
+    color: #0f766e;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .status-note {
+    text-align: center;
+    color: #64748b;
+    max-width: 500px;
+    margin: 0 auto 20px;
+  }
+
+  .status-note.error {
+    color: #b91c1c;
+  }
+
+  /* Item جدید (فیلتر تاریخ): نوار فیلتر بازهٔ تاریخ - روی سه بخش:
+     ردیف ورودی‌های تاریخ + دکمهٔ نمایش، ردیف دکمه‌های آماده (پرش
+     سریع)، و یک خط وضعیت که بازهٔ فعال را نشان می‌دهد. */
+  .filter-bar {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: end;
+    justify-content: center;
+  }
+
+  .filter-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #64748b;
+    position: relative;
+  }
+
+  .filter-row input[type="text"].jalali-date-input {
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 6px 8px;
+    border: 1px solid #d7dee7;
+    border-radius: 8px;
+    color: #1f2937;
+    width: 110px;
+    text-align: center;
+    direction: ltr;
+  }
+
+  #applyFilterBtn {
+    background: #0f766e;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  #applyFilterBtn:hover {
+    background: #0d5f58;
+  }
+
+  .filter-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .preset-btn {
+    background: #eef2f7;
+    color: #173b63;
+    border: none;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .preset-btn:hover {
+    background: #dde5ee;
+  }
+
+  .preset-btn.active {
+    background: #0f766e;
+    color: #ffffff;
+  }
+
+  .filter-current {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.8rem;
+    margin: 12px 0 0;
+  }
+
+  /* Item جدید (تقویمِ شمسیِ کلیک‌پذیر): چون input[type=date] از تقویم
+     میلادی خودِ مرورگر استفاده می‌کنه (که قابل تبدیل به شمسی نیست)،
+     به‌جاش یک تقویم کوچکِ شمسی خودمون ساختیم که با فوکوس/کلیک روی
+     ورودی باز می‌شه - تایپ دستی هم هنوز جواب می‌ده، این فقط یک راه
+     راحت‌تر و «قابل‌کلیک» اضافه است.  */
+  .jalali-picker-popup {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    background: #ffffff;
+    border: 1px solid #d7dee7;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+    padding: 10px;
+    width: 220px;
+    direction: rtl;
+  }
+
+  .jalali-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .jalali-picker-header select {
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 3px 4px;
+    border: 1px solid #d7dee7;
+    border-radius: 6px;
+    color: #1f2937;
+    background: #fff;
+  }
+
+  .jalali-picker-nav {
+    background: #eef2f7;
+    border: none;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    color: #173b63;
+    font-size: 0.9rem;
+    flex: 0 0 auto;
+  }
+
+  .jalali-picker-nav:hover {
+    background: #dde5ee;
+  }
+
+  .jalali-picker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-bottom: 4px;
+  }
+
+  .jalali-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .jalali-picker-day {
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 0.78rem;
+    cursor: pointer;
+    color: #1f2937;
+    font-family: inherit;
+  }
+
+  .jalali-picker-day:hover {
+    background: #eef2f7;
+  }
+
+  .jalali-picker-day.today {
+    box-shadow: inset 0 0 0 1px #0f766e;
+  }
+
+  .jalali-picker-day.selected {
+    background: #0f766e;
+    color: #ffffff;
+  }
+
+  .jalali-picker-day.empty {
+    cursor: default;
+  }
+
+  .jalali-picker-day.empty:hover {
+    background: transparent;
+  }
+
+  .jalali-picker-footer {
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .jalali-picker-today-btn {
+    background: none;
+    border: none;
+    color: #0f766e;
+    font-family: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* Item جدید (ریست آمار): طبق بازخورد کاربر، طراحیِ اولیه (فقط یک
+     خط نازک و متن کم‌رنگ) اونقدر بی‌سروصدا بود که عملاً پیدا نمی‌شد -
+     الان یک کادرِ مشخص با پس‌زمینه داره تا موقع اسکرول‌کردن، بدون شک
+     دیده بشه؛ ولی رنگش (قرمزِ ملایم) و جداافتادنش از بقیهٔ صفحه هنوز
+     نشون می‌ده این یک عملِ متفاوت (و حساس) از بقیهٔ صفحه‌ست.  */
+  .reset-stats-wrap {
+    max-width: 720px;
+    margin: 32px auto 0;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .reset-stats-wrap p {
+    margin: 0 0 10px;
+    color: #7f1d1d;
+    font-size: 0.85rem;
+  }
+
+  #resetStatsBtn {
+    background: #b91c1c;
+    border: none;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #resetStatsBtn:hover {
+    background: #991b1b;
+  }
+</style>
+</head>
+<body>
+
+<h1>📊 آمار سایت — آرشیو شهید روحبخش</h1>
+
+<div class="filter-bar" id="filterBar">
+  <div class="filter-row">
+    <label>از تاریخ (شمسی)<input type="text" class="jalali-date-input" id="fromDateInput" placeholder="۱۴۰۵/۰۶/۰۱" inputmode="numeric" autocomplete="off">
+      <div class="jalali-picker-popup" id="fromDatePicker" style="display:none;"></div>
+    </label>
+    <label>تا تاریخ (شمسی)<input type="text" class="jalali-date-input" id="toDateInput" placeholder="۱۴۰۵/۰۶/۲۲" inputmode="numeric" autocomplete="off">
+      <div class="jalali-picker-popup" id="toDatePicker" style="display:none;"></div>
+    </label>
+    <button type="button" id="applyFilterBtn">نمایش</button>
+  </div>
+  <div class="filter-presets">
+    <button type="button" class="preset-btn" data-preset="today">امروز</button>
+    <button type="button" class="preset-btn" data-preset="7">۷ روز اخیر</button>
+    <button type="button" class="preset-btn" data-preset="30">۳۰ روز اخیر</button>
+    <button type="button" class="preset-btn" data-preset="all">کل بازه (پیش‌فرض)</button>
+  </div>
+  <p class="filter-current" id="filterCurrentLabel"></p>
+</div>
+
+<p class="status-note" id="statusNote">در حال بارگذاری آمار…</p>
+
+<div class="stats-grid" id="statsGrid" style="display:none;">
+  <div class="stat-card">
+    <div class="value" id="statPageviews">۰</div>
+    <div class="label">بازدید صفحه</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statSearches">۰</div>
+    <div class="label">جست‌وجو</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statDownloads">۰</div>
+    <div class="label">دانلود</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statChats">۰</div>
+    <div class="label">گفتگو با هوش</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statSemanticSearches">۰</div>
+    <div class="label">جست‌وجوی مفهومی</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statBookmarks">۰</div>
+    <div class="label">نشانه‌ها</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statArchives">۰</div>
+    <div class="label">آرشیو</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" id="statExports">۰</div>
+    <div class="label">خروجی گرفتن</div>
+  </div>
+</div>
+
+<div class="tables-wrap" id="tablesWrap" style="display:none;">
+  <div class="table-card">
+    <h2>پرتکرارترین عبارت‌های جست‌وجوشده</h2>
+    <table>
+      <thead><tr><th>عبارت</th><th>تعداد</th></tr></thead>
+      <tbody id="searchTermsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>پرتکرارترین فایل‌های دانلودشده</h2>
+    <table>
+      <thead><tr><th>فایل</th><th>تعداد</th></tr></thead>
+      <tbody id="downloadFilesBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>چه چیزهایی در «گفتگو با هوش» پرسیده شده</h2>
+    <table>
+      <thead><tr><th>سؤال</th><th>تعداد</th></tr></thead>
+      <tbody id="chatQuestionsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>چه چیزهایی در «جست‌وجوی مفهومی» جست‌وجو شده</h2>
+    <table>
+      <thead><tr><th>عبارت</th><th>تعداد</th></tr></thead>
+      <tbody id="semanticQueriesBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>خروجی‌گرفتن‌ها به تفکیک فرمت</h2>
+    <table>
+      <thead><tr><th>فرمت</th><th>تعداد</th></tr></thead>
+      <tbody id="exportFormatsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>پرتکرارترین عنوان‌های نشانه‌شده</h2>
+    <table>
+      <thead><tr><th>عنوان</th><th>تعداد</th></tr></thead>
+      <tbody id="bookmarkedTitlesBody"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h2>پرتکرارترین عنوان‌های آرشیوشده</h2>
+    <table>
+      <thead><tr><th>عنوان</th><th>تعداد</th></tr></thead>
+      <tbody id="archivedTitlesBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="reset-stats-wrap">
+  <p>⚠️ منطقهٔ حساس — این کار همهٔ آمار را برای همیشه پاک می‌کند.</p>
+  <button type="button" id="resetStatsBtn">ریست کامل آمار</button>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const WORKER_URL = "https://roohbakhsh-archive-ai.mrooh200.workers.dev";
+
+  // Item جدید (تقویم هجری شمسی): تبدیل تاریخ بین میلادی و شمسی، چون
+  // ورودی‌های فیلتر حالا به شمسی گرفته می‌شن ولی خودِ Worker (و کلیدهای
+  // ذخیره‌شده در KV) بر مبنای تاریخ میلادیِ روزِ تقویمیِ تهران کار
+  // می‌کنن. الگوریتم استاندارد تبدیل (بر پایهٔ شمارهٔ روزِ ژولینی) -
+  // بدون وابستگی به کتابخانهٔ خارجی.
+  function div(a, b) { return Math.trunc(a / b); }
+  function mod(a, b) { return a - Math.trunc(a / b) * b; }
+
+  function jalCal(jy) {
+    const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+    const bl = breaks.length;
+    const gy = jy + 621;
+    let leapJ = -14;
+    let jp = breaks[0];
+
+    if (jy < jp || jy >= breaks[bl - 1]) {
+      throw new Error("سال شمسی نامعتبر: " + jy);
+    }
+
+    let jump = 0;
+    let jm;
+    for (let i = 1; i < bl; i += 1) {
+      jm = breaks[i];
+      jump = jm - jp;
+      if (jy < jm) break;
+      leapJ += div(jump, 33) * 8 + div(mod(jump, 33), 4);
+      jp = jm;
+    }
+
+    let n = jy - jp;
+    leapJ += div(n, 33) * 8 + div(mod(n, 33) + 3, 4);
+    if (mod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+
+    const leapG = div(gy, 4) - div((div(gy, 100) + 1) * 3, 4) - 150;
+    const march = 20 + leapJ - leapG;
+
+    if (jump - n < 6) n = n - jump + div(jump, 33) * 33;
+
+    let leap = mod(mod(n + 1, 33) - 1, 4);
+    if (leap === -1) leap = 4;
+
+    return { leap, gy, march };
+  }
+
+  function g2d(gy, gm, gd) {
+    let d = div((gy + div(gm - 8, 6) + 100100) * 1461, 4)
+      + div(153 * mod(gm + 9, 12) + 2, 5)
+      + gd - 34840408;
+    d = d - div(div(gy + div(gm - 8, 6) + 100100, 100) * 3, 4) + 752;
+    return d;
+  }
+
+  function d2g(jdn) {
+    let j = 4 * jdn + 139361631;
+    j = j + div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+    const i = div(mod(j, 1461), 4) * 5 + 308;
+    const gd = div(mod(i, 153), 5) + 1;
+    const gm = mod(div(i, 153), 12) + 1;
+    const gy = div(j, 1461) - 100100 + div(8 - gm, 6);
+    return [gy, gm, gd];
+  }
+
+  function j2d(jy, jm, jd) {
+    const r = jalCal(jy);
+    return g2d(r.gy, 3, r.march) + (jm - 1) * 31 - div(jm, 7) * (jm - 7) + jd - 1;
+  }
+
+  function d2j(jdn) {
+    const gy = d2g(jdn)[0];
+    let jy = gy - 621;
+    const r = jalCal(jy);
+    const jdn1f = g2d(gy, 3, r.march);
+    let k = jdn - jdn1f;
+    let jm, jd;
+
+    if (k >= 0) {
+      if (k <= 185) {
+        jm = 1 + div(k, 31);
+        jd = mod(k, 31) + 1;
+        return [jy, jm, jd];
+      }
+      k -= 186;
+    } else {
+      jy -= 1;
+      k += 179;
+      if (r.leap === 1) k += 1;
+    }
+
+    jm = 7 + div(k, 30);
+    jd = mod(k, 30) + 1;
+    return [jy, jm, jd];
+  }
+
+  function gregorianToJalali(gy, gm, gd) { return d2j(g2d(gy, gm, gd)); }
+  function jalaliToGregorian(jy, jm, jd) { return d2g(j2d(jy, jm, jd)); }
+
+  function toPersianDigits(num) {
+    return String(num).replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+  }
+
+  function toAsciiDigits(text) {
+    const persian = "۰۱۲۳۴۵۶۷۸۹";
+    const arabic = "٠١٢٣٤٥٦٧٨٩";
+    return String(text).replace(/[۰-۹٠-٩]/g, ch => {
+      const pIndex = persian.indexOf(ch);
+      if (pIndex !== -1) return String(pIndex);
+      const aIndex = arabic.indexOf(ch);
+      return aIndex !== -1 ? String(aIndex) : ch;
+    });
+  }
+
+  // یک رشتهٔ تاریخِ میلادیِ YYYY-MM-DD رو به رشتهٔ نمایشیِ شمسی (با
+  // ارقام فارسی، برای گذاشتن داخل ورودی‌های فیلتر) تبدیل می‌کنه.
+  function isoGregorianToJalaliDisplay(isoStr) {
+    const [gy, gm, gd] = isoStr.split("-").map(n => parseInt(n, 10));
+    const [jy, jm, jd] = gregorianToJalali(gy, gm, gd);
+    return toPersianDigits(`${jy}/${String(jm).padStart(2, "0")}/${String(jd).padStart(2, "0")}`);
+  }
+
+  // متن تایپ‌شده توسط کاربر (شمسی، با ارقام فارسی یا انگلیسی، با جداکنندهٔ
+  // / یا - یا فاصله) رو می‌گیره و رشتهٔ میلادیِ YYYY-MM-DD برمی‌گردونه؛
+  // اگه نامعتبر بود null برمی‌گردونه (نه این‌که خطا پرتاب کنه).
+  function jalaliInputToIsoGregorian(text) {
+    const clean = toAsciiDigits(String(text).trim()).replace(/[\s.]+/g, "/").replace(/-/g, "/");
+    const match = clean.match(/^(\d{3,4})\/(\d{1,2})\/(\d{1,2})$/);
+    if (!match) return null;
+
+    const jy = parseInt(match[1], 10);
+    const jm = parseInt(match[2], 10);
+    const jd = parseInt(match[3], 10);
+
+    if (jm < 1 || jm > 12 || jd < 1 || jd > 31) return null;
+
+    try {
+      const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
+      // اعتبارسنجی رفت‌وبرگشتی: اگه jd روزی بود که در این ماه/سال وجود
+      // نداره (مثلاً ۳۰ اسفند در سال غیرکبیسه)، تبدیل رفت‌وبرگشت به
+      // ورودیِ اصلی نمی‌رسه - این‌جا رد می‌کنیم.
+      const [jy2, jm2, jd2] = gregorianToJalali(gy, gm, gd);
+      if (jy2 !== jy || jm2 !== jm || jd2 !== jd) return null;
+
+      const year = String(gy).padStart(4, "0");
+      const month = String(gm).padStart(2, "0");
+      const day = String(gd).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    } catch {
+      return null;
+    }
+  }
+
+  // Item جدید (تقویمِ کلیک‌پذیر شمسی): یک تقویمِ کوچکِ بازشونده که با
+  // فوکوس‌کردنِ ورودی ظاهر می‌شه - هنوز می‌شه تاریخ رو دستی هم تایپ
+  // کرد؛ این فقط راهِ کلیک‌پذیرِ اضافه است (چون input[type=date]
+  // استانداردِ مرورگر از تقویم شمسی پشتیبانی نمی‌کنه).
+  const JALALI_MONTH_NAMES = [
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+  ];
+  const JALALI_WEEKDAY_LABELS = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+
+  function jalaliMonthLength(jy, jm) {
+    if (jm <= 6) return 31;
+    if (jm <= 11) return 30;
+    // نکته: jalCal(jy).leap یک شمارندهٔ درونیِ چرخهٔ ۴ساله است، نه یک
+    // بولین؛ طبق آزمایش رفت‌وبرگشتیِ واقعی (نه فرضی)، سال jy وقتی و
+    // فقط وقتی کبیسه است (اسفندش ۳۰ روزه) که این شمارنده صفر باشد.
+    return jalCal(jy).leap === 0 ? 30 : 29;
+  }
+
+  function todayJalali() {
+    const now = new Date();
+    return gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  }
+
+  // روزِ هفتهٔ ۱ فلان ماهِ شمسی را بر اساس هفتهٔ ایرانی (شنبه=۰ ... جمعه=۶)
+  // برمی‌گردونه - برای این‌که جدول روزها از ستونِ درست شروع بشه.
+  function jalaliFirstWeekday(jy, jm) {
+    const [gy, gm, gd] = jalaliToGregorian(jy, jm, 1);
+    const jsWeekday = new Date(gy, gm - 1, gd).getDay(); // یکشنبه=۰ ... شنبه=۶
+    return (jsWeekday + 1) % 7; // شنبه=۰ ... جمعه=۶
+  }
+
+  function setupJalaliDatePicker(inputEl, popupEl) {
+    let viewYear;
+    let viewMonth;
+
+    function currentSelection() {
+      const iso = jalaliInputToIsoGregorian(inputEl.value);
+      if (!iso) return null;
+      const [gy, gm, gd] = iso.split("-").map(n => parseInt(n, 10));
+      return gregorianToJalali(gy, gm, gd);
+    }
+
+    function render() {
+      const selected = currentSelection();
+      const [ty, tm, td] = todayJalali();
+      const monthLength = jalaliMonthLength(viewYear, viewMonth);
+      const firstWeekday = jalaliFirstWeekday(viewYear, viewMonth);
+
+      const yearOptions = [];
+      for (let y = ty - 10; y <= ty + 1; y += 1) {
+        yearOptions.push(
+          `<option value="${y}" ${y === viewYear ? "selected" : ""}>${toPersianDigits(y)}</option>`
+        );
+      }
+
+      const monthOptions = JALALI_MONTH_NAMES
+        .map((name, i) => `<option value="${i + 1}" ${i + 1 === viewMonth ? "selected" : ""}>${name}</option>`)
+        .join("");
+
+      let dayCells = "";
+      for (let i = 0; i < firstWeekday; i += 1) {
+        dayCells += `<span class="jalali-picker-day empty"></span>`;
+      }
+      for (let day = 1; day <= monthLength; day += 1) {
+        const isToday = viewYear === ty && viewMonth === tm && day === td;
+        const isSelected = selected && selected[0] === viewYear && selected[1] === viewMonth && selected[2] === day;
+        dayCells += `<button type="button" class="jalali-picker-day${isToday ? " today" : ""}${isSelected ? " selected" : ""}" data-day="${day}">${toPersianDigits(day)}</button>`;
+      }
+
+      popupEl.innerHTML = `
+        <div class="jalali-picker-header">
+          <button type="button" class="jalali-picker-nav" data-nav="prev" title="ماه قبل">›</button>
+          <select class="jalali-picker-month-select">${monthOptions}</select>
+          <select class="jalali-picker-year-select">${yearOptions.join("")}</select>
+          <button type="button" class="jalali-picker-nav" data-nav="next" title="ماه بعد">‹</button>
+        </div>
+        <div class="jalali-picker-weekdays">
+          ${JALALI_WEEKDAY_LABELS.map(l => `<span>${l}</span>`).join("")}
+        </div>
+        <div class="jalali-picker-days">${dayCells}</div>
+        <div class="jalali-picker-footer">
+          <button type="button" class="jalali-picker-today-btn">امروز</button>
+        </div>
+      `;
+
+      popupEl.querySelector('[data-nav="prev"]').addEventListener("click", () => {
+        viewMonth -= 1;
+        if (viewMonth < 1) { viewMonth = 12; viewYear -= 1; }
+        render();
+      });
+      popupEl.querySelector('[data-nav="next"]').addEventListener("click", () => {
+        viewMonth += 1;
+        if (viewMonth > 12) { viewMonth = 1; viewYear += 1; }
+        render();
+      });
+      popupEl.querySelector(".jalali-picker-month-select").addEventListener("change", (e) => {
+        viewMonth = parseInt(e.target.value, 10);
+        render();
+      });
+      popupEl.querySelector(".jalali-picker-year-select").addEventListener("change", (e) => {
+        viewYear = parseInt(e.target.value, 10);
+        render();
+      });
+      popupEl.querySelector(".jalali-picker-today-btn").addEventListener("click", () => {
+        viewYear = ty; viewMonth = tm;
+        selectDay(td);
+      });
+      popupEl.querySelectorAll(".jalali-picker-day:not(.empty)").forEach(btn => {
+        btn.addEventListener("click", () => selectDay(parseInt(btn.dataset.day, 10)));
+      });
+    }
+
+    function selectDay(day) {
+      inputEl.value = toPersianDigits(`${viewYear}/${String(viewMonth).padStart(2, "0")}/${String(day).padStart(2, "0")}`);
+      popupEl.style.display = "none";
+      // انتخاب از تقویم هم دقیقاً مثل تایپِ دستی است - کاربر هنوز باید
+      // دکمهٔ «نمایش» را بزند تا هر دو تاریخِ از/تا با هم اعمال شوند.
+    }
+
+    function openPicker() {
+      const selected = currentSelection();
+      const [ty, tm] = todayJalali();
+      viewYear = selected ? selected[0] : ty;
+      viewMonth = selected ? selected[1] : tm;
+      render();
+      popupEl.style.display = "block";
+    }
+
+    inputEl.addEventListener("focus", openPicker);
+    inputEl.addEventListener("click", openPicker);
+
+    document.addEventListener("click", (e) => {
+      if (!popupEl.contains(e.target) && e.target !== inputEl) {
+        popupEl.style.display = "none";
+      }
+    });
+
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") popupEl.style.display = "none";
+    });
+  }
+
+  // Item جدید (فیلتر تاریخ): وضعیت فعلیِ بازهٔ انتخابی (همیشه به شکل
+  // میلادیِ YYYY-MM-DD - همون چیزی که Worker می‌فهمه). مقدار null یعنی
+  // «کل بازه» (بدون فیلتر - همون رفتار قبلی، سازگار با نسخهٔ قدیمی
+  // Worker هم هست، چون وقتی from/to فرستاده نشه، Worker مجموع کل رو
+  // برمی‌گردونه).
+  let currentFrom = null;
+  let currentTo = null;
+
+  function toIsoDateString(date) {
+    // تاریخِ محلیِ مرورگر کاربر رو به شکل YYYY-MM-DD تبدیل می‌کنه (نه
+    // toISOString که به UTC تبدیل می‌کنه و ممکنه یک روز عقب/جلو بشه).
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function daysAgoDateString(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return toIsoDateString(d);
+  }
+
+  function escapeHtml(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function fillTable(bodyEl, entries, labelKey) {
+    if (!entries || entries.length === 0) {
+      bodyEl.innerHTML = `<tr><td colspan="2" style="color:#94a3b8;">هنوز داده‌ای ثبت نشده</td></tr>`;
+      return;
+    }
+    bodyEl.innerHTML = entries
+      .map(item => `
+        <tr>
+          <td>${escapeHtml(item[labelKey])}</td>
+          <td class="count">${toPersianDigits(item.count)}</td>
+        </tr>
+      `)
+      .join("");
+  }
+
+  async function loadStats() {
+    const statusNote = document.getElementById("statusNote");
+    statusNote.className = "status-note";
+    statusNote.textContent = "در حال بارگذاری آمار…";
+    statusNote.style.display = "block";
+    document.getElementById("statsGrid").style.display = "none";
+    document.getElementById("tablesWrap").style.display = "none";
+
+    try {
+      // Item جدید (فیلتر تاریخ): وقتی currentFrom/currentTo پر باشن،
+      // به‌عنوان پارامتر به Worker فرستاده می‌شن؛ Worker خودش تشخیص
+      // می‌ده و فقط مجموع همون بازه رو برمی‌گردونه.
+      const query = currentFrom && currentTo
+        ? `?from=${encodeURIComponent(currentFrom)}&to=${encodeURIComponent(currentTo)}`
+        : "";
+
+      const res = await fetch(`${WORKER_URL}/stats${query}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `خطای سرور (${res.status})`);
+      }
+      const data = await res.json();
+
+      document.getElementById("statPageviews").textContent = toPersianDigits(data.pageviews || 0);
+      document.getElementById("statSearches").textContent = toPersianDigits(data.searches || 0);
+      document.getElementById("statDownloads").textContent = toPersianDigits(data.downloads || 0);
+      document.getElementById("statChats").textContent = toPersianDigits(data.chats || 0);
+      document.getElementById("statSemanticSearches").textContent = toPersianDigits(data.semanticSearches || 0);
+      document.getElementById("statBookmarks").textContent = toPersianDigits(data.bookmarks || 0);
+      document.getElementById("statArchives").textContent = toPersianDigits(data.archives || 0);
+      document.getElementById("statExports").textContent = toPersianDigits(data.exports || 0);
+
+      fillTable(document.getElementById("searchTermsBody"), data.topSearchTerms, "value");
+      fillTable(document.getElementById("downloadFilesBody"), data.topDownloadFiles, "value");
+      fillTable(document.getElementById("chatQuestionsBody"), data.topChatQuestions, "value");
+      fillTable(document.getElementById("semanticQueriesBody"), data.topSemanticQueries, "value");
+      fillTable(document.getElementById("exportFormatsBody"), data.topExportFormats, "value");
+      fillTable(document.getElementById("bookmarkedTitlesBody"), data.topBookmarkedTitles, "value");
+      fillTable(document.getElementById("archivedTitlesBody"), data.topArchivedTitles, "value");
+
+      statusNote.style.display = "none";
+      document.getElementById("statsGrid").style.display = "grid";
+      document.getElementById("tablesWrap").style.display = "flex";
+    } catch (err) {
+      statusNote.className = "status-note error";
+      statusNote.textContent = "دریافت آمار ناموفق بود: " + err.message;
+    }
+  }
+
+  // Item جدید (فیلتر تاریخ): وقتی یک دکمهٔ آماده (امروز/۷ روز/۳۰ روز/کل
+  // بازه) زده می‌شه، هم ورودی‌های تاریخ رو پر می‌کنه و هم بلافاصله
+  // آمار رو دوباره می‌خونه؛ دکمهٔ «نمایش» هم برای وقتی هست که کاربر
+  // خودش دستی یک بازهٔ دلخواه در ورودی‌ها انتخاب کرده.
+  function setActivePresetButton(presetKey) {
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.preset === presetKey);
+    });
+  }
+
+  function updateFilterCurrentLabel() {
+    const label = document.getElementById("filterCurrentLabel");
+    label.textContent = currentFrom && currentTo
+      ? `بازهٔ نمایش‌داده‌شده: ${isoGregorianToJalaliDisplay(currentFrom)} تا ${isoGregorianToJalaliDisplay(currentTo)}`
+      : "بازهٔ نمایش‌داده‌شده: از ابتدا تا الان (بدون فیلتر)";
+  }
+
+  function applyPreset(presetKey) {
+    const fromInput = document.getElementById("fromDateInput");
+    const toInput = document.getElementById("toDateInput");
+
+    if (presetKey === "all") {
+      currentFrom = null;
+      currentTo = null;
+      fromInput.value = "";
+      toInput.value = "";
+    } else if (presetKey === "today") {
+      const today = toIsoDateString(new Date());
+      currentFrom = today;
+      currentTo = today;
+      fromInput.value = isoGregorianToJalaliDisplay(today);
+      toInput.value = isoGregorianToJalaliDisplay(today);
+    } else {
+      const n = parseInt(presetKey, 10);
+      currentFrom = daysAgoDateString(n - 1);
+      currentTo = toIsoDateString(new Date());
+      fromInput.value = isoGregorianToJalaliDisplay(currentFrom);
+      toInput.value = isoGregorianToJalaliDisplay(currentTo);
+    }
+
+    setActivePresetButton(presetKey);
+    updateFilterCurrentLabel();
+    loadStats();
+  }
+
+  document.querySelectorAll(".preset-btn").forEach(btn => {
+    btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+  });
+
+  document.getElementById("applyFilterBtn").addEventListener("click", () => {
+    const fromText = document.getElementById("fromDateInput").value.trim();
+    const toText = document.getElementById("toDateInput").value.trim();
+
+    if (!fromText || !toText) {
+      // اگه کاربر هر دو تاریخ رو پاک کرده باشه، یعنی می‌خواد فیلتر
+      // برداشته بشه - مثل زدن دکمهٔ «کل بازه».
+      applyPreset("all");
+      return;
+    }
+
+    const fromValue = jalaliInputToIsoGregorian(fromText);
+    const toValue = jalaliInputToIsoGregorian(toText);
+
+    if (!fromValue || !toValue) {
+      alert("تاریخ را به‌صورت شمسی و به شکل سال/ماه/روز وارد کنید - مثلاً ۱۴۰۵/۰۶/۰۱");
+      return;
+    }
+
+    if (fromValue > toValue) {
+      alert("تاریخ «از» نباید بعد از تاریخ «تا» باشد.");
+      return;
+    }
+
+    currentFrom = fromValue;
+    currentTo = toValue;
+    setActivePresetButton(null);
+    updateFilterCurrentLabel();
+    loadStats();
+  });
+
+  setupJalaliDatePicker(document.getElementById("fromDateInput"), document.getElementById("fromDatePicker"));
+  setupJalaliDatePicker(document.getElementById("toDateInput"), document.getElementById("toDatePicker"));
+
+  // Item جدید (ریست آمار): با تأییدِ دوباره (چون برگشت‌ناپذیره) و
+  // گرفتنِ رمز، درخواست POST /reset-stats می‌فرسته. رمز روی همین
+  // مرورگر ذخیره نمی‌شه - هر بار باید دوباره وارد بشه، عمداً، تا فقط
+  // با تصمیمِ آگاهانه انجام بشه.
+  document.getElementById("resetStatsBtn").addEventListener("click", async () => {
+    const sure = confirm(
+      "این کار همهٔ آمار (بازدید، جست‌وجو، دانلود، گفتگو، جست‌وجوی مفهومی، نشانه‌ها، آرشیو، خروجی‌گرفتن‌ها و پرتکرارترین‌ها) را برای همیشه پاک می‌کند و قابل بازگشت نیست. مطمئن هستید؟"
+    );
+    if (!sure) return;
+
+    const key = prompt("رمز ریست آمار را وارد کنید:");
+    if (key === null) return;
+
+    try {
+      const res = await fetch(`${WORKER_URL}/reset-stats`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key }),
+      });
+      const body = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        alert(body.error || `خطای سرور (${res.status})`);
+        return;
+      }
+
+      alert("آمار با موفقیت صفر شد.");
+      applyPreset("all");
+    } catch (err) {
+      alert("ارتباط با سرور برقرار نشد: " + err.message);
+    }
+  });
+
+  // Item جدید (رفع اشکال: پلیس‌هولدرهای تاریخ ثابت مونده بودن): قبلاً
+  // این دو placeholder با یک تاریخ نمونهٔ ثابت (هاردکد) نوشته شده بودن -
+  // یعنی هیچ‌وقت خودشون رو با تاریخ واقعیِ امروز به‌روز نمی‌کردن. الان
+  // هر بار که صفحه باز می‌شه، از روی تاریخ واقعیِ سیستم محاسبه می‌شن:
+  // «از» = اول همین ماهِ شمسی، «تا» = امروز.
+  (function setDynamicDatePlaceholders() {
+    const [jy, jm, jd] = todayJalali();
+    const firstOfMonth = toPersianDigits(`${jy}/${String(jm).padStart(2, "0")}/01`);
+    const today = toPersianDigits(`${jy}/${String(jm).padStart(2, "0")}/${String(jd).padStart(2, "0")}`);
+
+    const fromInput = document.getElementById("fromDateInput");
+    const toInput = document.getElementById("toDateInput");
+    if (fromInput) fromInput.placeholder = firstOfMonth;
+    if (toInput) toInput.placeholder = today;
+  })();
+
+  updateFilterCurrentLabel();
+  setActivePresetButton("all");
+  loadStats();
+})();
+</script>
+
+</body>
+</html>
