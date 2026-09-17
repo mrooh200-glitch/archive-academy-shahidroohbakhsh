@@ -157,28 +157,37 @@
       position: relative;
       display: flex;
       flex-direction: row;
-      flex-wrap: wrap;
+      /* nowrap عمدیه: عکس و نوشته باید همیشه کنار هم (در یک ردیف)
+         بمونن، حتی تو صفحه‌های باریک - قبلاً با wrap، تو موبایل نوشته
+         می‌افتاد زیر عکس. اگه فضا کم بیاد، خودِ متنِ داخل site-name
+         (نه کل ردیف) می‌شکنه، نه این‌که کل بلوک بره خط بعد. */
+      flex-wrap: nowrap;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      padding: 24px 22px;
+      gap: 12px;
+      padding: 20px 18px;
       text-align: center;
     }
 
     .hero-portrait {
       flex: 0 0 auto;
-      width: clamp(110px, 24vw, 150px);
-      height: clamp(110px, 24vw, 150px);
+      width: clamp(96px, 26vw, 210px);
+      height: clamp(96px, 26vw, 210px);
       border-radius: 50%;
       overflow: hidden;
       border: 3px solid var(--c-gold);
       box-shadow: 0 0 0 5px rgba(227, 200, 118, 0.2);
+      background: var(--c-cream);
     }
 
     .hero-portrait img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      /* به‌جای cover (که همیشه بخشی از عکس رو برای پرکردنِ کامل کادر
+         برش می‌زد)، از contain استفاده می‌کنیم - کل عکس، بدون هیچ
+         برشی، داخل کادر دایره‌ای جا می‌شه (فقط کوچیک‌تر دیده می‌شه). */
+      object-fit: contain;
+      object-position: center;
       display: block;
     }
 
@@ -186,6 +195,12 @@
        متناسب با مخاطب جوان این سایت. */
     .site-name {
       margin: 0;
+      /* min-width:0 لازمه وگرنه فلکس‌آیتم به‌طور پیش‌فرض جمع نمی‌شه
+         (min-width:auto) و به‌جاش کل ردیف رو پهن می‌کنه یا سرریز
+         می‌شه - با این، وقتی جا کم باشه خودِ متنِ «شهید روحبخش» بین
+         دو کلمه می‌شکنه، نه این‌که عکس بره خط بعد. */
+      min-width: 0;
+      flex: 1 1 auto;
     }
 
     .site-name .line1 {
@@ -193,7 +208,7 @@
       font-family: "Vazirmatn", sans-serif;
       font-weight: 600;
       color: var(--c-gold-light);
-      font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+      font-size: clamp(0.75rem, 2.2vw, 1.05rem);
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 2px 10px rgba(0, 0, 0, 0.25);
     }
 
@@ -202,14 +217,14 @@
       font-family: "Vazirmatn", sans-serif;
       font-weight: 800;
       color: var(--c-cream);
-      font-size: clamp(1.3rem, 4.6vw, 1.9rem);
+      font-size: clamp(1.05rem, 4.6vw, 1.9rem);
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 3px 14px rgba(0, 0, 0, 0.3);
     }
 
     @media (max-width: 400px) {
       .hero-portrait {
-        width: clamp(88px, 26vw, 110px);
-        height: clamp(88px, 26vw, 110px);
+        width: clamp(90px, 24vw, 130px);
+        height: clamp(90px, 24vw, 130px);
       }
     }
 
