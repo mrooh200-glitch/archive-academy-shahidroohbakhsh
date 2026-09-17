@@ -1,6 +1,16 @@
 name: Build embeddings & Deploy Worker
 permissions:
   contents: write 
+# Item جدید (رفع باگ: پوش‌های نزدیک‌به‌هم باعث تصادمِ commit می‌شدن):
+# اگه چند پوش با فاصله‌ی کم اتفاق بیفته، هر پوش یه اجرای جدید شروع می‌کنه؛
+# بدون این تنظیم، ممکنه دو اجرا هم‌زمان بخوان embeddings.json رو کامیت و
+# پوش کنن - اجرایی که دیرتر می‌رسه با خطای «non-fast-forward» شکست
+# می‌خوره چون شاخه‌ی main از زیرش در رفته. با این تنظیم، به‌محض شروعِ یه
+# اجرای تازه (برای همون شاخه)، هر اجرای ناتمومِ قبلی به‌جای رقابت کردن،
+# خودکار کنسل می‌شه - فقط آخرین پوش واقعاً تا انتها اجرا می‌شه.
+concurrency:
+  group: build-and-deploy-${{ github.ref }}
+  cancel-in-progress: true
 on:
   workflow_dispatch: # اجرای دستی از تب Actions در گیت‌هاب
   push:
