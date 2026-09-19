@@ -1425,13 +1425,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    function syncSearchCheckboxes() {
-      aiSearchResults.querySelectorAll(".ai-result-checkbox").forEach((checkbox) => {
-        const index = Number(checkbox.dataset.aiIndex);
-        checkbox.checked = searchSelectedIndexes.has(index);
-      });
-    }
-
     function renderAiResultsHtml() {
       aiSearchResults.innerHTML = latestSearchResults
         .map(
@@ -1509,6 +1502,11 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         if (aiSearchStatus) aiSearchStatus.textContent = "در حال جست‌وجو…";
+        // رفع باگ: باکس نتایج با display:none شروع می‌شود و قبلاً فقط در
+        // حالت موفقیت‌آمیز (با نتیجه) باز می‌شد؛ در نتیجه هم پیام «در حال
+        // جست‌وجو…» و هم پیام خطا (پایین، در catch) دیده نمی‌شدند و به نظر
+        // می‌رسید تایپ‌کردن هیچ خروجی‌ای ندارد. الان همین‌جا باز می‌شود.
+        if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = "block";
         try {
           const results = await semanticSearch(query, 5, aiSearchBookScope);
           // اگه در این فاصله کاربر متن رو پاک کرده یا چیز دیگه‌ای تایپ کرده،
@@ -1532,6 +1530,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {
           if (myToken !== searchToken) return;
           if (aiSearchStatus) aiSearchStatus.textContent = err.message || "در جست‌وجو خطایی رخ داد. لطفاً مجدداً تلاش کنید.";
+          // رفع باگ: همینجا هم باکس باید باز بماند تا پیام خطا دیده شود.
+          if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = "block";
           console.error(err);
         }
       }, 400); // debounce: صبر کن کاربر تایپش تموم بشه
