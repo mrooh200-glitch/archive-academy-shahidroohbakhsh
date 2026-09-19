@@ -60,8 +60,14 @@ function findHtmFiles(dir) {
     if (entry.isDirectory()) {
       if (["node_modules", ".git", ".github", "scripts", "aa"].includes(entry.name)) continue;
       files = files.concat(findHtmFiles(path.join(dir, entry.name)));
-    } else if (entry.name.toLowerCase() === "index.htm" || entry.name.toLowerCase() === "index.html") {
-      // فایل index.htm/index.html که خود سایته رو رد کن، نه یه کتاب
+    } else if (
+      entry.name.toLowerCase() === "index.htm" ||
+      entry.name.toLowerCase() === "index.html" ||
+      entry.name.toLowerCase() === "stats.html"
+    ) {
+      // فایل index.htm/index.html (خود سایت) و stats.html (صفحهٔ آمار
+      // سایت) رو رد کن - این‌ها کتاب نیستن و نباید تو جست‌وجوی معنایی/
+      // نتایج ظاهر بشن.
       continue;
     } else if (entry.name.toLowerCase().endsWith(".htm") || entry.name.toLowerCase().endsWith(".html")) {
       files.push(path.join(dir, entry.name));
@@ -277,8 +283,14 @@ async function main() {
     const { title: bookName, paragraphs } = extractBookContent(file, titleIndex);
     const chunks = chunkParagraphs(paragraphs);
     console.log(`  ${bookName}: ${paragraphs.length} پاراگراف → ${chunks.length} تکه`);
+    // رفع باگ: قبلاً فقط اسم فایل (بدون نام پوشه) ذخیره می‌شد، پس برای
+    // کتاب‌هایی که داخل یک زیرپوشه‌ن (مثل Seyed_Kazem_Roohbakhsh/...)
+    // لینک نتیجهٔ جست‌وجو به‌جای مسیر واقعی، به ریشهٔ سایت اشاره می‌کرد و
+    // با خطای ۴۰۴ روبه‌رو می‌شد. الان مسیر نسبی کامل (از ریشهٔ مخزن)
+    // ذخیره می‌شه تا لینک همیشه درست باشه.
+    const relativeSource = path.relative(REPO_ROOT, file).split(path.sep).join("/");
     for (const chunk of chunks) {
-      allChunks.push({ book: bookName, source: path.basename(file), text: chunk.text, page: chunk.page });
+      allChunks.push({ book: bookName, source: relativeSource, text: chunk.text, page: chunk.page });
     }
   }
 
