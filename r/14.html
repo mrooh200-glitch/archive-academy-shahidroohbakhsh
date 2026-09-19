@@ -78,7 +78,7 @@
   }
   .ref-source-banner a { color: #f4d35e !important; font-weight: bold !important; text-decoration: underline !important; font-size: 14px !important; font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important; }
 </style>
-<div class="ref-source-banner">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است. برای مشاهده‌ی نسخه‌ی اصلی: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3894123/#:~:text=Bleak%20or%20uncertain%20views%20about%20the%20afterlife,multiple%20aspects%20of%20distress%20postloss." rel="noopener">مشاهده‌ی منبع اصلی</a></div>
+<div class="ref-source-banner">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است. برای مشاهده‌ی نسخه‌ی اصلی: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3894123/#:~:text=Bleak%20or%20uncertain%20views%20about%20the%20afterlife%20are%20associated%20with%20multiple%20aspects%20of%20distress%20postloss." rel="noopener">مشاهده‌ی منبع اصلی</a></div>
  
  <a class=usa-skipnav href=#main-content><font dir=auto style=vertical-align:inherit><font dir=auto style=vertical-align:inherit>
  پرش به محتوای اصلی
@@ -1351,8 +1351,25 @@ Derogatis LR، Cleary PA (1977). تأیید ساختار ابعادی SCL-90: م
       var mark = document.createElement("mark");
       mark.className = "flash-highlight";
       var frag = range.extractContents();
-      mark.appendChild(frag);
-      range.insertNode(mark);
+
+      var BLOCK_TAGS = /^(P|DIV|LI|TD|TH|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|ARTICLE|SECTION|UL|OL|TABLE|TR)$/;
+      var topLevelEls = [];
+      for (var ci = 0; ci < frag.childNodes.length; ci++) {
+        var cn = frag.childNodes[ci];
+        if (cn.nodeType === 1) topLevelEls.push(cn);
+      }
+      if (topLevelEls.length === 1 && BLOCK_TAGS.test(topLevelEls[0].tagName)) {
+        // The whole fragment is a single block element (e.g. one <p>).
+        // Wrap only its inner content in <mark>, keep the block element itself outside.
+        var blockEl = topLevelEls[0];
+        while (blockEl.firstChild) mark.appendChild(blockEl.firstChild);
+        blockEl.appendChild(mark);
+        range.insertNode(blockEl);
+        mark = blockEl.querySelector("mark.flash-highlight") || mark;
+      } else {
+        mark.appendChild(frag);
+        range.insertNode(mark);
+      }
 
       if (!firstMark) firstMark = mark;
 
