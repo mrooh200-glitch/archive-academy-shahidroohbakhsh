@@ -138,7 +138,7 @@ async function handleEmbed(request, env) {
   return jsonResponse({ vector });
 }
 
-// ---------- تلاش دوباره برای خطاهای موقتی Gemini (کد 503 / status UNAVAILABLE) ----------
+// ---------- تلاش دوباره برای خطاهای موقتی Gemini (کد 503 / status UNAVAILABLE، و کد 429 / سهمیهٔ لحظه‌ای) ----------
 // این فقط دورِ خودِ تماس با Gemini رو می‌گیره؛ به بقیهٔ کد کاری نداره.
 // اگه بار اول موفق بشه (حالت معمول)، هیچ تأخیر اضافه‌ای ایجاد نمی‌کنه.
 //
@@ -146,9 +146,26 @@ async function handleEmbed(request, env) {
 // هر دلیلی (مشکل شبکه، گیر کردن سرویس) گیر می‌کرد، هیچ محدودیت زمانی‌ای
 // نبود - کاربر ده‌ها ثانیه بدون هیچ بازخوردی منتظر می‌موند تا بالاخره
 // یه خطای نامشخص ببینه. حالا هر تلاش حداکثر TIMEOUT_MS صبر می‌کنه و
-// اگه جواب نداد، به‌جای گیرکردن، همون تلاش رو شکست‌خورده حساب می‌کنه
-// (و طبق منطق قبلی، فقط برای 503 دوباره امتحان می‌کنه).
+// اگه جواب نداد، به‌جای گیرکردن، همون تلاش رو شکست‌خورده حساب می‌کنه.
+//
+// رفع باگ (خطای «تماس با Gemini» بدون دلیل روشن): قبلاً فقط کد 503 (شلوغی
+// موقتِ مدل) دوباره امتحان می‌شد. اما تو تست عملی معلوم شد وقتی چند
+// درخواست پشت‌سرهم به Gemini می‌رسه (مثلاً چند پیام سریع، یا هم‌زمانیِ
+// چند کاربر روی سهمیهٔ رایگانِ محدودِ همین اکانت روحبخش)، گوگل کد 429
+// (RESOURCE_EXHAUSTED / سهمیهٔ لحظه‌ای پر شده) برمی‌گردونه - این کد قبلاً
+// اصلاً دوباره امتحان نمی‌شد و بلافاصله به کاربر «خطا در تماس با Gemini»
+// نشون داده می‌شد، حتی وقتی چند ثانیه بعد دوباره جواب می‌داد. حالا 429
+// هم مثل 503 قابل‌تلاش‌دوباره‌ست؛ اگه گوگل هدر Retry-After بده همونو
+// رعایت می‌کنیم، وگرنه از همون تأخیرِ فزاینده استفاده می‌کنیم.
 const GEMINI_TIMEOUT_MS = 20000;
+
+function parseRetryAfterMs(res) {
+  const header = res && res.headers ? res.headers.get("Retry-After") : null;
+  if (!header) return null;
+  const seconds = Number(header);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.min(seconds * 1000, 5000);
+  return null;
+}
 
 async function fetchGeminiWithRetry(geminiUrl, requestBody, maxAttempts = 3) {
   let lastRes;
@@ -173,18 +190,19 @@ async function fetchGeminiWithRetry(geminiUrl, requestBody, maxAttempts = 3) {
 
     if (lastRes && lastRes.ok) return lastRes;
 
-    // فقط برای خطای واقعیِ 503 (شلوغی موقت مدل) دوباره تلاش کن. برای
-    // تایم‌اوت/قطعیِ اتصال دوباره تلاش نمی‌کنیم - چون این‌جور خطاها
-    // معمولاً به این زودی‌ها درست نمی‌شن و تلاش دوباره فقط باعث می‌شه
-    // کاربر ۳ برابر بیشتر (تا ~۶۰ ثانیه) بی‌خبر منتظر بمونه؛ بهتره سریع
+    // برای خطاهای موقتی (503 شلوغی مدل، یا 429 سهمیهٔ لحظه‌ای) دوباره
+    // تلاش کن. برای تایم‌اوت/قطعیِ اتصال دوباره تلاش نمی‌کنیم - چون
+    // این‌جور خطاها معمولاً به این زودی‌ها درست نمی‌شن و تلاش دوباره فقط
+    // باعث می‌شه کاربر چند برابر بیشتر بی‌خبر منتظر بمونه؛ بهتره سریع
     // خطای روشن بدیم تا کاربر بتونه دوباره تلاش کنه.
-    const isRetryable503 = !lastErr && lastRes && lastRes.status === 503;
-    if (!isRetryable503 || attempt === maxAttempts) {
+    const isRetryableStatus = !lastErr && lastRes && (lastRes.status === 503 || lastRes.status === 429);
+    if (!isRetryableStatus || attempt === maxAttempts) {
       if (lastErr) throw lastErr;
       return lastRes;
     }
 
-    await new Promise((r) => setTimeout(r, 500 * attempt)); // کمی صبر قبل از تلاش بعدی
+    const retryAfterMs = parseRetryAfterMs(lastRes);
+    await new Promise((r) => setTimeout(r, retryAfterMs ?? 700 * attempt)); // کمی صبر قبل از تلاش بعدی
   }
   if (lastErr) throw lastErr;
   return lastRes;
@@ -334,7 +352,14 @@ ${contextText}`;
 
       if (!geminiRes.ok) {
         const errText = await geminiRes.text().catch(() => "");
-        send({ type: "error", message: "خطا در تماس با Gemini", detail: errText });
+        // رفع باگ (پیام مبهم برای کاربر): وقتی همهٔ تلاش‌های دوباره هم با
+        // 429 (سهمیهٔ لحظه‌ای پر) شکست بخوره، به‌جای پیام کلی و گنگ، یه
+        // پیام روشن و قابل‌اقدام نشون بده - چون این حالت معمولاً چند
+        // ثانیه بعد خودش برطرف می‌شه.
+        const message = geminiRes.status === 429
+          ? "دستیار هوشمند موقتاً شلوغه (سهمیهٔ لحظه‌ای پر شده). لطفاً چند ثانیه صبر کنید و دوباره بپرسید."
+          : "خطا در تماس با Gemini";
+        send({ type: "error", message, detail: errText });
         controller.close();
         return;
       }
