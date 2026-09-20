@@ -4,7 +4,9 @@
   // Item ۸ (آمار سایت): این فایل روی هر صفحهٔ کتاب جداگانه لود می‌شه و
   // WORKER_URL خودِ search-widget.js رو (که ممکنه اصلاً روی این صفحه
   // لود نشده باشه) نداره - برای همین آدرس رو این‌جا هم جدا نگه می‌داریم.
-  const STATS_WORKER_URL = "https://roohbakhsh-archive-ai.mrooh200.workers.dev";
+  // آدرس قبلی (workers.dev) از شبکهٔ فعلی در دسترس نبود؛ همان Custom
+  // Domain استفاده‌شده در search-widget.js اینجا هم به کار می‌رود.
+  const STATS_WORKER_URL = "https://roohbakhsh-api.ostadmilani.ir";
 
   // Item جدید (خروج خودِ صاحبِ سایت از آمار): همون پرچمِ localStorage
   // که در index.htm تنظیم می‌شه (با ?notrack=1 یک‌بار در آدرسِ سایت) -

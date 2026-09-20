@@ -8752,7 +8752,9 @@
     // WORKER_URL خودِ search-widget.js رو دوباره تعریف نمی‌کنیم (اون
     // اسکریپت بعد از همین جا لود می‌شه و باعث خطای «قبلاً تعریف شده»
     // می‌شد) - همون آدرس رو این‌جا جدا نگه می‌داریم.
-    const STATS_WORKER_URL = "https://roohbakhsh-archive-ai.mrooh200.workers.dev";
+    // آدرس قبلی (workers.dev) از شبکهٔ فعلی در دسترس نبود؛ همان Custom
+    // Domain استفاده‌شده در search-widget.js اینجا هم به کار می‌رود.
+    const STATS_WORKER_URL = "https://roohbakhsh-api.ostadmilani.ir";
 
     // Item جدید (خروج خودِ صاحبِ سایت از آمار): یک پرچمِ محلی (فقط رو
     // همین مرورگر/دستگاه، نه یک تنظیمِ سراسری) که وقتی روشن باشه،
