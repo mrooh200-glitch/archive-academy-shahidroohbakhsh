@@ -25,7 +25,35 @@
     color: var(--c-ink);
     line-height: 2;
   }
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    background:
+      radial-gradient(circle at 1px 1px, rgba(109,40,217,.28) 1.6px, transparent 0) 0 0/18px 18px,
+      linear-gradient(180deg, var(--c-cream-deep), var(--c-cream) 40%, var(--c-cream) 60%, var(--c-cream-deep));
+    z-index: 0;
+  }
+  .side-rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, var(--c-gold) 10%, var(--c-gold) 90%, transparent);
+  }
+  .side-rail.right { right: 0; }
+  .side-rail.right::after { left: 0; }
+  .side-rail.left { left: 0; }
+  .side-rail.left::after { right: 0; }
+  @media (min-width: 860px) {
+    .side-rail { display: block; }
+  }
   .m-topbar {
+    position: relative;
+    z-index: 2;
     background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
     color: #fff;
     padding: 14px 20px;
@@ -43,12 +71,35 @@
     padding: 3px 12px;
     font-size: 12.5px;
     white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .m-topbar a.m-badge:hover {
+    background: rgba(255,255,255,.26);
+    border-color: rgba(255,255,255,.55);
   }
   .m-wrap {
+    position: relative;
+    z-index: 1;
     max-width: 680px;
     margin: 0 auto;
     padding: 40px 22px 70px;
+    background: var(--c-cream);
+    box-shadow: 0 0 0 1px var(--c-line);
   }
+  .m-wrap::before,
+  .m-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
+    opacity: .55;
+  }
+  .m-wrap::before { right: 0; }
+  .m-wrap::after { left: 0; }
   .m-num {
     display: inline-flex;
     align-items: center;
@@ -153,9 +204,11 @@
 </style>
 </head>
 <body>
+  <div class="side-rail right"></div>
+  <div class="side-rail left"></div>
   <div class="m-topbar">
     <span>مطالعات تکمیلی — اصول اعتقادی</span>
-    <span class="m-badge">شهید روحبخش</span>
+    <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a>
   </div>
   <div class="m-wrap">
     <div class="m-num">۱</div>
