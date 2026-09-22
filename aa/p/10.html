@@ -89,8 +89,10 @@
     .side-rail { display: block; }
   }
   .brand-topbar {
-    position: sticky !important;
+    position: fixed !important;
     top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     z-index: 1000002 !important;
     background: linear-gradient(135deg, var(--b-forest-dark), var(--b-forest)) !important;
     color: #fff !important;
@@ -145,6 +147,7 @@
 <h1>A History of Federal Funding for<br>Abstinence-Only-Until-Marriage Programs</h1>
 
 <p id="ref-target">Government funding of abstinence-only-until-marriage programs is not new. In fact, the federal government has poured tax-payer money into such programs for over a quarter century. Beginning in 1981 under the Reagan Administration, the federal government has consistently funded abstinence-only-until-marriage programs despite an overwhelming body of research proving they are ineffective and that this federal expenditure has failed to achieve its stated goals. Funding for these unproven programs grew exponentially from 1996 until 2006, particularly during the years of the George W. Bush Administration. The funding leveled out between 2006 and 2009 and then reduced significantly in 2010. Between 1996 and federal Fiscal Year 2010, Congress funneled a total of over one-and-a-half billion tax-payer dollars into abstinence-only-until-marriage programs and the funding continues today.</p>
+<div class="fa-translation-box"><span class="fa-translation-label">ترجمه فارسی:</span>تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد.</div>
 
 <p>(See the <i>Dedicated Federal Abstinence-Only-Until-Marriage Funding by Year</i> graph and chart for more information.)</p>
 
@@ -162,7 +165,7 @@
     el.appendChild(mark);
   }
   var banner = document.querySelector(".ref-source-banner");
-  if (banner) document.body.style.marginTop = (banner.offsetHeight + 55) + "px";
+  if (banner) /* superseded by dynamic-offset-script */
   requestAnimationFrame(function() {
     var m = document.querySelector("mark.flash-highlight");
     if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
@@ -172,6 +175,9 @@
 
 <style id="brand-override-style">
   .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
     top: 55px !important;
     background: #4c1d95 !important;
     color: #fff5df !important;
@@ -185,25 +191,210 @@
 </body>
 </html>
 
+<script id="dynamic-offset-script">
+(function() {
+  function applyOffset() {
+    var tb = document.querySelector('.brand-topbar');
+    var rb = document.querySelector('.ref-source-banner');
+    var tbH = tb ? tb.offsetHeight : 0;
+    if (rb) rb.style.setProperty('top', tbH + 'px', 'important');
+    var rbH = rb ? rb.offsetHeight : 0;
+    document.body.style.marginTop = (tbH + rbH) + 'px';
+  }
+  applyOffset();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOffset);
+  } else {
+    applyOffset();
+  }
+  window.addEventListener('load', applyOffset);
+  window.addEventListener('resize', applyOffset);
+})();
+</script>
 <style id="rtl-fix-style">
-  html.translated-rtl p,
-  html.translated-rtl li,
-  html.translated-rtl h1,
-  html.translated-rtl h2,
-  html.translated-rtl h3,
-  html.translated-rtl h4,
-  html.translated-rtl h5,
-  html.translated-rtl h6,
-  html.translated-rtl blockquote,
-  html.translated-rtl figcaption,
-  html.translated-rtl dd,
-  html.translated-rtl dt {
-    direction: rtl !important;
-    text-align: right !important;
+  p, li, h1, h2, h3, h4, h5, h6,
+  blockquote, figcaption, dd, dt {
     unicode-bidi: isolate !important;
     max-width: 760px !important;
     margin-left: auto !important;
     margin-right: auto !important;
     float: none !important;
   }
+  .fa-translation-box {
+    direction: rtl !important;
+    text-align: right !important;
+    max-width: 760px !important;
+    margin: 14px auto !important;
+    padding: 14px 18px !important;
+    background: #ede9fe !important;
+    border-right: 4px solid #b8912a !important;
+    border-radius: 6px !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 15.5px !important;
+    line-height: 2 !important;
+    color: #201a2b !important;
+    box-sizing: border-box !important;
+  }
+  .fa-translation-box .fa-translation-label {
+    display: block;
+    font-weight: 800;
+    color: #4c1d95;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
 </style>
+<script id="text-bounds-guard-script">
+(function() {
+  var SAFE_GAP = 90; // minimum px distance from the viewport edge / side-rail
+  var SELECTOR = 'p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt';
+  var RTL_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g;
+
+  function isRtlText(text) {
+    var letters = text.replace(/[^A-Za-z؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g, '');
+    if (!letters) return null; // no letters at all; leave direction as-is
+    var rtlCount = (text.match(RTL_RE) || []).length;
+    return (rtlCount / letters.length) > 0.35;
+  }
+
+  // Auto-scrolling straight to the highlighted passage hides the page's own
+  // top info (title, banner, etc.) from the user. We show a small arrow
+  // ("↑") that jumps back to the top of the page. On wide screens it sits
+  // OUTSIDE the text block, in the white margin beside it (like a margin
+  // note) rather than squeezed inline into the text. On narrow screens,
+  // where there is no side margin, it falls back to sitting just at the
+  // block's own edge.
+  var backToTopLink = null;
+  // Only worth showing if the page's own auto-scroll-to-highlight actually
+  // moved us away from the very top (hiding the source's own title/header).
+  // If the highlight sits right near the top already, there is nothing
+  // hidden to jump back to, so skip the arrow. The highlight script's own
+  // scroll can settle well after 'load' (it searches the whole page text),
+  // so this is re-checked on every call rather than decided once early;
+  // once the link is actually created, it is cached and kept.
+  function isBackToTopNeeded() {
+    var scrollY = window.scrollY || window.pageYOffset;
+    return scrollY > 40;
+  }
+  function ensureBackToTopLink() {
+    if (backToTopLink) return backToTopLink;
+    var hl0 = document.querySelector('mark.flash-highlight, .flash-highlight');
+    if (!hl0) return null;
+    if (!isBackToTopNeeded()) return null;
+
+    var link = document.createElement('a');
+    link.id = 'back-to-top-link';
+    link.href = '#';
+    link.textContent = '\u2191';
+    link.title = 'رفتن به بالای صفحه';
+    link.setAttribute('aria-label', 'رفتن به بالای صفحه');
+    link.style.setProperty('position', 'absolute', 'important');
+    link.style.setProperty('z-index', '500', 'important');
+    link.style.setProperty('display', 'flex', 'important');
+    link.style.setProperty('align-items', 'center', 'important');
+    link.style.setProperty('justify-content', 'center', 'important');
+    link.style.setProperty('width', '28px', 'important');
+    link.style.setProperty('height', '28px', 'important');
+    link.style.setProperty('color', '#4c1d95', 'important');
+    link.style.setProperty('background', '#e3c876', 'important');
+    link.style.setProperty('border-radius', '50%', 'important');
+    link.style.setProperty('font-weight', '800', 'important');
+    link.style.setProperty('font-size', '15px', 'important');
+    link.style.setProperty('text-decoration', 'none', 'important');
+    link.style.setProperty('cursor', 'pointer', 'important');
+    link.style.setProperty('line-height', '1', 'important');
+    link.style.setProperty('user-select', 'none', 'important');
+    link.style.setProperty('box-shadow', '0 1px 4px rgba(0,0,0,.25)', 'important');
+
+    link.addEventListener('click', function(e) {
+      if (e) e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.body.appendChild(link);
+    backToTopLink = link;
+    return link;
+  }
+
+  function positionBackToTopLink() {
+    var link = ensureBackToTopLink();
+    if (!link) return;
+    var hl = document.querySelector('mark.flash-highlight, .flash-highlight');
+    if (!hl) return;
+    var block = hl.closest('p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, div, td, th') || hl;
+    var blockRect = block.getBoundingClientRect();
+    var hlRect = hl.getBoundingClientRect();
+    var scrollX = window.scrollX || window.pageXOffset;
+    var scrollY = window.scrollY || window.pageYOffset;
+    var vw = window.innerWidth;
+    var SIZE = 28;
+    var GAP = 12;
+
+    var spaceRight = vw - blockRect.right;
+    var spaceLeft = blockRect.left;
+
+    if (spaceRight >= SIZE + GAP) {
+      link.style.setProperty('left', Math.round(scrollX + blockRect.right + GAP) + 'px', 'important');
+    } else if (spaceLeft >= SIZE + GAP) {
+      link.style.setProperty('left', Math.round(scrollX + blockRect.left - SIZE - GAP) + 'px', 'important');
+    } else {
+      // No side margin available (narrow/mobile) — sit just inside the block's own edge.
+      link.style.setProperty('left', Math.round(scrollX + Math.max(4, blockRect.left)) + 'px', 'important');
+    }
+    link.style.setProperty('top', Math.round(scrollY + hlRect.top) + 'px', 'important');
+  }
+
+  function fixTextBounds() {
+    var vw = window.innerWidth;
+    var maxW = Math.max(280, Math.min(760, vw - SAFE_GAP * 2));
+    var els = document.querySelectorAll(SELECTOR);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.closest('.side-rail') || el.closest('.brand-topbar') || el.id === 'back-to-top-link') continue;
+      el.style.setProperty('max-width', maxW + 'px', 'important');
+      el.style.setProperty('box-sizing', 'border-box', 'important');
+      el.style.setProperty('margin-left', 'auto', 'important');
+      el.style.setProperty('margin-right', 'auto', 'important');
+      el.style.setProperty('float', 'none', 'important');
+
+      var rtl = isRtlText(el.textContent || '');
+      if (rtl === true) {
+        el.style.setProperty('direction', 'rtl', 'important');
+        el.style.setProperty('text-align', 'right', 'important');
+      } else if (rtl === false) {
+        el.style.setProperty('direction', 'ltr', 'important');
+        el.style.setProperty('text-align', 'left', 'important');
+      }
+
+      var rect = el.getBoundingClientRect();
+      if (rect.width === 0) continue;
+      if (rect.left < SAFE_GAP) {
+        var curL = parseFloat(getComputedStyle(el).marginLeft) || 0;
+        el.style.setProperty('margin-left', (curL + (SAFE_GAP - rect.left)) + 'px', 'important');
+      }
+      var rect2 = el.getBoundingClientRect();
+      if (rect2.right > vw - SAFE_GAP) {
+        var curR = parseFloat(getComputedStyle(el).marginRight) || 0;
+        el.style.setProperty('margin-right', (curR + (rect2.right - (vw - SAFE_GAP))) + 'px', 'important');
+      }
+    }
+    positionBackToTopLink();
+  }
+
+  var pending = null;
+  function scheduleFix() {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(fixTextBounds, 150);
+  }
+
+  fixTextBounds();
+  window.addEventListener('load', fixTextBounds);
+  window.addEventListener('resize', scheduleFix);
+
+  // Google Translate (and similar tools) mutate the DOM asynchronously after load,
+  // so watch for that and re-run the check whenever it happens.
+  if (window.MutationObserver) {
+    var observer = new MutationObserver(scheduleFix);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>
