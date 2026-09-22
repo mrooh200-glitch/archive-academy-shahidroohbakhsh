@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حتی مشرک هم دین دارد | مطالعات تکمیلی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-cream: #faf9fc;
+    --c-cream-deep: #ede9fe;
+    --c-forest: #6d28d9;
+    --c-forest-dark: #4c1d95;
+    --c-maroon: #6b2fb3;
+    --c-gold: #b8912a;
+    --c-gold-light: #e3c876;
+    --c-ink: #201a2b;
+    --c-line: #e6e1f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+    background: var(--c-cream);
+    color: var(--c-ink);
+    line-height: 2;
+  }
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    background:
+      radial-gradient(circle at 1px 1px, rgba(109,40,217,.28) 1.6px, transparent 0) 0 0/18px 18px,
+      linear-gradient(180deg, var(--c-cream-deep), var(--c-cream) 40%, var(--c-cream) 60%, var(--c-cream-deep));
+    z-index: 0;
+  }
+  .side-rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, var(--c-gold) 10%, var(--c-gold) 90%, transparent);
+  }
+  .side-rail.right { right: 0; }
+  .side-rail.right::after { left: 0; }
+  .side-rail.left { left: 0; }
+  .side-rail.left::after { right: 0; }
+  @media (min-width: 860px) {
+    .side-rail { display: block; }
+  }
+  .m-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000002;
+    background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25);
+  }
+  .m-topbar .m-badge {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .m-topbar a.m-badge:hover {
+    background: rgba(255,255,255,.26);
+    border-color: rgba(255,255,255,.55);
+  }
+  .m-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 22px 70px;
+    background: var(--c-cream);
+    box-shadow: 0 0 0 1px var(--c-line);
+  }
+  .m-wrap::before,
+  .m-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
+    opacity: .55;
+  }
+  .m-wrap::before { right: 0; }
+  .m-wrap::after { left: 0; }
+  .m-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--c-cream-deep);
+    color: var(--c-forest-dark);
+    font-weight: 800;
+    font-size: 18px;
+    border: 1.5px solid var(--c-gold-light);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--c-forest-dark);
+    margin: 0 0 28px;
+    line-height: 1.6;
+    border-bottom: 2px solid var(--c-line);
+    padding-bottom: 18px;
+  }
+  p.m-p {
+    font-size: 17px;
+    margin: 0 0 18px;
+    text-align: right;
+  }
+  blockquote.m-quote {
+    margin: 26px 0;
+    padding: 18px 20px;
+    background: var(--c-cream-deep);
+    border-right: 4px solid var(--c-gold);
+    border-radius: 6px;
+    font-size: 16.5px;
+    line-height: 2.1;
+  }
+  blockquote.m-quote::before {
+    content: "﴾";
+    color: var(--c-gold);
+    font-size: 20px;
+  }
+  a.ref-link {
+    color: var(--c-forest);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--c-forest);
+    font-size: 14px;
+  }
+  a.ref-link:hover { color: var(--c-maroon); }
+  .m-nav {
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-line);
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+  }
+  .m-nav a {
+    color: var(--c-forest);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .m-nav a:hover { color: var(--c-maroon); }
+  .m-nav .disabled { color: #b9b3c6; pointer-events: none; }
+  sup.fn-ref { font-size: 12px; }
+  sup.fn-ref a {
+    color: var(--c-forest);
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0 1px;
+  }
+  .m-footnotes {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--c-line);
+    font-size: 14px;
+    color: #4a4356;
+  }
+  .m-footnotes-title {
+    font-weight: 800;
+    color: var(--c-forest-dark);
+    margin-bottom: 10px;
+    font-size: 14.5px;
+  }
+  .m-footnotes ol {
+    margin: 0;
+    padding-inline-start: 22px;
+  }
+  .m-footnotes li {
+    margin-bottom: 10px;
+    line-height: 1.9;
+  }
+  .m-footnotes a.fn-back {
+    color: var(--c-forest);
+    text-decoration: none;
+    margin-inline-start: 4px;
+  }
+</style>
+</head>
+<body>
+  <div class="side-rail right"></div>
+  <div class="side-rail left"></div>
+  <div class="m-topbar">
+    <span>مطالعات تکمیلی — اصول اعتقادی</span>
+    <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+  </div>
+  <script id="dynamic-offset-script">
+  (function() {
+    function applyOffset() {
+      var bar = document.querySelector('.m-topbar');
+      if (!bar) return;
+      var h = bar.getBoundingClientRect().height;
+      document.body.style.paddingTop = h + 'px';
+    }
+    applyOffset();
+    document.addEventListener('DOMContentLoaded', applyOffset);
+    window.addEventListener('load', applyOffset);
+    window.addEventListener('resize', applyOffset);
+  })();
+  </script>
+  <div class="m-wrap">
+    <div class="m-num">۳</div>
+    <h1>حتی مشرک هم دین دارد</h1>
+    <p class="m-p">خداوند حکیم در یه خطاب تاریخی به مشرکان مکه می‌فرماید:</p>
+    <blockquote class="m-quote"> «لَكُمْ دِينُكُمْ وَلِيَ دِينِ» (سوره کافرون، آیه ۶، <a class="ref-link" href="https://gharaati.ir/%d8%aa%d9%81%d8%b3%db%8c%d8%b1-%d9%86%d9%88%d8%b1/?query=%D8%A7%D9%84%D9%82%D9%84%D9%88%D8%A8&amp;exact=1&amp;view=result&amp;elems%5B11%5D=1&amp;elems%5B12%5D=1&amp;elems%5B13%5D=1&amp;elems%5B14%5D=1&amp;elems%5B15%5D=1#numsooreh=109&amp;numayeh=2724:~:text=%D9%84%D9%8E%D9%83%D9%8F%D9%85%D9%92%20%D8%AF%D9%90%D9%8A%D9%86%D9%8F%D9%83%D9%8F%D9%85%D9%92%20%D9%88%D9%8E%D9%84%D9%90%D9%89%D9%8E%20%D8%AF%D9%90%D9%8A%D9%86%D9%90" target="_blank" rel="noopener">لینک</a>). دین و راهِ زندگیِ شما برای خودتون، دین و راهِ زندگیِ من هم برای خودم.</blockquote>
+    <p class="m-p">نکته مهم اینه که مخاطب این آیه اهل کتاب نیستن بلکه مشرکانی هستن که سبک زندگی‌شون بر پایه بت‌پرستی و هوای نفس بنا شده بود و انحراف‌شون از اهل کتاب خیلی بیشتر بود.<sup class="fn-ref" id="fnref-3"><a href="#fn-3">۱</a></sup> با این حال، قرآن همین کفر و شرک رو هم یه نوع «دین» (روش زندگی) می‌نامه.</p>
+    <div class="m-footnotes">
+      <div class="m-footnotes-title">پی‌نوشت‌ها</div>
+      <ol>
+        <li id="fn-3">اهل کتاب کسانی هستن که اصل دین‌شون درست و حسابیه یعنی دین‌شون رو یک پیامبر آورده، اما به مرور زمان، دین‌شون دچار انحراف شد. مثل یهود و مسیحیت. <a class="fn-back" href="#fnref-3">↩</a></li>
+      </ol>
+    </div>
+    <div class="m-nav">
+      <a href="2.html">« قبلی</a>
+      <a href="4.html">بعدی »</a>
+    </div>
+  </div>
+</body>
+</html>
