@@ -59,6 +59,61 @@
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
   }
+  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
+     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
+     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
+     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
+     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
+     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
+     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
+  html.dark-mode { background: #0d0d10 !important; }
+  body.dark-mode .brand-topbar,
+  body.dark-mode .ref-source-banner,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .brand-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+  /* متنِ اصلیِ صفحه، محتوایِ آرشیوشده از سایتِ منبعه و پالتِ رنگیِ خودش رو داره که
+     با پس‌زمینه‌ی تیره‌ی حالتِ شب سازگار نیست (مثلاً متنِ تیره‌ی روی زمینه‌ی
+     سفیدِ اصلی، وقتی زمینه تیره میشه، ناخوانا میشه). به‌جایِ فیلترِ رنگی (که
+     موقعیتِ fixed رو می‌شکنه)، رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک
+     ترکیبِ همیشه-خوانا override می‌کنیم؛ اختصاصیتِ بالا (تکرارِ کلاس) تضمین
+     می‌کنه این override روی CSSِ خودِ سایتِ منبع (even با !important) اثر کنه. */
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #e7e2f2 !important;
+    border-color: rgba(255,255,255,.2) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+    background: rgba(227,200,118,.55) !important;
+    color: #2a1a05 !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+    color: #2a1a05 !important;
+    background: rgba(227,200,118,.55) !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+    color: #cdb6ff !important;
+  }
   .side-rail {
     display: none;
     position: fixed;
@@ -105,6 +160,7 @@
     margin: 0 !important;
   }
   .brand-topbar span { color: #fff !important; }
+  .brand-topbar-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
   .brand-topbar .brand-badge {
     background: rgba(255,255,255,.15) !important;
     border: 1px solid rgba(255,255,255,.35) !important;
@@ -118,48 +174,36 @@
   }
   .brand-topbar .brand-badge:hover { background: rgba(255,255,255,.26) !important; }
   .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000001 !important;
     top: 55px !important;
-    background: var(--b-forest-dark) !important;
-    color: #fff5df !important;
+    background: var(--b-cream-deep) !important;
+    color: var(--b-forest-dark) !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    padding: 8px 16px !important;
+    direction: rtl !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--b-gold-light) !important;
+    margin: 0 !important;
   }
-  .ref-source-banner a { color: var(--b-gold-light) !important; }
+  .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
   mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+    background: rgba(227,200,118,.45);
+    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    color: inherit;
   }
 </style>
 </head>
- <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a></div>
-<style id="ref-flash-style">
-mark.flash-highlight {
-  background: #ffe08a !important;
-  color: inherit !important;
-  padding: 0 2px;
-  border-radius: 2px;
-  box-shadow: 0 0 0 2px #ffe08a;
-}
-.ref-source-banner {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  z-index: 999999 !important;
-  background: #0b4f3c !important;
-  color: #faf5e8 !important;
-  font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-  text-align: center !important;
-  padding: 10px 14px !important;
-  direction: rtl !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
-  margin: 0 !important;
-}
-.ref-source-banner a { color: #f4d35e !important; font-weight: bold !important; text-decoration: underline !important; font-size: 14px !important; font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important; }
-</style>
-<div class="ref-source-banner">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است. برای مشاهده‌ی نسخه‌ی اصلی: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8763215/#:~:text=his%20experiences%20in%20the%20concentration%20camps%20confirmed%20his%20view%20that%20it%20is%20through%20a%20search%20for%20meaning%20and%20purpose%20in%20life%20that%20individuals%20can%20endure%20hardship%20and%20suffering." rel="noopener">مشاهده‌ی منبع اصلی</a></div>
+ <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
+
+<div class="ref-source-banner">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است. برای مشاهده‌ی نسخه‌ی زنده‌ی صفحه (زبان اصلی)، <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8763215/#:~:text=his%20experiences%20in%20the%20concentration%20camps%20confirmed%20his%20view%20that%20it%20is%20through%20a%20search%20for%20meaning%20and%20purpose%20in%20life%20that%20individuals%20can%20endure%20hardship%20and%20suffering." rel="noopener">اینجا کلیک کنید</a>.</div>
  
  <a class=usa-skipnav href=#main-content><font dir=auto style=vertical-align:inherit><font dir=auto style=vertical-align:inherit>
  پرش به محتوای اصلی
@@ -1043,21 +1087,81 @@ mark.flash-highlight {
 })();
 </script>
 
-<style id="brand-override-style">
-  .ref-source-banner {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 55px !important;
-    background: #4c1d95 !important;
-    color: #fff5df !important;
+<script id="dark-mode-script">
+(function() {
+  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var FORCED_ATTR = "data-dm-forced";
+  var CONTENT_COLOR = "rgb(231, 226, 242)";
+  var LINK_COLOR = "rgb(205, 182, 255)";
+  var MARK_COLOR = "rgb(42, 26, 5)";
+
+  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
+  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
+  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
+  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
+  // هر #id ای هم بالاتره) اصلاح می‌کنه.
+  function patchStubbornColors() {
+    var all = document.body.querySelectorAll("*");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      var cs = getComputedStyle(el);
+      if (el.closest("mark.flash-highlight")) {
+        if (cs.color !== MARK_COLOR) {
+          el.style.setProperty("color", "#2a1a05", "important");
+          el.setAttribute(FORCED_ATTR, "1");
+        }
+        continue;
+      }
+      if (cs.color !== CONTENT_COLOR && cs.color !== LINK_COLOR) {
+        el.style.setProperty("color", "#e7e2f2", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+      if (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") {
+        el.style.setProperty("background-color", "transparent", "important");
+        el.style.setProperty("background-image", "none", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+    }
   }
-  .ref-source-banner a { color: #e3c876 !important; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+  function unpatchStubbornColors() {
+    var all = document.body.querySelectorAll("[" + FORCED_ATTR + "]");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.removeProperty("color");
+      all[i].style.removeProperty("background-color");
+      all[i].style.removeProperty("background-image");
+      all[i].removeAttribute(FORCED_ATTR);
+    }
   }
-</style>
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
+    var button = document.getElementById("darkModeToggle");
+    if (button) {
+      button.textContent = enabled ? "☀️" : "🌙";
+      button.title = enabled ? "حالت روز" : "حالت شب";
+      button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+    }
+    if (enabled) {
+      patchStubbornColors();
+    } else {
+      unpatchStubbornColors();
+    }
+  }
+  var toggle = document.getElementById("darkModeToggle");
+  if (toggle) {
+    var saved = false;
+    try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+    applyDarkMode(saved);
+    toggle.addEventListener("click", function() {
+      var enabled = !document.body.classList.contains("dark-mode");
+      applyDarkMode(enabled);
+      try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+    });
+  }
+})();
+</script>
 
 <script id="dynamic-offset-script">
 (function() {

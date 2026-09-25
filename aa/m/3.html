@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>حتی مشرک هم دین دارد | مطالعات تکمیلی</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri+Quran&display=swap" rel="stylesheet">
 <style>
   :root {
     --c-cream: #faf9fc;
@@ -16,6 +16,7 @@
     --c-gold-light: #e3c876;
     --c-ink: #201a2b;
     --c-line: #e6e1f0;
+    --c-quote-bg: #fff7e6;
   }
   * { box-sizing: border-box; }
   body {
@@ -23,50 +24,66 @@
     font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
     background: var(--c-cream);
     color: var(--c-ink);
-    line-height: 2;
+    line-height: 1.9;
   }
+  /* فیلتر مستقیم رو body نیست: هر جدِ دارایِ filter برای فرزندانِ
+     position:fixed (topbar/side-rail) containing block تازه می‌سازه و
+     "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو خودِ هر بلاکِ
+     سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  body.dark-mode .m-topbar,
+  body.dark-mode .m-wrap,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  body.dark-mode img,
+  body.dark-mode iframe,
+  body.dark-mode video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  .m-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .m-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
   .side-rail {
     display: none;
     position: fixed;
-    top: 0;
-    bottom: 0;
-    width: 64px;
-    background:
-      radial-gradient(circle at 1px 1px, rgba(109,40,217,.28) 1.6px, transparent 0) 0 0/18px 18px,
-      linear-gradient(180deg, var(--c-cream-deep), var(--c-cream) 40%, var(--c-cream) 60%, var(--c-cream-deep));
+    top: 0; bottom: 0;
+    width: 40px;
+    background-image: radial-gradient(var(--c-forest) 1.3px, transparent 1.3px);
+    background-size: 14px 14px;
+    opacity: .35;
+    pointer-events: none;
     z-index: 0;
   }
-  .side-rail::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, transparent, var(--c-gold) 10%, var(--c-gold) 90%, transparent);
-  }
-  .side-rail.right { right: 0; }
-  .side-rail.right::after { left: 0; }
-  .side-rail.left { left: 0; }
-  .side-rail.left::after { right: 0; }
-  @media (min-width: 860px) {
-    .side-rail { display: block; }
-  }
+  .side-rail.right { right: 0; border-left: 2px solid var(--c-gold); }
+  .side-rail.left  { left: 0;  border-right: 2px solid var(--c-gold); }
+  @media (min-width: 860px) { .side-rail { display: block; } }
+
   .m-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: fixed; top: 0; left: 0; right: 0;
     z-index: 1000002;
     background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
     color: #fff;
-    padding: 14px 20px;
+    padding: 12px 20px;
     font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
     box-shadow: 0 2px 10px rgba(76,29,149,.25);
   }
+  .m-topbar .m-title { font-weight: 600; }
+  .m-topbar-actions { display: flex; align-items: center; gap: 8px; }
   .m-topbar .m-badge {
     background: rgba(255,255,255,.15);
     border: 1px solid rgba(255,255,255,.35);
@@ -78,73 +95,76 @@
     text-decoration: none;
     transition: background .15s, border-color .15s;
   }
-  .m-topbar a.m-badge:hover {
-    background: rgba(255,255,255,.26);
-    border-color: rgba(255,255,255,.55);
-  }
+  .m-topbar a.m-badge:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
   .m-wrap {
     position: relative;
     z-index: 1;
-    max-width: 680px;
+    max-width: 700px;
     margin: 0 auto;
-    padding: 40px 22px 70px;
+    padding: 40px 24px 70px;
     background: var(--c-cream);
+    border-radius: 10px;
     box-shadow: 0 0 0 1px var(--c-line);
   }
-  .m-wrap::before,
-  .m-wrap::after {
+  .m-wrap::before, .m-wrap::after {
     content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
+    position: absolute; top: 0; bottom: 0;
     width: 2px;
     background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
     opacity: .55;
   }
   .m-wrap::before { right: 0; }
-  .m-wrap::after { left: 0; }
+  .m-wrap::after  { left: 0; }
+
   .m-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 42px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
     border-radius: 50%;
     background: var(--c-cream-deep);
     color: var(--c-forest-dark);
-    font-weight: 800;
-    font-size: 18px;
+    font-weight: 800; font-size: 18px;
     border: 1.5px solid var(--c-gold-light);
     margin-bottom: 14px;
   }
   h1 {
-    font-size: 24px;
-    font-weight: 800;
+    font-size: 24px; font-weight: 800;
     color: var(--c-forest-dark);
     margin: 0 0 28px;
     line-height: 1.6;
     border-bottom: 2px solid var(--c-line);
     padding-bottom: 18px;
   }
-  p.m-p {
-    font-size: 17px;
-    margin: 0 0 18px;
-    text-align: right;
-  }
+  p.m-p { font-size: 17px; font-weight: 500; margin: 0 0 18px; text-align: right; text-indent: 0.4cm; }
+
   blockquote.m-quote {
     margin: 26px 0;
     padding: 18px 20px;
-    background: var(--c-cream-deep);
+    background: var(--c-quote-bg);
     border-right: 4px solid var(--c-gold);
     border-radius: 6px;
-    font-size: 16.5px;
-    line-height: 2.1;
+    font-size: 17px;
+    line-height: 1.95;
   }
-  blockquote.m-quote::before {
-    content: "﴾";
-    color: var(--c-gold);
-    font-size: 20px;
+  blockquote.m-quote .arabic {
+    display: block;
+    font-family: "Amiri Quran", "Vazirmatn", serif;
+    font-size: 23px; font-weight: 400;
+    color: var(--c-forest-dark);
+    margin-bottom: 10px;
   }
+  blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
+  blockquote.m-quote .translation { color: var(--c-ink); }
+
+  sup.fn-ref { font-size: 12px; }
+  sup.fn-ref a {
+    color: var(--c-forest-dark);
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0 1px;
+  }
+  sup.fn-ref a:hover { text-decoration: underline; }
+
   a.ref-link {
     color: var(--c-forest);
     text-decoration: none;
@@ -152,63 +172,69 @@
     font-size: 14px;
   }
   a.ref-link:hover { color: var(--c-maroon); }
+
+  .m-footnotes {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--c-gold-light);
+    font-size: 14.5px;
+    color: #4a4356;
+  }
+  .m-footnotes-title { font-weight: 800; color: var(--c-forest-dark); margin-bottom: 10px; font-size: 14.5px; }
+  .m-footnotes ol { margin: 0; padding-inline-start: 22px; list-style-type: persian; }
+  .m-footnotes li { margin-bottom: 14px; line-height: 1.85; }
+  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0; }
+  .m-footnotes .fn-p:last-child { margin-bottom: 0; }
+  .m-footnotes a.fn-back { color: var(--c-forest); text-decoration: none; font-weight: 700; margin-inline-start: 6px; }
+  .m-footnotes a.fn-back:hover { color: var(--c-maroon); }
+
   .m-nav {
     margin-top: 46px;
     padding-top: 22px;
     border-top: 1px solid var(--c-line);
-    display: flex;
-    justify-content: space-between;
+    display: flex; justify-content: space-between;
     font-size: 14.5px;
   }
-  .m-nav a {
-    color: var(--c-forest);
-    text-decoration: none;
-    font-weight: 600;
-  }
+  .m-nav a { color: var(--c-forest); text-decoration: none; font-weight: 600; }
   .m-nav a:hover { color: var(--c-maroon); }
   .m-nav .disabled { color: #b9b3c6; pointer-events: none; }
-  sup.fn-ref { font-size: 12px; }
-  sup.fn-ref a {
-    color: var(--c-forest);
-    text-decoration: none;
-    font-weight: 700;
-    padding: 0 1px;
-  }
-  .m-footnotes {
-    margin-top: 40px;
-    padding-top: 18px;
-    border-top: 1px solid var(--c-line);
-    font-size: 14px;
-    color: #4a4356;
-  }
-  .m-footnotes-title {
-    font-weight: 800;
-    color: var(--c-forest-dark);
-    margin-bottom: 10px;
-    font-size: 14.5px;
-  }
-  .m-footnotes ol {
-    margin: 0;
-    padding-inline-start: 22px;
-  }
-  .m-footnotes li {
-    margin-bottom: 10px;
-    line-height: 1.9;
-  }
-  .m-footnotes a.fn-back {
-    color: var(--c-forest);
-    text-decoration: none;
-    margin-inline-start: 4px;
-  }
 </style>
 </head>
 <body>
   <div class="side-rail right"></div>
   <div class="side-rail left"></div>
   <div class="m-topbar">
-    <span>مطالعات تکمیلی — اصول اعتقادی</span>
-    <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+    <span class="m-title">مطالعات تکمیلی — اصول اعتقادی</span>
+    <div class="m-topbar-actions">
+      <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/" target="_blank" rel="noopener">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+      <button id="darkModeToggle" type="button" class="m-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button>
+    </div>
   </div>
+  <script id="dark-mode-script">
+  (function() {
+    var DARK_MODE_KEY = "roohbakhshDarkMode";
+    function applyDarkMode(enabled) {
+      document.body.classList.toggle("dark-mode", enabled);
+      var button = document.getElementById("darkModeToggle");
+      if (button) {
+        button.textContent = enabled ? "☀️" : "🌙";
+        button.title = enabled ? "حالت روز" : "حالت شب";
+        button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+      }
+    }
+    var toggle = document.getElementById("darkModeToggle");
+    if (toggle) {
+      var saved = false;
+      try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+      applyDarkMode(saved);
+      toggle.addEventListener("click", function() {
+        var enabled = !document.body.classList.contains("dark-mode");
+        applyDarkMode(enabled);
+        try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+      });
+    }
+  })();
+  </script>
   <script id="dynamic-offset-script">
   (function() {
     function applyOffset() {
@@ -221,13 +247,17 @@
     document.addEventListener('DOMContentLoaded', applyOffset);
     window.addEventListener('load', applyOffset);
     window.addEventListener('resize', applyOffset);
+    setTimeout(applyOffset, 50);
   })();
   </script>
   <div class="m-wrap">
     <div class="m-num">۳</div>
     <h1>حتی مشرک هم دین دارد</h1>
     <p class="m-p">خداوند حکیم در یه خطاب تاریخی به مشرکان مکه می‌فرماید:</p>
-    <blockquote class="m-quote"> «لَكُمْ دِينُكُمْ وَلِيَ دِينِ»<sup class="fn-ref" id="fnref-3-2"><a href="#fn-3-2">۱</a></sup>. دین و راهِ زندگیِ شما برای خودتون، دین و راهِ زندگیِ من هم برای خودم.</blockquote>
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>لَكُمْ دِينُكُمْ وَلِيَ دِينِ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-3-2"><a href="#fn-3-2">۱</a></sup></span>
+      <span class="translation">دین و راهِ زندگیِ شما برای خودتون، دین و راهِ زندگیِ من هم برای خودم.</span>
+    </blockquote>
     <p class="m-p">نکته مهم اینه که مخاطب این آیه اهل کتاب نیستن بلکه مشرکانی هستن که سبک زندگی‌شون بر پایه بت‌پرستی و هوای نفس بنا شده بود و انحراف‌شون از اهل کتاب خیلی بیشتر بود.<sup class="fn-ref" id="fnref-3"><a href="#fn-3">۲</a></sup> با این حال، قرآن همین کفر و شرک رو هم یه نوع «دین» (روش زندگی) می‌نامه.</p>
     <div class="m-footnotes">
       <div class="m-footnotes-title">پی‌نوشت‌ها</div>

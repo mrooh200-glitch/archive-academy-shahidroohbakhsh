@@ -1,70 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Federal Funding Overview — Fiscal Year 2017 Edition — SIECUS</title>
+<title>بررسی اجمالیِ بودجه‌ی فدرال — ویرایشِ سالِ مالیِ ۲۰۱۷ — SIECUS</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: Tahoma, "Vazirmatn", Arial, sans-serif;
     background: #f7f3ea;
     color: #222;
-    line-height: 1.8;
+    line-height: 2;
     font-size: 17px;
   }
-  .ref-source-banner {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    z-index: 999999 !important;
-    background: #0b4f3c !important;
-    color: #faf5e8 !important;
-    font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important;
-    font-size: 14px !important;
-    line-height: 1.5 !important;
-    text-align: center !important;
-    padding: 10px 14px !important;
-    direction: rtl !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
-    margin: 0 !important;
-  }
-  .ref-source-banner a { color: #f4d35e !important; font-weight: bold !important; text-decoration: underline !important; font-size: 14px !important; font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important; }
   .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   h1 { font-size: 22px; text-align: center; margin-bottom: 6px; }
   h1 span { display: block; font-size: 15px; color: #666; font-weight: normal; margin-top: 4px; }
   .cite-box {
-    background: #fff; border-left: 4px solid #0b4f3c;
+    background: #fff; border-right: 4px solid #0b4f3c; border-left: none;
     padding: 14px 18px; margin-bottom: 28px; font-size: 14px; color: #444;
-    font-family: Tahoma, "Vazirmatn", Arial, sans-serif; direction: rtl; text-align: right;
+    direction: rtl; text-align: right;
   }
   .cite-box b { color: #0b4f3c; }
-  .pdf-page-label { font-size: 13px; color: #888; margin-bottom: 10px; font-family: Tahoma, "Vazirmatn", Arial, sans-serif; direction: rtl; }
+  .pdf-page-label { font-size: 13px; color: #888; margin-bottom: 10px; }
   p { margin: 0 0 18px; text-align: justify; }
   table.def-table { border-collapse: collapse; width: 100%; margin: 10px 0 20px; font-size: 15px; }
-  table.def-table caption { text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999; background: #eee; caption-side: top; }
+  table.def-table caption { text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999; background: #eee; caption-side: top; }
   table.def-table td { border: 1px solid #999; padding: 8px 10px; vertical-align: top; }
   table.def-table td.letter { width: 26px; font-weight: bold; text-align: center; }
-  mark.flash-highlight {
-    background: #ffe08a !important;
-    color: inherit !important;
-    padding: 0 2px;
-    border-radius: 2px;
-    box-shadow: 0 0 0 2px #ffe08a;
-  }
-  #ref-target { display: block; }
-  #ref-target.flash-highlight {
-    background: #ffe08a !important;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0 0 0 3px #ffb703;
-    margin: 10px 0 20px;
-  }
-  #ref-target.flash-highlight .def-table { margin: 0; }
 </style>
 <style id="brand-style">
   :root {
@@ -74,6 +38,61 @@
     --b-forest-dark: #4c1d95;
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
+  }
+  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
+     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
+     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
+     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
+     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
+     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
+     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
+  html.dark-mode { background: #0d0d10 !important; }
+  body.dark-mode .brand-topbar,
+  body.dark-mode .ref-source-banner,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .brand-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+  /* متنِ اصلیِ صفحه، محتوایِ آرشیوشده از سایتِ منبعه و پالتِ رنگیِ خودش رو داره که
+     با پس‌زمینه‌ی تیره‌ی حالتِ شب سازگار نیست (مثلاً متنِ تیره‌ی روی زمینه‌ی
+     سفیدِ اصلی، وقتی زمینه تیره میشه، ناخوانا میشه). به‌جایِ فیلترِ رنگی (که
+     موقعیتِ fixed رو می‌شکنه)، رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک
+     ترکیبِ همیشه-خوانا override می‌کنیم؛ اختصاصیتِ بالا (تکرارِ کلاس) تضمین
+     می‌کنه این override روی CSSِ خودِ سایتِ منبع (even با !important) اثر کنه. */
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #e7e2f2 !important;
+    border-color: rgba(255,255,255,.2) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+    background: rgba(227,200,118,.55) !important;
+    color: #2a1a05 !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+    color: #2a1a05 !important;
+    background: rgba(227,200,118,.55) !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+    color: #cdb6ff !important;
   }
   .side-rail {
     display: none;
@@ -121,6 +140,7 @@
     margin: 0 !important;
   }
   .brand-topbar span { color: #fff !important; }
+  .brand-topbar-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
   .brand-topbar .brand-badge {
     background: rgba(255,255,255,.15) !important;
     border: 1px solid rgba(255,255,255,.35) !important;
@@ -134,90 +154,163 @@
   }
   .brand-topbar .brand-badge:hover { background: rgba(255,255,255,.26) !important; }
   .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000001 !important;
     top: 55px !important;
-    background: var(--b-forest-dark) !important;
-    color: #fff5df !important;
+    background: var(--b-cream-deep) !important;
+    color: var(--b-forest-dark) !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    padding: 8px 16px !important;
+    direction: rtl !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--b-gold-light) !important;
+    margin: 0 !important;
   }
-  .ref-source-banner a { color: var(--b-gold-light) !important; }
+  .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
   mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+    background: rgba(227,200,118,.45);
+    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    color: inherit;
   }
 </style>
 </head>
-<body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a></div>
+<body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
-<div class="ref-source-banner">این صفحه، متنِ استخراج‌شده از یک منبع PDF است. برای مشاهده‌ی نسخه‌ی اصلی: <a href="https://siecus.org/wp-content/uploads/2024/04/SIECUS-SP-FY17-Federal-Funding-Overview.pdf#page=1" rel="noopener">مشاهده‌ی منبع اصلی (PDF)</a></div>
+<div class="ref-source-banner">این صفحه، ترجمه‌شده‌ی متنِ استخراج‌شده از یک منبع PDF است. برای مشاهده‌ی نسخه‌ی اصلی (زبان اصلی): <a href="https://siecus.org/wp-content/uploads/2024/04/SIECUS-SP-FY17-Federal-Funding-Overview.pdf#page=1" rel="noopener">مشاهده‌ی منبع اصلی (PDF)</a></div>
 
 <div class="wrap">
 
 <div class="cite-box">
-<b>Sexuality Information and Education Council of the United States (SIECUS).</b> (۲۰۱۸). «<span dir="ltr">Federal Funding Overview: Fiscal Year 2017 Edition</span>».
+<b>Sexuality Information and Education Council of the United States (SIECUS).</b> (۲۰۱۸). «<span dir="ltr">Federal Funding Overview: Fiscal Year 2017 Edition</span>» (بررسی اجمالیِ بودجه‌ی فدرال: ویرایشِ سالِ مالیِ ۲۰۱۷).
 </div>
 
-<div class="pdf-page-label">متن صفحه ۱ فایل PDF:</div>
+<div class="pdf-page-label">متن صفحه ۱ فایل PDF (ترجمه‌شده):</div>
 
-<h1>Federal Funding Overview<span>Fiscal Year 2017 Edition</span></h1>
+<h1>بررسی اجمالیِ بودجه‌ی فدرال<span>ویرایشِ سالِ مالیِ ۲۰۱۷</span></h1>
 
-<p>Beginning in fiscal year (FY) 2010, a new era of support for evidence-based and evidence-informed adolescent sexual health promotion resulted in both new and increased support for programs to prevent HIV/AIDS, other sexually transmitted diseases (STDs), and (unintended) teen pregnancy.</p>
+<p>از سالِ مالیِ (FY) ۲۰۱۰، دوره‌ی تازه‌ای از حمایت از برنامه‌های ترویجِ سلامتِ جنسیِ نوجوانانِ مبتنی‌بر شواهد، هم به حمایتی تازه و هم افزایش‌یافته برای برنامه‌های پیشگیری از اچ‌آی‌وی/ایدز، دیگر بیماری‌های مقاربتی (STD) و بارداریِ (ناخواسته‌یِ) نوجوانان انجامید.</p>
 
-<p>Unfortunately, federal funding for abstinence-only-until-marriage (AOUM) programs, tied to the federal definition of &ldquo;abstinence education,&rdquo;<sup>1</sup> was not only extended for two years in FY 2016, but received an increase from $50 million to $75 million per year. This funding amount remained level in FY 2017. Similarly, the competitive AOUM grant program, while renamed the &ldquo;Sexual Risk Avoidance Education&rdquo; program, also received an increase from $5 million to $10 million in FY 2016 and increased from $10 million to $15 million in FY2017. The $90 million in federal AOUM funding in FY 2017 continues and expands a harmful 35-year history and a total of $2.05 billion in federal spending alone wasted on programs that stigmatize and shame young people.</p>
+<p>متأسفانه، بودجه‌ی فدرال برای برنامه‌های «پرهیزِ جنسی تا ازدواج» (AOUM)، که به تعریفِ فدرالِ «آموزشِ پرهیز» گره خورده،<sup>۱</sup> نه‌تنها در سالِ مالیِ ۲۰۱۶ برایِ دو سالِ دیگر تمدید شد، بلکه از ۵۰ میلیون دلار به ۷۵ میلیون دلار در سال افزایش یافت. این میزانِ بودجه در سالِ مالیِ ۲۰۱۷ هم ثابت ماند. به همین ترتیب، برنامه‌ی رقابتیِ کمک‌هزینه‌یِ AOUM، که با نامِ «برنامه‌ی آموزشِ اجتنابِ از خطرِ جنسی» تغییرِ نام داد، نیز از ۵ میلیون دلار به ۱۰ میلیون دلار در سالِ مالیِ ۲۰۱۶ و از ۱۰ میلیون دلار به ۱۵ میلیون دلار در سالِ مالیِ ۲۰۱۷ افزایش یافت. این ۹۰ میلیون دلار بودجه‌یِ فدرالِ AOUM در سالِ مالیِ ۲۰۱۷، ادامه و گسترشِ یک تاریخچه‌یِ زیان‌بارِ ۳۵ ساله و مجموعاً ۲.۰۵ میلیارد دلار هزینه‌کردِ فدرال است که تنها صرفِ برنامه‌هایی شده که جوانان را داغ‌گذاری و شرمنده می‌کنند.</p>
 
 <div id="ref-target">
 <table class="def-table">
-<caption>Section 510 (b) of Title V of the Social Security Act, P.L. 104&ndash;193</caption>
-<tr><td colspan="2">For the purposes of this section, the term &ldquo;abstinence education&rdquo; means an educational or motivational program which:</td></tr>
-<tr><td class="letter">A</td><td>has as its exclusive purpose teaching the social, psychological, and health gains to be realized by abstaining from sexual activity;</td></tr>
-<tr><td class="letter">B</td><td>teaches abstinence from sexual activity outside marriage as the expected standard for all school-age children;</td></tr>
-<tr><td class="letter">C</td><td>teaches that abstinence from sexual activity is the only certain way to avoid out-of-wedlock pregnancy, sexually transmitted diseases, and other associated health problems;</td></tr>
-<tr><td class="letter">D</td><td>teaches that a mutually faithful, monogamous relationship in the context of marriage is the expected standard of sexual activity;</td></tr>
-<tr><td class="letter">E</td><td>teaches that sexual activity outside of the context of marriage is likely to have harmful psychological and physical effects;</td></tr>
-<tr><td class="letter">F</td><td>teaches that bearing children out-of-wedlock is likely to have harmful consequences for the child, the child's parents, and society;</td></tr>
-<tr><td class="letter">G</td><td>teaches young people how to reject sexual advances and how alcohol and drug use increase vulnerability to sexual advances; and</td></tr>
-<tr><td class="letter">H</td><td>teaches the importance of attaining self-sufficiency before engaging in sexual activity.</td></tr>
+<caption>بخش ۵۱۰(ب) از عنوانِ پنجمِ قانونِ تأمینِ اجتماعی، قانونِ عمومیِ ۱۰۴–۱۹۳</caption>
+<tr><td colspan="2">در این قانون، عبارتِ «آموزشِ پرهیزِ جنسی» به برنامه‌ای آموزشی یا انگیزشی گفته می‌شود که:</td></tr>
+<tr><td class="letter">A</td><td>هدفِ انحصاری‌اش آموزشِ دستاوردهای اجتماعی، روانی و سلامتیِ حاصل از پرهیز از فعالیتِ جنسی باشد؛</td></tr>
+<tr><td class="letter">B</td><td>پرهیز از فعالیتِ جنسی خارج از ازدواج را معیارِ موردِ انتظار برای همه‌ی دانش‌آموزان در هر سنی آموزش دهد؛</td></tr>
+<tr><td class="letter">C</td><td>آموزش دهد که پرهیز از فعالیتِ جنسی تنها راهِ قطعی برای پیشگیری از بارداریِ خارج از ازدواج، بیماری‌های مقاربتی و دیگر مشکلاتِ سلامتیِ مرتبط است؛</td></tr>
+<tr><td class="letter">D</td><td>آموزش دهد که رابطه‌ای متعهدانه و تک‌همسری در چارچوبِ ازدواج، معیارِ موردِ انتظار برای فعالیتِ جنسی است؛</td></tr>
+<tr><td class="letter">E</td><td>آموزش دهد که فعالیتِ جنسی خارج از چارچوبِ ازدواج احتمالاً پیامدهای روانی و جسمیِ زیان‌بار دارد؛</td></tr>
+<tr><td class="letter">F</td><td>آموزش دهد که بچه‌دار شدن خارج از ازدواج احتمالاً برای کودک، والدینِ او و جامعه پیامدهای زیان‌بار دارد؛</td></tr>
+<tr><td class="letter">G</td><td>به نوجوانان بیاموزد چگونه پیشنهادهای جنسی را رد کنند و مصرفِ الکل و موادِ مخدر چگونه آسیب‌پذیری در برابرِ چنین پیشنهادهایی را افزایش می‌دهد؛ و</td></tr>
+<tr><td class="letter">H</td><td>اهمیتِ رسیدن به خودکفایی پیش از ورود به فعالیتِ جنسی را آموزش دهد.</td></tr>
 </table>
 </div>
-<div class="fa-translation-box"><span class="fa-translation-label">ترجمه فارسی:</span>بخش ۵۱۰(ب) از عنوان پنجم قانون تأمین اجتماعی، قانون عمومی ۱۰۴–۱۹۳<br>در این قانون، عبارت «آموزش پرهیز جنسی» به برنامه‌ای آموزشی یا انگیزشی گفته می‌شود که:<br>
-الف) هدف انحصاری‌اش آموزش دستاوردهای اجتماعی، روانی و سلامتی حاصل از پرهیز از فعالیت جنسی باشد؛<br>
-ب) پرهیز از فعالیت جنسی خارج از ازدواج را معیار مورد انتظار برای همه‌ی دانش‌آموزان در هر سنی آموزش دهد؛<br>
-ج) آموزش دهد که پرهیز از فعالیت جنسی تنها راه قطعی برای پیشگیری از بارداری خارج از ازدواج، بیماری‌های مقاربتی و دیگر مشکلات سلامتی مرتبط است؛<br>
-د) آموزش دهد که رابطه‌ای متعهدانه و تک‌همسری در چارچوب ازدواج، معیار مورد انتظار برای فعالیت جنسی است؛<br>
-هـ) آموزش دهد که فعالیت جنسی خارج از چارچوب ازدواج احتمالاً پیامدهای روانی و جسمیِ زیان‌بار دارد؛<br>
-و) آموزش دهد که بچه‌دار شدن خارج از ازدواج احتمالاً برای کودک، والدین او و جامعه پیامدهای زیان‌بار دارد؛<br>
-ز) به نوجوانان بیاموزد چگونه پیشنهادهای جنسی را رد کنند و مصرف الکل و مواد مخدر چگونه آسیب‌پذیری در برابر چنین پیشنهادهایی را افزایش می‌دهد؛ و<br>
-ح) اهمیت رسیدن به خودکفایی پیش از ورود به فعالیت جنسی را آموزش دهد.</div>
 
-<p>While PREP, TPPP, and DASH are an important and necessary shift in the advancement of sexuality education, they still provide piecemeal sexuality education to narrow segments of the youth population.</p>
+<p>هرچند PREP، TPPP و DASH گامی مهم و ضروری در پیشرفتِ آموزشِ جنسی هستند، اما هنوز آموزشِ جنسیِ پراکنده‌ای را تنها به بخش‌های محدودی از جمعیتِ جوانان ارائه می‌دهند.</p>
 
 </div>
 
 <script>
 (function() {
   var el = document.getElementById("ref-target");
-  if (el) el.classList.add("flash-highlight");
+  if (el) {
+    var mark = document.createElement("mark");
+    mark.className = "flash-highlight";
+    while (el.firstChild) mark.appendChild(el.firstChild);
+    el.appendChild(mark);
+  }
   var banner = document.querySelector(".ref-source-banner");
   if (banner) /* superseded by dynamic-offset-script */
   requestAnimationFrame(function() {
-    if (el) el.scrollIntoView({ block: "center", behavior: "instant" });
+    var m = document.querySelector("mark.flash-highlight");
+    if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
   });
 })();
 </script>
 
-<style id="brand-override-style">
-  .ref-source-banner {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 55px !important;
-    background: #4c1d95 !important;
-    color: #fff5df !important;
+<script id="dark-mode-script">
+(function() {
+  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var FORCED_ATTR = "data-dm-forced";
+  var CONTENT_COLOR = "rgb(231, 226, 242)";
+  var LINK_COLOR = "rgb(205, 182, 255)";
+  var MARK_COLOR = "rgb(42, 26, 5)";
+
+  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
+  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
+  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
+  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
+  // هر #id ای هم بالاتره) اصلاح می‌کنه.
+  function patchStubbornColors() {
+    var all = document.body.querySelectorAll("*");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      var cs = getComputedStyle(el);
+      if (el.closest("mark.flash-highlight")) {
+        if (cs.color !== MARK_COLOR) {
+          el.style.setProperty("color", "#2a1a05", "important");
+          el.setAttribute(FORCED_ATTR, "1");
+        }
+        continue;
+      }
+      if (cs.color !== CONTENT_COLOR && cs.color !== LINK_COLOR) {
+        el.style.setProperty("color", "#e7e2f2", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+      if (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") {
+        el.style.setProperty("background-color", "transparent", "important");
+        el.style.setProperty("background-image", "none", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+    }
   }
-  .ref-source-banner a { color: #e3c876 !important; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+  function unpatchStubbornColors() {
+    var all = document.body.querySelectorAll("[" + FORCED_ATTR + "]");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.removeProperty("color");
+      all[i].style.removeProperty("background-color");
+      all[i].style.removeProperty("background-image");
+      all[i].removeAttribute(FORCED_ATTR);
+    }
   }
-</style>
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
+    var button = document.getElementById("darkModeToggle");
+    if (button) {
+      button.textContent = enabled ? "☀️" : "🌙";
+      button.title = enabled ? "حالت روز" : "حالت شب";
+      button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+    }
+    if (enabled) {
+      patchStubbornColors();
+    } else {
+      unpatchStubbornColors();
+    }
+  }
+  var toggle = document.getElementById("darkModeToggle");
+  if (toggle) {
+    var saved = false;
+    try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+    applyDarkMode(saved);
+    toggle.addEventListener("click", function() {
+      var enabled = !document.body.classList.contains("dark-mode");
+      applyDarkMode(enabled);
+      try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+    });
+  }
+})();
+</script>
 </body>
 </html>
 
@@ -254,28 +347,6 @@
     max-width: 760px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-  }
-  .fa-translation-box {
-    direction: rtl !important;
-    text-align: right !important;
-    max-width: 760px !important;
-    margin: 14px auto !important;
-    padding: 14px 18px !important;
-    background: #ede9fe !important;
-    border-right: 4px solid #b8912a !important;
-    border-radius: 6px !important;
-    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
-    font-size: 15.5px !important;
-    line-height: 2 !important;
-    color: #201a2b !important;
-    box-sizing: border-box !important;
-  }
-  .fa-translation-box .fa-translation-label {
-    display: block;
-    font-weight: 800;
-    color: #4c1d95;
-    margin-bottom: 6px;
-    font-size: 13px;
   }
 </style>
 <script id="text-bounds-guard-script">
@@ -319,7 +390,7 @@
     var link = document.createElement('a');
     link.id = 'back-to-top-link';
     link.href = '#';
-    link.textContent = '\u2191';
+    link.textContent = '↑';
     link.title = 'رفتن به بالای صفحه';
     link.setAttribute('aria-label', 'رفتن به بالای صفحه');
     link.style.setProperty('position', 'absolute', 'important');

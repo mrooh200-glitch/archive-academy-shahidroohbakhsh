@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>شاکله (سیستم عامل درونیِ تو) | مطالعات تکمیلی</title>
+<title>مطالعات تکمیلی ۴ — ناهماهنگی شناختی | اصول اعتقادی</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri+Quran&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -24,7 +24,7 @@
     font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
     background: var(--c-cream);
     color: var(--c-ink);
-    line-height: 1.9;
+    line-height: 1.9; /* بود: 2 — کمی فشرده‌تر برای حسِ معتبرتر */
   }
   /* فیلتر مستقیم رو body نیست: هر جدِ دارایِ filter برای فرزندانِ
      position:fixed (topbar/side-rail) containing block تازه می‌سازه و
@@ -135,6 +135,7 @@
     border-bottom: 2px solid var(--c-line);
     padding-bottom: 18px;
   }
+  /* تغییر ۱: وزن ۴۰۰ → ۵۰۰ برای حضورِ بصریِ قوی‌تر رو صفحه‌نمایش */
   p.m-p { font-size: 17px; font-weight: 500; margin: 0 0 18px; text-align: right; text-indent: 0.4cm; }
 
   blockquote.m-quote {
@@ -144,17 +145,18 @@
     border-right: 4px solid var(--c-gold);
     border-radius: 6px;
     font-size: 17px;
-    line-height: 1.95;
+    line-height: 1.95; /* بود: 2.05 */
   }
   blockquote.m-quote .arabic {
     display: block;
     font-family: "Amiri Quran", "Vazirmatn", serif;
-    font-size: 23px; font-weight: 400;
+    font-size: 23px; /* تغییر ۲: بود 21px */
+    font-weight: 400;
     color: var(--c-forest-dark);
     margin-bottom: 10px;
   }
   blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
-  blockquote.m-quote .translation { color: var(--c-ink); }
+  blockquote.m-quote .translation { color: var(--c-ink); font-weight: 500; }
 
   sup.fn-ref { font-size: 12px; }
   sup.fn-ref a {
@@ -212,7 +214,7 @@
   </div>
   <script id="dark-mode-script">
   (function() {
-    var DARK_MODE_KEY = "roohbakhshDarkMode";
+    var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
     function applyDarkMode(enabled) {
       document.body.classList.toggle("dark-mode", enabled);
       var button = document.getElementById("darkModeToggle");
@@ -251,36 +253,52 @@
   })();
   </script>
   <div class="m-wrap">
-    <div class="m-num">۱</div>
-    <h1>شاکله (سیستم عامل درونیِ تو)</h1>
-    <p class="m-p">گوشیت رو نگاه کن. حتی اگه آخرین مدل دنیا باشه، بدون سیستم‌عامل فقط یه تیکه فلز و شیشه‌ست. هر اپی که باز می‌کنی، هر کاری که می‌کنی، همه‌ش زیر نظر همون سیستم‌عامله.</p>
-    <p class="m-p">مغز تو هم دقیقاً همینه.</p>
-    <p class="m-p">روان‌شناسی و علوم اعصاب می‌گن ما یه «ساختار درونی» داریم که مثل سیستم‌عامل، رفتارها و برداشت‌هامون رو فیلتر می‌کنه؛ اسم قدیمی‌ترش «شاکله»ست.<sup class="fn-ref" id="fnref-1"><a href="#fn-1">۱</a></sup></p>
-    <p class="m-p">نکته‌ی عجیب اینه: بیشتر کارهایی که می‌کنی، اصلاً آگاهانه نیست. یعنی چی؟</p>
-    <p class="m-p">یعنی هیچ رفتاری از تو سر نمی‌زنه مگه اینکه از قبل، دستورش از همون سیستم‌عامل ناخودآگاهت صادر شده باشه.</p>
-    <p class="m-p">بی‌حوصله‌ای، بدون فکر گوشی رو باز می‌کنی و اسکرول می‌کنی؟ اون سیستم‌عامله.</p>
-    <p class="m-p">داری تصمیم می‌گیری پولت رو کجا خرج کنی؟ بازم همون.</p>
-    <p class="m-p">تو فقط دکمه رو می‌زنی؛ قوانین بازی رو شاکله‌ات از قبل چیده.</p>
-    <p class="m-p">حالا بخش ترسناکش:</p>
-    <p class="m-p">گوشی‌ها یه سیستم‌عامل ثابت دارن که از کارخونه میاد. اما سیستم‌عامل ذهن تو «متن‌بازه». یعنی هر کسی می‌تونه توش دست ببره.</p>
-    <p class="m-p">اینجا یه دوراهیه:</p>
-    <p class="m-p">یا خودت آگاهانه میشی مهندس این سیستم،</p>
-    <p class="m-p">یا صندلی رو خالی می‌گذاری تا الگوریتم تیک‌تاک، ترندهای اینستا و اقتصاد توجه بیان کدنویسیش کنن.</p>
-    <p class="m-p">وقتی کنترل دست الگوریتم‌هاست، فکر می‌کنی خیلی آزادی، «هر کاری دلت بخواد می‌کنی». اما واقعیتش اینه که فقط یه برنامه رو اجرا می‌کنی که یکی دیگه روی ذهنت نصب کرده.</p>
-    <p class="m-p">حالا یه لحظه فکر کن:</p>
-    <p class="m-p">کدهای سیستم‌عاملت رو الان کی می‌نویسه؟</p>
+    <div class="m-num">۴</div>
+    <h1>ناهماهنگی شناختی؛ وقتی خلوت و جلوت با هم نمی‌خونن</h1>
+
+    <p class="m-p">از منظر روان‌شناسی، زمانی که انسان تو خلوتِ خودش رفتاری داشته باشه که با ارزش‌های درونی یا کنش‌های اجتماعی‌اش در تضاد باشه، دچار پدیده‌ای به نام «ناهماهنگی شناختی» (Cognitive Dissonance) می‌شه.</p>
+
+    <p class="m-p">وقتی یه جوان تو خلوتِ خودش چارچوبی رو می‌شکنه، اما تو اجتماع چهره‌ی ناچاره‌ی هویتی متفاوت و پایبند به نمایش بذاره، این شکافِ عمیقِ بین «باور و عمل» یا «خلوت و جلوت»، یه تعارض روانی فرساینده ایجاد می‌کنه. این تضادِ درونی، به‌مثابه‌ی یه برنامه‌ی پنهانِ ذهن تو، تمام انرژی روانی فرد رو می‌بلعه.</p>
+
+    <p class="m-p">اگه‌چه تو نظریاتِ کلاسیکِ روان‌شناسی می‌گفتن: این چیز مهمی نیست، فقط ناراحتی است، اما مطالعاتِ بالینیِ معاصر اثبات می‌کنن که تلاشِ ذهن برای سرپوش گذاشتن رو این تناقض‌ها، یکی از ریشه‌های اصلیِ استرسِ مزمنه، و در صورت تداوم، انسان رو به دامِ ناسازگاری‌های شناختی، اضطرابِ فراگیر، افسردگی و ازخودبیگانگی می‌کشونه<sup class="fn-ref" id="fnref-4-1"><a href="#fn-4-1">۱</a></sup>.</p>
+
+    <p class="m-p">پیامدِ این درکِ پیوستگی اینه که انسان برای جلوگیری از فروپاشیِ شخصیتی و رهایی از تناقضات، باید به یه سیستمِ مدیریتِ هماهنگ پناه ببره.</p>
+
+    <p class="m-p">منطقی‌ترین رویکرد، همون چیزیه که تو اسلام و با قرائتِ اهل‌بیت (علیهم‌السلام) ارائه شده. تو این مکتب، پروردگار به‌عنوانِ خالق و مهندسِ بی‌نقصِ وجودِ انسان، برای تمامِ مسائل - از ریزترین آدابِ فردی و بهداشتی گرفته تا کلان‌ترین مسائلِ اجتماعی - دستورالعمل و برنامه‌ی کامل داره. این کامل‌بودن نه به معنای سلبِ آزادی، بلکه به معنای ارائه‌ی «نقشه‌ی راهِ یکپارچه» است تا انسان تو هیچ‌کدوم از ابعادِ زندگی‌اش دچارِ تناقض و سردرگمی نشه.</p>
+
+    <p class="m-p">قرآن کریم این کمال و جامعیت رو با صراحت بیان می‌کنه:</p>
+
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>مَّا فَرَّطْنَا فِي الْكِتَابِ مِن شَيْءٍ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-4-2"><a href="#fn-4-2">۲</a></sup></span>
+      <span class="translation">ما این کتاب هیچ چیز رو فروگذار نکردیم<sup class="fn-ref" id="fnref-4-3"><a href="#fn-4-3">۳</a></sup>.</span>
+    </blockquote>
+
+    <p class="m-p">و در جای دیگه:</p>
+
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>وَنَزَّلْنَا عَلَيْكَ الْكِتَابَ تِبْيَانًا لِّكُلِّ شَيْءٍ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-4-4"><a href="#fn-4-4">۴</a></sup></span>
+      <span class="translation">ما این کتاب رو بر تو نازل کردیم تا روشنگرِ هر چیزی باشه.</span>
+    </blockquote>
+
     <div class="m-footnotes">
       <div class="m-footnotes-title">پی‌نوشت‌ها</div>
       <ol>
-        <li id="fn-1">
-          <p class="fn-p">محمدعلی‌نژاد عمران، روح‌الله؛ شمخی، مینا. (۱۳۹۹). «مقایسه تحلیلی شخصیت از دیدگاه روان‌شناسی با مفهوم شاکله در قرآن». فصلنامه فرهنگ مشاوره و روان‌درمانی، ۱۱(۴۳)، ۱۵۹–۱۸۲. <a class="ref-link" href="../p/22.html" target="_blank" rel="noopener">مشاهده‌ی آرشیو منبع</a>.</p>
-          <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع خارجی: <span dir="ltr" style="unicode-bidi:isolate;display:inline-block">Augusto, L. M. (2011). "Accommodating Unconscious Beliefs." <em>Principios: Revista de Filosofia (UFRN)</em>, 17(28), 129–154.</span> <a class="ref-link" href="../p/23.html" target="_blank" rel="noopener">مشاهده‌ی آرشیو منبع</a>. <a class="fn-back" href="#fnref-1">↩</a></p>
+        <li id="fn-4-1">
+          <p class="fn-p">یزدی، سیده منور؛ درویزه، زهرا؛ و شیخی، زهرا. (۱۳۹۳). «مقایسة نارسایی‌های شناختی و شیوه‌های مقابله با استرس در بیماران مبتلا به اختلال افسردگی اساسی، اختلال اضطراب فراگیر و همبود». فصلنامة مطالعات روان‌شناختی، ۱۱(۳)، ۷-۲۸. نقل قول: «میزان نارسایی شناختی و خرده‌مقیاس‌های آن در گروه همبود [افسردگی و اضطراب] بیشتر از گروه افسرده اساسی و اضطراب فراگیر بود.» <a class="ref-link" href="../p/28.html" target="_blank" rel="noopener">مشاهده‌ی آرشیو منبع</a>.</p>
+          <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع خارجی: <span dir="ltr" style="unicode-bidi:isolate;display:inline-block">Dilakshini, V. L., &amp; Kumar, S. M. (2020). "Cognitive dissonance: A psychological unrest." <em>Current Journal of Applied Science and Technology</em> 39(30), 54-60. Quote: "Cognitive dissonance is a phenomenon which will be created based on the discomfort experience when two cognitions are mismatch with each other."</span> <a class="ref-link" href="../p/29.html" target="_blank" rel="noopener">مشاهده‌ی آرشیو منبع</a>. <a class="fn-back" href="#fnref-4-1">↩</a></p>
         </li>
+
+        <li id="fn-4-2">سوره انعام، آیه ۳۸ — <a class="ref-link" href="../p/27.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>. <a class="fn-back" href="#fnref-4-2">↩</a></li>
+
+        <li id="fn-4-3">یه نکته‌ی مهم: قرآن یه دانشنامه یا انبارِ همه‌چیز نیست؛ بلکه هر چیزی که به هدایتِ آدم مربوط باشه، تو قرآن و روایات اومده. مثلِ یه داروخونه که بگه «ما همه‌چیز داریم»، این منظورش این نیست که انبارِ همه‌ی کالاهای دنیا رو داره؛ منظورش اینه که همه‌ی چیزهایی که دارو داره رو داره. <a class="fn-back" href="#fnref-4-3">↩</a></li>
+
+        <li id="fn-4-4">سوره نحل، آیه ۸۹ — <a class="ref-link" href="../p/26.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>. <a class="fn-back" href="#fnref-4-4">↩</a></li>
       </ol>
     </div>
+
     <div class="m-nav">
-      <span class="disabled">« قبلی</span>
-      <a href="2.html">بعدی »</a>
+      <a href="3.html">« قبلی</a>
+      <a href="5.html">بعدی »</a>
     </div>
   </div>
 </body>

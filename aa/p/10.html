@@ -1,57 +1,29 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A History of Federal Funding for Abstinence-Only-Until-Marriage Programs — SIECUS</title>
+<title>تاریخچه‌ی بودجه‌ی فدرال برای برنامه‌های «پرهیز جنسی تا ازدواج» — SIECUS</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: Tahoma, "Vazirmatn", Arial, sans-serif;
     background: #f7f3ea;
     color: #222;
-    line-height: 1.8;
+    line-height: 2;
     font-size: 17px;
   }
-  .ref-source-banner {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    z-index: 999999 !important;
-    background: #0b4f3c !important;
-    color: #faf5e8 !important;
-    font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important;
-    font-size: 14px !important;
-    line-height: 1.5 !important;
-    text-align: center !important;
-    padding: 10px 14px !important;
-    direction: rtl !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
-    margin: 0 !important;
-  }
-  .ref-source-banner a { color: #f4d35e !important; font-weight: bold !important; text-decoration: underline !important; font-size: 14px !important; font-family: Tahoma, "Vazirmatn", Arial, sans-serif !important; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
   h1 { font-size: 22px; text-align: center; margin-bottom: 28px; }
   .cite-box {
-    background: #fff; border-right: none; border-left: 4px solid #0b4f3c;
+    background: #fff; border-right: 4px solid #0b4f3c; border-left: none;
     padding: 14px 18px; margin-bottom: 28px; font-size: 14px; color: #444;
-    font-family: Tahoma, "Vazirmatn", Arial, sans-serif; direction: rtl; text-align: right;
+    direction: rtl; text-align: right;
   }
   .cite-box b { color: #0b4f3c; }
-  .pdf-page-label { font-size: 13px; color: #888; margin-bottom: 10px; font-family: Tahoma, "Vazirmatn", Arial, sans-serif; direction: rtl; }
+  .pdf-page-label { font-size: 13px; color: #888; margin-bottom: 10px; }
   p { margin: 0 0 18px; text-align: justify; }
-  h2 { font-size: 18px; margin-top: 30px; }
-  mark.flash-highlight {
-    background: #ffe08a !important;
-    color: inherit !important;
-    padding: 0 2px;
-    border-radius: 2px;
-    box-shadow: 0 0 0 2px #ffe08a;
-  }
 </style>
 <style id="brand-style">
   :root {
@@ -61,6 +33,58 @@
     --b-forest-dark: #4c1d95;
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
+  }
+  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
+     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
+     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
+     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
+     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
+     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
+     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
+  html.dark-mode { background: #0d0d10 !important; }
+  body.dark-mode .brand-topbar,
+  body.dark-mode .ref-source-banner,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .brand-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+  /* متنِ اصلیِ صفحه (نقل‌قولِ PDF) پالتِ رنگیِ گرمِ خودش رو داره که با پس‌زمینه‌ی
+     تیره‌ی حالتِ شب سازگار نیست. به‌جایِ فیلترِ رنگی (که موقعیتِ fixed رو می‌شکنه)،
+     رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک ترکیبِ همیشه-خوانا override می‌کنیم. */
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #e7e2f2 !important;
+    border-color: rgba(255,255,255,.2) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+    background: rgba(227,200,118,.55) !important;
+    color: #2a1a05 !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+    color: #2a1a05 !important;
+    background: rgba(227,200,118,.55) !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+    color: #cdb6ff !important;
   }
   .side-rail {
     display: none;
@@ -108,6 +132,7 @@
     margin: 0 !important;
   }
   .brand-topbar span { color: #fff !important; }
+  .brand-topbar-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
   .brand-topbar .brand-badge {
     background: rgba(255,255,255,.15) !important;
     border: 1px solid rgba(255,255,255,.35) !important;
@@ -121,37 +146,52 @@
   }
   .brand-topbar .brand-badge:hover { background: rgba(255,255,255,.26) !important; }
   .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000001 !important;
     top: 55px !important;
-    background: var(--b-forest-dark) !important;
-    color: #fff5df !important;
+    background: var(--b-cream-deep) !important;
+    color: var(--b-forest-dark) !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    padding: 8px 16px !important;
+    direction: rtl !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--b-gold-light) !important;
+    margin: 0 !important;
   }
-  .ref-source-banner a { color: var(--b-gold-light) !important; }
+  .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
   mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+    background: rgba(227,200,118,.45);
+    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    color: inherit;
   }
 </style>
 </head>
-<body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a></div>
+<body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
-<div class="ref-source-banner">این صفحه، متنِ استخراج‌شده از یک منبع PDF است. برای مشاهده‌ی نسخه‌ی اصلی: <a href="https://siecus.org/wp-content/uploads/2018/07/4-A-Brief-History-of-AOUM-Funding.pdf#page=1" rel="noopener">مشاهده‌ی منبع اصلی (PDF)</a></div>
+<div class="ref-source-banner">این صفحه، ترجمه‌شده‌ی متنِ استخراج‌شده از یک منبع PDF است. برای مشاهده‌ی نسخه‌ی اصلی (زبان اصلی): <a href="https://siecus.org/wp-content/uploads/2018/07/4-A-Brief-History-of-AOUM-Funding.pdf#page=1" rel="noopener">مشاهده‌ی منبع اصلی (PDF)</a></div>
 
 <div class="wrap">
 
 <div class="cite-box">
-<b>Sexuality Information and Education Council of the United States (SIECUS).</b> (بی‌تا). «<span dir="ltr">A History of Federal Funding for Abstinence-Only-Until-Marriage Programs</span>».
+<b>Sexuality Information and Education Council of the United States (SIECUS).</b> (بی‌تا). «<span dir="ltr">A History of Federal Funding for Abstinence-Only-Until-Marriage Programs</span>» (تاریخچه‌ی بودجه‌ی فدرال برای برنامه‌های «پرهیز جنسی تا ازدواج»).
 </div>
 
-<div class="pdf-page-label">متن صفحه ۱ فایل PDF:</div>
+<div class="pdf-page-label">متن صفحه ۱ فایل PDF (ترجمه‌شده):</div>
 
-<h1>A History of Federal Funding for<br>Abstinence-Only-Until-Marriage Programs</h1>
+<h1>تاریخچه‌ی بودجه‌ی فدرال برای برنامه‌های<br>«پرهیز جنسی تا ازدواج»</h1>
 
-<p id="ref-target">Government funding of abstinence-only-until-marriage programs is not new. In fact, the federal government has poured tax-payer money into such programs for over a quarter century. Beginning in 1981 under the Reagan Administration, the federal government has consistently funded abstinence-only-until-marriage programs despite an overwhelming body of research proving they are ineffective and that this federal expenditure has failed to achieve its stated goals. Funding for these unproven programs grew exponentially from 1996 until 2006, particularly during the years of the George W. Bush Administration. The funding leveled out between 2006 and 2009 and then reduced significantly in 2010. Between 1996 and federal Fiscal Year 2010, Congress funneled a total of over one-and-a-half billion tax-payer dollars into abstinence-only-until-marriage programs and the funding continues today.</p>
-<div class="fa-translation-box"><span class="fa-translation-label">ترجمه فارسی:</span>تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد.</div>
+<p id="ref-target">تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد.</p>
 
-<p>(See the <i>Dedicated Federal Abstinence-Only-Until-Marriage Funding by Year</i> graph and chart for more information.)</p>
+<p>(برای اطلاعات بیشتر، نمودار و جدولِ «بودجه‌ی اختصاصیِ فدرال برای برنامه‌های پرهیز جنسی تا ازدواج بر حسب سال» را ببینید.)</p>
 
-<p>Fiscal Year 2010, however, marked a significant shift in the federal government's funding for abstinence-only-until-marriage programs. After nearly thirty years of strong support for such programs, the Obama Administration and Congress eliminated the two discretionary federal funding streams for abstinence-only-until-marriage programs—the Community-Based Abstinence Education grant program and the abstinence-only-until-marriage portion of the Adolescent Family Life Act.</p>
+<p>با این‌حال، سالِ مالیِ ۲۰۱۰ نقطه‌ی عطفِ مهمی در بودجه‌ی دولتِ فدرال برای برنامه‌های «پرهیز جنسی تا ازدواج» بود. پس از نزدیک به سی سال حمایتِ جدی از این برنامه‌ها، دولتِ اوباما و کنگره دو منبعِ بودجه‌ی اختیاریِ فدرال برایِ این برنامه‌ها را حذف کردند: برنامه‌ی کمک‌هزینه‌ی «آموزشِ پرهیزِ جنسیِ مبتنی‌بر جامعه» و بخشِ مربوط به پرهیزِ جنسی تا ازدواج از «قانونِ زندگیِ خانوادگیِ نوجوانان».</p>
 
 </div>
 
@@ -173,21 +213,81 @@
 })();
 </script>
 
-<style id="brand-override-style">
-  .ref-source-banner {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 55px !important;
-    background: #4c1d95 !important;
-    color: #fff5df !important;
+<script id="dark-mode-script">
+(function() {
+  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var FORCED_ATTR = "data-dm-forced";
+  var CONTENT_COLOR = "rgb(231, 226, 242)";
+  var LINK_COLOR = "rgb(205, 182, 255)";
+  var MARK_COLOR = "rgb(42, 26, 5)";
+
+  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
+  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
+  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
+  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
+  // هر #id ای هم بالاتره) اصلاح می‌کنه.
+  function patchStubbornColors() {
+    var all = document.body.querySelectorAll("*");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      var cs = getComputedStyle(el);
+      if (el.closest("mark.flash-highlight")) {
+        if (cs.color !== MARK_COLOR) {
+          el.style.setProperty("color", "#2a1a05", "important");
+          el.setAttribute(FORCED_ATTR, "1");
+        }
+        continue;
+      }
+      if (cs.color !== CONTENT_COLOR && cs.color !== LINK_COLOR) {
+        el.style.setProperty("color", "#e7e2f2", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+      if (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") {
+        el.style.setProperty("background-color", "transparent", "important");
+        el.style.setProperty("background-image", "none", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+    }
   }
-  .ref-source-banner a { color: #e3c876 !important; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45) !important;
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45) !important;
+  function unpatchStubbornColors() {
+    var all = document.body.querySelectorAll("[" + FORCED_ATTR + "]");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.removeProperty("color");
+      all[i].style.removeProperty("background-color");
+      all[i].style.removeProperty("background-image");
+      all[i].removeAttribute(FORCED_ATTR);
+    }
   }
-</style>
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
+    var button = document.getElementById("darkModeToggle");
+    if (button) {
+      button.textContent = enabled ? "☀️" : "🌙";
+      button.title = enabled ? "حالت روز" : "حالت شب";
+      button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+    }
+    if (enabled) {
+      patchStubbornColors();
+    } else {
+      unpatchStubbornColors();
+    }
+  }
+  var toggle = document.getElementById("darkModeToggle");
+  if (toggle) {
+    var saved = false;
+    try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+    applyDarkMode(saved);
+    toggle.addEventListener("click", function() {
+      var enabled = !document.body.classList.contains("dark-mode");
+      applyDarkMode(enabled);
+      try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+    });
+  }
+})();
+</script>
 </body>
 </html>
 
@@ -219,28 +319,6 @@
     margin-left: auto !important;
     margin-right: auto !important;
     float: none !important;
-  }
-  .fa-translation-box {
-    direction: rtl !important;
-    text-align: right !important;
-    max-width: 760px !important;
-    margin: 14px auto !important;
-    padding: 14px 18px !important;
-    background: #ede9fe !important;
-    border-right: 4px solid #b8912a !important;
-    border-radius: 6px !important;
-    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
-    font-size: 15.5px !important;
-    line-height: 2 !important;
-    color: #201a2b !important;
-    box-sizing: border-box !important;
-  }
-  .fa-translation-box .fa-translation-label {
-    display: block;
-    font-weight: 800;
-    color: #4c1d95;
-    margin-bottom: 6px;
-    font-size: 13px;
   }
 </style>
 <script id="text-bounds-guard-script">
