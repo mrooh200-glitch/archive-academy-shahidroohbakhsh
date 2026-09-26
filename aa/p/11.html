@@ -171,6 +171,53 @@
     margin: 0 !important;
   }
   .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
+  .ref-menu-wrap { position: relative !important; display: inline-block !important; margin-right: 4px !important; }
+  .ref-menu-trigger {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: underline !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+  }
+  .ref-menu-trigger:hover { color: var(--b-forest) !important; }
+  .ref-menu-dots { font-weight: 900 !important; letter-spacing: 1px !important; text-decoration: none !important; }
+  .ref-menu-dropdown {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    right: 50% !important;
+    transform: translateX(50%) !important;
+    background: var(--b-cream) !important;
+    border: 1px solid var(--b-gold-light) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 6px 18px rgba(76,29,149,.22) !important;
+    padding: 6px !important;
+    min-width: 190px !important;
+    z-index: 1000003 !important;
+    text-align: right !important;
+  }
+  .ref-menu-dropdown.ref-menu-open { display: block !important; }
+  .ref-menu-dropdown a {
+    display: block !important;
+    padding: 7px 12px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    border-radius: 5px !important;
+    white-space: nowrap !important;
+    font-size: 13px !important;
+  }
+  .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
+  .ref-menu-label { display: block !important; }
+  .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
   mark.flash-highlight {
     background: rgba(227,200,118,.45);
     box-shadow: 0 0 0 2px rgba(227,200,118,.45);
@@ -179,11 +226,41 @@
     -webkit-box-decoration-break: clone;
     color: inherit;
   }
+  .fa-original-en {
+    direction: ltr !important;
+    text-align: left !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+    color: #4a4458 !important;
+    background: #f4f2fa !important;
+    border-right: none !important;
+    border-left: 4px solid var(--b-gold) !important;
+    border-radius: 6px !important;
+    padding: 12px 16px !important;
+    margin: 10px 0 18px 0 !important;
+    box-sizing: border-box !important;
+    max-width: 760px;
+  }
+  .fa-original-en .fa-original-en-label {
+    display: block !important;
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: bold !important;
+    color: var(--b-forest-dark) !important;
+    margin-bottom: 6px !important;
+  }
+  .fa-original-en table { border-collapse: collapse; width: 100%; font-size: 13px; direction: ltr; }
+  .fa-original-en table caption { text-align: left; font-weight: bold; padding: 6px; border: 1px solid #999; background: #eee; caption-side: top; }
+  .fa-original-en table td { border: 1px solid #999; padding: 6px 8px; vertical-align: top; }
+  .fa-original-en table td.letter { width: 22px; font-weight: bold; text-align: center; }
 </style>
 </head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
-<div class="ref-source-banner">این صفحه، ترجمه‌شده‌ی متنِ استخراج‌شده از یک منبع PDF است. برای مشاهده‌ی نسخه‌ی اصلی (زبان اصلی): <a href="https://siecus.org/wp-content/uploads/2024/04/SIECUS-SP-FY17-Federal-Funding-Overview.pdf#page=1" rel="noopener">مشاهده‌ی منبع اصلی (PDF)</a></div>
+<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، ترجمه‌شده‌ی متنِ استخراج‌شده از یک منبع PDF است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://siecus.org/wp-content/uploads/2024/04/SIECUS-SP-FY17-Federal-Funding-Overview.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/11.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div>
 
 <div class="wrap">
 
@@ -211,6 +288,22 @@
 <tr><td class="letter">F</td><td>آموزش دهد که بچه‌دار شدن خارج از ازدواج احتمالاً برای کودک، والدینِ او و جامعه پیامدهای زیان‌بار دارد؛</td></tr>
 <tr><td class="letter">G</td><td>به نوجوانان بیاموزد چگونه پیشنهادهای جنسی را رد کنند و مصرفِ الکل و موادِ مخدر چگونه آسیب‌پذیری در برابرِ چنین پیشنهادهایی را افزایش می‌دهد؛ و</td></tr>
 <tr><td class="letter">H</td><td>اهمیتِ رسیدن به خودکفایی پیش از ورود به فعالیتِ جنسی را آموزش دهد.</td></tr>
+</table>
+</div>
+
+<div class="fa-original-en" dir="ltr">
+<span class="fa-original-en-label">متنِ اصلیِ مرتبط:</span>
+<table>
+<caption>Section 510 (b) of Title V of the Social Security Act, P.L. 104&ndash;193</caption>
+<tr><td colspan="2">For the purposes of this section, the term &ldquo;abstinence education&rdquo; means an educational or motivational program which:</td></tr>
+<tr><td class="letter">A</td><td>has as its exclusive purpose teaching the social, psychological, and health gains to be realized by abstaining from sexual activity;</td></tr>
+<tr><td class="letter">B</td><td>teaches abstinence from sexual activity outside marriage as the expected standard for all school-age children;</td></tr>
+<tr><td class="letter">C</td><td>teaches that abstinence from sexual activity is the only certain way to avoid out-of-wedlock pregnancy, sexually transmitted diseases, and other associated health problems;</td></tr>
+<tr><td class="letter">D</td><td>teaches that a mutually faithful, monogamous relationship in the context of marriage is the expected standard of sexual activity;</td></tr>
+<tr><td class="letter">E</td><td>teaches that sexual activity outside of the context of marriage is likely to have harmful psychological and physical effects;</td></tr>
+<tr><td class="letter">F</td><td>teaches that bearing children out-of-wedlock is likely to have harmful consequences for the child, the child's parents, and society;</td></tr>
+<tr><td class="letter">G</td><td>teaches young people how to reject sexual advances and how alcohol and drug use increase vulnerability to sexual advances; and</td></tr>
+<tr><td class="letter">H</td><td>teaches the importance of attaining self-sufficiency before engaging in sexual activity.</td></tr>
 </table>
 </div>
 
@@ -309,6 +402,32 @@
       try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
     });
   }
+})();
+</script>
+<script id="ref-menu-script">
+(function() {
+  "use strict";
+  function closeAll() {
+    document.querySelectorAll(".ref-menu-dropdown.ref-menu-open").forEach(function(d) { d.classList.remove("ref-menu-open"); });
+    document.querySelectorAll('.ref-menu-trigger[aria-expanded="true"]').forEach(function(b) { b.setAttribute("aria-expanded", "false"); });
+  }
+  document.querySelectorAll(".ref-menu-trigger").forEach(function(btn) {
+    var dropdown = btn.nextElementSibling;
+    if (!dropdown) return;
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      var isOpen = dropdown.classList.contains("ref-menu-open");
+      closeAll();
+      if (!isOpen) {
+        dropdown.classList.add("ref-menu-open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+  document.addEventListener("click", closeAll);
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeAll();
+  });
 })();
 </script>
 </body>
