@@ -3,6 +3,10 @@
  url: https://www.goodreads.com/work/quotes/2067246-staring-at-the-sun-overcoming-the-terror-of-death 
  saved date: Wed Sep 09 2026 23:50:35 GMT+0330 (وقت عادی ایران)
 --><meta charset=utf-8>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+
 <title>خیره به خورشید، نقل قول‌هایی از اروین دی. یالوم</title>
 <meta content="68 quotes from Staring at the Sun: Overcoming the Terror of Death: ‘... sooner or later she had to give up the hope for a better past.’" name=description>
 <meta content="telephone=no" name=format-detection>
@@ -46,6 +50,8 @@
      صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
      تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
   body.dark-mode .brand-topbar,
   body.dark-mode .ref-source-banner,
   body.dark-mode .side-rail {
@@ -1279,6 +1285,7 @@
     for (var i = 0; i < all.length; i++) {
       var el = all[i];
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
       if (el.closest("mark.flash-highlight")) {
         if (cs.color !== MARK_COLOR) {

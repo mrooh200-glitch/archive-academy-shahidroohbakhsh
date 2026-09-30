@@ -2,7 +2,11 @@
  Page saved with SingleFile 
  url: https://gharaati.ir/%d8%aa%d9%81%d8%b3%db%8c%d8%b1-%d9%86%d9%88%d8%b1/?query=%D8%A7%D9%84%D9%82%D9%84%D9%88%D8%A8&exact=1&view=result&elems%5B11%5D=1&elems%5B12%5D=1&elems%5B13%5D=1&elems%5B14%5D=1&elems%5B15%5D=1#numsooreh=109&numayeh=2724 
  saved date: Tue Sep 22 2026 20:29:47 GMT+0330 (وقت عادی ایران)
---><!--<![endif]--><meta charset=utf-8><style>body{transition:opacity ease-in 0.2s}</style>
+--><!--<![endif]--><meta charset=utf-8>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+<style>body{transition:opacity ease-in 0.2s}</style>
 <meta http-equiv=X-UA-Compatible content="IE=edge">
 <meta name=viewport content="width=device-width, initial-scale=1.0">
 <link rel=pingback href=https://gharaati.ir/xmlrpc.php>
@@ -84,6 +88,8 @@ window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15
      صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
      تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
   body.dark-mode .brand-topbar,
   body.dark-mode .ref-source-banner,
   body.dark-mode .side-rail {
@@ -696,6 +702,7 @@ var pmefracjg=function(t){"use strict";return{init:function(){0==pmefracjg.ads_s
     for (var i = 0; i < all.length; i++) {
       var el = all[i];
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
       if (el.closest("mark.flash-highlight")) {
         if (cs.color !== MARK_COLOR) {

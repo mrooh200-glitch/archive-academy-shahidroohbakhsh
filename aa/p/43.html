@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>اوج و افولِ زنِ سنتی — نیویورکر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -16,15 +19,16 @@
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   .cite-box {
-    background: #fff; border-right: 4px solid #0b4f3c; border-left: none;
+    background: #fff; border-right: 4px solid #4c1d95; border-left: none;
     padding: 14px 18px; margin-bottom: 28px; font-size: 14px; color: #444;
     direction: rtl; text-align: right;
   }
-  .cite-box b { color: #0b4f3c; }
+  .cite-box b { color: #4c1d95; }
+  .cite-box .cite-ltr { direction: ltr; text-align: left; margin-bottom: 6px; }
   .pdf-page-label { font-size: 13px; color: #888; margin: 26px 0 10px; }
   .pdf-page-label:first-of-type { margin-top: 0; }
   p { margin: 0 0 18px; text-align: justify; }
-  .wrap p { text-indent: 0.4cm; }
+  .wrap p:not(.fa-original-en) { text-indent: 0.4cm; }
 </style>
 <style id="brand-style">
   :root {
@@ -37,6 +41,8 @@
   }
   body.dark-mode { background: #0d0d10; }
   html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
   body.dark-mode .brand-topbar,
   body.dark-mode .ref-source-banner,
   body.dark-mode .side-rail {
@@ -202,6 +208,16 @@
   .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
   .ref-menu-label { display: block !important; }
   .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
+  /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
+  body.dark-mode .ref-menu-dropdown {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background: #1c1826 !important;
+    border-color: rgba(227,200,118,.55) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.6) !important;
+  }
+  body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
+  body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
+  body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
   .fa-original-en {
     direction: ltr !important;
     text-align: left !important;
@@ -274,7 +290,8 @@
 <div class="wrap">
 
 <div class="cite-box">
-<b>Elmhirst, S.</b> (۲۰۲۴). <i><span dir="ltr">The Rise and Fall of the Trad Wife</span></i>. The New Yorker.
+<div class="cite-ltr" dir="ltr"><b>Elmhirst, S.</b> (2024). <i>The Rise and Fall of the Trad Wife</i>. The New Yorker.</div>
+<div>(«اوج و افولِ زنِ سنتی»)</div>
 </div>
 
 <div class="pdf-page-label">صفحه‌ی ۲ مقاله:</div>
@@ -297,10 +314,19 @@ For readers of Betty Friedan or viewers of "Mad Men," the idea that the interior
     while (el.firstChild) mark.appendChild(el.firstChild);
     el.appendChild(mark);
   });
-  requestAnimationFrame(function() {
+  var userMoved = false;
+  ["wheel", "touchstart", "keydown", "mousedown"].forEach(function(ev) {
+    window.addEventListener(ev, function() { userMoved = true; }, { once: true, passive: true });
+  });
+  function center() {
+    if (userMoved) return;
     var m = document.querySelector("mark.flash-highlight");
     if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
-  });
+  }
+  requestAnimationFrame(center);
+  window.addEventListener("load", center);
+  setTimeout(center, 600);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(center);
 })();
 </script>
 
@@ -317,6 +343,7 @@ For readers of Betty Friedan or viewers of "Mad Men," the idea that the interior
     for (var i = 0; i < all.length; i++) {
       var el = all[i];
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
       if (el.closest("mark.flash-highlight, .flash-highlight")) {
         if (cs.color !== MARK_COLOR) {
@@ -418,6 +445,13 @@ For readers of Betty Friedan or viewers of "Mad Men," the idea that the interior
   }
   window.addEventListener('load', applyOffset);
   window.addEventListener('resize', applyOffset);
+  setTimeout(applyOffset, 50);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(applyOffset);
+    var tb = document.querySelector('.brand-topbar'), rb = document.querySelector('.ref-source-banner');
+    if (tb) ro.observe(tb);
+    if (rb) ro.observe(rb);
+  }
 })();
 </script>
 <script id="text-bounds-guard-script">
