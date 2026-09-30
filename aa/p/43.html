@@ -28,7 +28,7 @@
   .pdf-page-label { font-size: 13px; color: #888; margin: 26px 0 10px; }
   .pdf-page-label:first-of-type { margin-top: 0; }
   p { margin: 0 0 18px; text-align: justify; }
-  .wrap p { text-indent: 0.4cm; }
+  .wrap p:not(.fa-original-en) { text-indent: 0.4cm; }
 </style>
 <style id="brand-style">
   :root {
@@ -208,6 +208,16 @@
   .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
   .ref-menu-label { display: block !important; }
   .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
+  /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
+  body.dark-mode .ref-menu-dropdown {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background: #1c1826 !important;
+    border-color: rgba(227,200,118,.55) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.6) !important;
+  }
+  body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
+  body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
+  body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
   .fa-original-en {
     direction: ltr !important;
     text-align: left !important;

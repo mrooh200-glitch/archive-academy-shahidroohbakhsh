@@ -84,6 +84,8 @@ window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15
      صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
      تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
   body.dark-mode .brand-topbar,
   body.dark-mode .ref-source-banner,
   body.dark-mode .side-rail {
@@ -722,6 +724,7 @@ var pmefracjg=function(t){"use strict";return{init:function(){0==pmefracjg.ads_s
     for (var i = 0; i < all.length; i++) {
       var el = all[i];
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
       if (el.closest("mark.flash-highlight")) {
         if (cs.color !== MARK_COLOR) {

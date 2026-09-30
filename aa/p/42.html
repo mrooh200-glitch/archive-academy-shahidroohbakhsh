@@ -66,6 +66,8 @@
   }
   body.dark-mode { background: #0d0d10; }
   html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
   body.dark-mode .brand-topbar,
   body.dark-mode .ref-source-banner,
   body.dark-mode .side-rail {
@@ -229,6 +231,16 @@
   .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
   .ref-menu-label { display: block !important; }
   .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
+  /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
+  body.dark-mode .ref-menu-dropdown {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background: #1c1826 !important;
+    border-color: rgba(227,200,118,.55) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.6) !important;
+  }
+  body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
+  body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
+  body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
   mark.flash-highlight {
     background: rgba(227,200,118,.45);
     box-shadow: 0 0 0 2px rgba(227,200,118,.45);
@@ -8525,6 +8537,7 @@
     for (var i = 0; i < all.length; i++) {
       var el = all[i];
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
       if (el.closest("mark.flash-highlight")) {
         if (cs.color !== MARK_COLOR) {
