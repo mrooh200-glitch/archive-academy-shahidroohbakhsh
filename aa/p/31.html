@@ -271,9 +271,11 @@
     border-left: 3px solid var(--b-gold);
     border-radius: 5px;
     padding: 12px 16px;
+    padding-left: 0.4cm !important;
     margin: 8px 0 18px !important;
     max-width: 760px;
   }
+  .fa-original-en-text { display: block; }
   .fa-original-en-label {
     display: block;
     direction: rtl;
@@ -283,6 +285,7 @@
     font-weight: 700;
     color: var(--b-forest-dark);
     margin-bottom: 6px;
+    text-indent: 0 !important;
   }
 
   #back-to-top-link {
@@ -347,7 +350,7 @@
   }
 
   /* --- paragraph indentation (scoped to Guardian's article body container only) --- */
-  .article-body-viewer-selector p { text-indent: 0.4cm; }
+  .article-body-viewer-selector p:not(.fa-original-en) { text-indent: 0.4cm; }
 </style>
 <script id="kill-dialog-script">
 (function() {
@@ -832,7 +835,10 @@
         label.className = "fa-original-en-label";
         label.textContent = "متنِ اصلیِ مرتبط:";
         enBox.appendChild(label);
-        enBox.appendChild(document.createTextNode(ORIGINAL_EN));
+        var enText = document.createElement("span");
+        enText.className = "fa-original-en-text";
+        enText.textContent = ORIGINAL_EN;
+        enBox.appendChild(enText);
         blockAncestor.parentNode.insertBefore(enBox, blockAncestor.nextSibling);
       }
     }

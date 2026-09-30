@@ -157,16 +157,21 @@
   }
 
   #back-to-top-link {
-    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -0.2em;
+    margin: 0 .3em;
     border-radius: 50%;
     background: var(--b-gold);
     color: #2a1a05;
-    display: flex; align-items: center; justify-content: center;
     text-decoration: none;
     font-weight: 800;
-    box-shadow: 0 2px 8px rgba(0,0,0,.25);
-    z-index: 999999;
+    font-family: Arial, "Segoe UI Symbol", sans-serif;
+    text-indent: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
     cursor: pointer;
+    line-height: 1;
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
 
@@ -239,7 +244,7 @@
   <div class="ref-menu-wrap">
     <button type="button" class="ref-menu-trigger" id="ref-menu-trigger" aria-haspopup="true" aria-expanded="false">دسترسی<span class="ref-menu-dots">⋮</span></button>
     <div class="ref-menu-dropdown" id="ref-menu-dropdown" role="menu">
-      <a href="https://hadith.inoor.ir/fa/hadith/269966/translate" target="_blank" rel="noopener" role="menuitem">
+      <a href="https://hadith.inoor.ir/fa/hadith/269966/translate#:~:text=%D9%84%D9%8E%D9%8A%D9%92%D8%B3%D9%8E%20%D9%85%D9%90%D9%86%D9%91%D9%8E%D8%A7%20%D9%85%D9%8E%D9%86%D9%92%20%D8%AA%D9%8E%D8%B1%D9%8E%D9%83%D9%8E%20%D8%AF%D9%8F%D9%86%D9%92%D9%8A%D9%8E%D8%A7%D9%87%D9%8F%20%D9%84%D9%90%D8%AF%D9%90%D9%8A%D9%86%D9%90%D9%87%D9%90%20%D9%88%D9%8E%20%D8%AF%D9%90%D9%8A%D9%86%D9%8E%D9%87%D9%8F%20%D9%84%D9%90%D8%AF%D9%8F%D9%86%D9%92%D9%8A%D9%8E%D8%A7%D9%87%D9%8F" target="_blank" rel="noopener" role="menuitem">
         <span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span>
       </a>
       <a href="../pdf/30.pdf#page=1" target="_blank" rel="noopener" role="menuitem">
@@ -524,53 +529,171 @@
     }, 200);
   }
 
-  function isBackToTopNeeded() {
-    return window.scrollY > 40;
+  function insertAtNewParagraphStart(link, mark, container) {
+    // Splits the container into two real block-level elements a few words
+    // before the highlight, then drops the arrow at the very start of the
+    // new second block. A real element boundary is a 100%-reliable, fixed
+    // "line start" (unlike a rendering-time wrap point, which shifts with
+    // viewport width/zoom and would need constant re-detection) -- and
+    // because the split happens just a few words before the highlight, the
+    // arrow always stays right next to it, even inside a long paragraph on
+    // mobile.
+    try {
+      var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+      var nodes = [];
+      var n;
+      while ((n = walker.nextNode())) {
+        if (mark.contains(n)) break;
+        nodes.push(n);
+      }
+
+      // Prefer breaking at a real sentence boundary (a period or question
+      // mark) right before the highlight -- that reads naturally, instead
+      // of breaking mid-sentence at an arbitrary word. Hadith-style texts
+      // often carry no punctuation at all, so fall back to the nearest
+      // comma, and only as a last resort fall back to a fixed word count.
+      function lastMatchIndex(text, re) {
+        for (var i = text.length - 1; i >= 0; i--) {
+          if (re.test(text[i])) return i;
+        }
+        return -1;
+      }
+      function scanBackwardForChar(re) {
+        for (var ni = nodes.length - 1; ni >= 0; ni--) {
+          var idx = lastMatchIndex(nodes[ni].data, re);
+          if (idx >= 0) return { node: nodes[ni], index: idx };
+        }
+        return null;
+      }
+      function afterChar(m) {
+        var offset = m.index + 1;
+        var data = m.node.data;
+        while (offset < data.length && data[offset] === " ") offset++;
+        return { node: m.node, offset: offset };
+      }
+      function wordsBack(count) {
+        var need = count, sNode = null, sOffset = 0;
+        outer2:
+        for (var ni = nodes.length - 1; ni >= 0; ni--) {
+          var textNode = nodes[ni];
+          var text = textNode.data;
+          var i = text.length;
+          while (i > 0) {
+            var spaceIdx = text.lastIndexOf(" ", i - 1);
+            var wordStart = spaceIdx + 1;
+            if (wordStart < i) {
+              sNode = textNode;
+              sOffset = wordStart;
+              need--;
+              if (need <= 0) break outer2;
+            }
+            if (spaceIdx < 0) break;
+            i = spaceIdx;
+          }
+        }
+        return sNode ? { node: sNode, offset: sOffset } : null;
+      }
+
+      // A punctuation mark is only useful as a split point if it's actually
+      // near the highlight -- in a long block that mixes several hadiths,
+      // the nearest period/comma the plain backward scan finds can belong
+      // to an earlier, unrelated sentence far away, which would make the
+      // new paragraph swallow everything in between (too long). So a
+      // candidate is accepted only if it's within a short distance of the
+      // highlight; otherwise we fall through to the next, more local tier.
+      var MAX_LOOKBACK = 70;
+      function charDistanceToMark(matchNode, matchIndex) {
+        var dist = 0, found = false;
+        for (var ni = 0; ni < nodes.length; ni++) {
+          if (nodes[ni] === matchNode) {
+            dist += nodes[ni].data.length - (matchIndex + 1);
+            found = true;
+          } else if (found) {
+            dist += nodes[ni].data.length;
+          }
+        }
+        return dist;
+      }
+
+      var split = null;
+      var sentenceEnd = scanBackwardForChar(/[.!؟]/);
+      if (sentenceEnd && charDistanceToMark(sentenceEnd.node, sentenceEnd.index) <= MAX_LOOKBACK) {
+        split = afterChar(sentenceEnd);
+      }
+      if (!split) {
+        var commaEnd = scanBackwardForChar(/[،,]/);
+        if (commaEnd && charDistanceToMark(commaEnd.node, commaEnd.index) <= MAX_LOOKBACK) {
+          split = afterChar(commaEnd);
+        }
+      }
+      if (!split) {
+        // No sentence-ending punctuation or comma was found nearby (common
+        // in unpunctuated classical Arabic hadith text, where clauses are
+        // simply strung together with "wa"). Guessing a word-count cutoff
+        // there risks slicing a clause in half. The safe, always-correct
+        // fallback is to start the new paragraph exactly where the
+        // highlighted quote itself starts -- that quote was chosen as a
+        // complete, self-contained statement, so this can never land
+        // mid-clause.
+        var markParent = mark.parentNode;
+        var idx = Array.prototype.indexOf.call(markParent.childNodes, mark);
+        split = { node: markParent, offset: idx };
+      }
+
+      if (!split) { container.insertBefore(link, container.firstChild); return; }
+      var splitNode = split.node, splitOffset = split.offset;
+
+      var range = document.createRange();
+      range.setStart(splitNode, splitOffset);
+      range.setEnd(container, container.childNodes.length);
+      var frag = range.extractContents();
+
+      var newBlock = container.cloneNode(false);
+      newBlock.removeAttribute("id");
+      newBlock.appendChild(frag);
+      container.parentNode.insertBefore(newBlock, container.nextSibling);
+
+      // keep the split visually seamless -- no extra gap should appear
+      // between the two artificially-split halves of what was one paragraph
+      container.style.marginBottom = "0";
+      newBlock.style.marginTop = "0";
+
+      newBlock.insertBefore(link, newBlock.firstChild);
+    } catch (e) {
+      container.insertBefore(link, container.firstChild);
+    }
   }
 
   function ensureBackToTopLink() {
-    if (!isBackToTopNeeded()) return;
     if (document.getElementById("back-to-top-link")) return;
     var mark = document.querySelector("mark.flash-highlight");
     if (!mark) return;
-    var rect = mark.getBoundingClientRect();
+    var container = mark.closest("p, li, blockquote, dd, dt, td, th, figcaption, div") || mark.parentNode;
     var fontSize = parseFloat(window.getComputedStyle(mark).fontSize) || 17;
-    var size = Math.max(24, Math.min(42, Math.round(fontSize * 1.65)));
+    var size = Math.max(18, Math.min(30, Math.round(fontSize * 1.05)));
     var link = document.createElement("a");
     link.id = "back-to-top-link";
     link.href = "#";
     link.title = "رفتن به بالا";
     link.setAttribute("aria-label", "رفتن به بالا");
-    link.textContent = "\u2191";
+    link.textContent = "↑";
     link.style.width = size + "px";
     link.style.height = size + "px";
-    link.style.fontSize = Math.round(fontSize * 0.885) + "px";
-    document.body.appendChild(link);
-    var top = window.scrollY + rect.top;
-    var leftTry = window.scrollX + rect.right + 12;
-    var rightMargin = window.innerWidth - (rect.right);
-    if (rightMargin > size + 24) {
-      link.style.left = leftTry + "px";
-    } else {
-      var leftMargin = rect.left;
-      if (leftMargin > size + 24) {
-        link.style.left = (window.scrollX + rect.left - size - 12) + "px";
-      } else {
-        link.style.left = (window.scrollX + rect.right - size - 6) + "px";
-      }
-    }
-    link.style.top = top + "px";
+    link.style.fontSize = Math.round(size * 0.55) + "px";
     link.addEventListener("click", function(e) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
+    insertAtNewParagraphStart(link, mark, container);
   }
 
   findAndHighlight();
   document.addEventListener("DOMContentLoaded", findAndHighlight);
   window.addEventListener("load", findAndHighlight);
   setTimeout(findAndHighlight, 2000);
-  window.addEventListener("scroll", ensureBackToTopLink);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function() { setTimeout(ensureBackToTopLink, 50); });
+  }
 })();
 </script>
 </body></html>
