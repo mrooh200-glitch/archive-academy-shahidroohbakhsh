@@ -152,9 +152,10 @@
     font-size: 23px; font-weight: 400;
     color: var(--c-forest-dark);
     margin-bottom: 10px;
+    text-indent: 0.4cm;
   }
   blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
-  blockquote.m-quote .translation { color: var(--c-ink); }
+  blockquote.m-quote .translation { display: block; color: var(--c-ink); text-indent: 0.4cm; margin-top: 8px; }
 
   sup.fn-ref, .m-footnotes li { scroll-margin-top: var(--topbar-h, 90px); }
   sup.fn-ref { font-size: 12px; }
@@ -184,7 +185,8 @@
   .m-footnotes-title { font-weight: 800; color: var(--c-forest-dark); margin-bottom: 10px; font-size: 14.5px; }
   .m-footnotes ol { margin: 0; padding-inline-start: 22px; list-style-type: persian; }
   .m-footnotes li { margin-bottom: 14px; line-height: 1.85; }
-  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0; }
+  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0.4cm; }
+  .m-footnotes .fn-p:first-child { text-indent: 0; }
   .m-footnotes .fn-p:last-child { margin-bottom: 0; }
   .m-footnotes a.fn-back { color: var(--c-forest); text-decoration: none; font-weight: 700; font-size: 12.5px; margin-inline-end: 6px; }
   .m-footnotes a.fn-back:hover { color: var(--c-maroon); }

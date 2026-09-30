@@ -285,9 +285,10 @@
     border-left: 4px solid var(--b-gold) !important;
     border-radius: 6px !important;
     padding: 12px 16px !important;
+    padding-left: 0.4cm !important;
     margin: 10px 0 18px 0 !important;
     box-sizing: border-box !important;
-  }
+}
   .fa-original-en .fa-original-en-label {
     display: block !important;
     direction: rtl !important;
@@ -297,9 +298,11 @@
     font-weight: bold !important;
     color: var(--b-forest-dark) !important;
     margin-bottom: 6px !important;
+    text-indent: 0 !important;
   }
+  .fa-original-en-text { display: block; }
   dialog, dialog[open], dialog::backdrop { display: none !important; }
-  section.body p { text-indent: 0.4cm !important; }
+  section.body p:not(.fa-original-en) { text-indent: 0.4cm !important; }
 </style>
 </head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button aria-label="حالت شب" class="brand-dark-toggle" id="darkModeToggle" title="حالت شب" type="button">🌙</button></div></div><div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5717173/#:~:text=Storytelling%20is%20a%20human%20universal18,expectations%20in%20a%20given%20society15" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5717173/pdf/41467_2017_Article_2036.pdf#page=2" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/2.pdf#page=2" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div>
@@ -1340,7 +1343,10 @@
       enLabel.className = "fa-original-en-label";
       enLabel.textContent = "متنِ اصلیِ مرتبط:";
       enBox.appendChild(enLabel);
-      enBox.appendChild(document.createTextNode(ENGLISH_ORIGINAL));
+      var enText = document.createElement("span");
+      enText.className = "fa-original-en-text";
+      enText.textContent = ENGLISH_ORIGINAL;
+      enBox.appendChild(enText);
       blockAncestor.parentNode.insertBefore(enBox, blockAncestor.nextSibling);
     }
 

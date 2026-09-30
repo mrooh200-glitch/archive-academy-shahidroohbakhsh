@@ -464,7 +464,7 @@
   .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
   .ref-source-banner .ref-pdf-sep { margin: 0 8px !important; color: var(--b-gold) !important; font-weight: normal !important; }
   dialog, dialog[open], dialog::backdrop { display: none !important; }
-  .c-article-body p { text-indent: 0.4cm !important; }
+  .c-article-body p:not(.fa-original-en) { text-indent: 0.4cm !important; }
   mark.flash-highlight {
     background: rgba(227,200,118,.45);
     box-shadow: 0 0 0 2px rgba(227,200,118,.45);
@@ -548,10 +548,11 @@
     border-left: 4px solid var(--b-gold) !important;
     border-radius: 6px !important;
     padding: 12px 16px !important;
+    padding-left: 0.4cm !important;
     margin: 10px auto 18px auto !important;
     max-width: 760px !important;
     box-sizing: border-box !important;
-  }
+}
   .fa-original-en .fa-original-en-label {
     display: block !important;
     direction: rtl !important;
@@ -561,7 +562,9 @@
     font-weight: bold !important;
     color: var(--b-forest-dark) !important;
     margin-bottom: 6px !important;
+    text-indent: 0 !important;
   }
+  .fa-original-en-text { display: block; }
 </style><style id="rtl-fix-style">
   p, li, h1, h2, h3, h4, h5, h6,
   blockquote, figcaption, dd, dt {
@@ -1353,7 +1356,10 @@ e/100?0:100),a=[g,e,0],this.set(f,a.join(":"));else return!0;var b=a[1];if(100==
       enLabel.className = "fa-original-en-label";
       enLabel.textContent = "متنِ اصلیِ مرتبط:";
       enBox.appendChild(enLabel);
-      enBox.appendChild(document.createTextNode(ENGLISH_ORIGINAL));
+      var enText = document.createElement("span");
+      enText.className = "fa-original-en-text";
+      enText.textContent = ENGLISH_ORIGINAL;
+      enBox.appendChild(enText);
       blockAncestor.parentNode.insertBefore(enBox, blockAncestor.nextSibling);
     }
 
