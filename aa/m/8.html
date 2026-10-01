@@ -31,11 +31,17 @@
      "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو خودِ هر بلاکِ
      سطحِ‌بالا جدا اعمال می‌شه. */
   body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
   body.dark-mode .m-topbar,
   body.dark-mode .m-wrap,
   body.dark-mode .side-rail {
     filter: invert(1) hue-rotate(180deg);
   }
+  /* حالتِ شب: نوارِ کناری و خطِ طلاییِ آن با opacity پایین تقریباً نامرئی می‌شد */
+  body.dark-mode .side-rail { opacity: .65; }
+  body.dark-mode .side-rail.right { border-left-width: 3px; }
+  body.dark-mode .side-rail.left { border-right-width: 3px; }
   body.dark-mode img,
   body.dark-mode iframe,
   body.dark-mode video {
@@ -231,6 +237,7 @@
     var DARK_MODE_KEY = "roohbakhshDarkMode";
     function applyDarkMode(enabled) {
       document.body.classList.toggle("dark-mode", enabled);
+      document.documentElement.classList.toggle("dark-mode", enabled);
       var button = document.getElementById("darkModeToggle");
       if (button) {
         button.textContent = enabled ? "☀️" : "🌙";
