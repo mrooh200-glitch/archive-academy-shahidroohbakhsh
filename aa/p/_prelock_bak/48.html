@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>چرا عشق حقیقی منتظر می‌ماند؟ — جاش مک‌داول</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Tahoma, "Vazirmatn", Arial, sans-serif;
+    background: #f7f3ea;
+    color: #222;
+    line-height: 2;
+    font-size: 17px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
+  .cite-box {
+    background: #fff; border-right: 4px solid #0b4f3c; border-left: none;
+    padding: 14px 18px; margin-bottom: 28px; font-size: 14px; color: #444;
+    direction: rtl; text-align: right;
+  }
+  .cite-box b { color: #0b4f3c; }
+  .pdf-page-label { font-size: 13px; color: #888; margin: 26px 0 10px; }
+  .pdf-page-label:first-of-type { margin-top: 0; }
+  p { margin: 0 0 18px; text-align: justify; }
+  .wrap p { text-indent: 0.4cm; }
+</style>
+<style id="brand-style">
+  :root {
+    --b-cream: #faf9fc;
+    --b-cream-deep: #ede9fe;
+    --b-forest: #6d28d9;
+    --b-forest-dark: #4c1d95;
+    --b-gold: #b8912a;
+    --b-gold-light: #e3c876;
+  }
+  body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
+  body.dark-mode .brand-topbar,
+  body.dark-mode .ref-source-banner,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .brand-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *):not(.flash-highlight):not(.flash-highlight *) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #e7e2f2 !important;
+    border-color: rgba(255,255,255,.2) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight {
+    background: rgba(227,200,118,.55) !important;
+    color: #2a1a05 !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight *,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight * {
+    color: #2a1a05 !important;
+    background: rgba(227,200,118,.55) !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *):not(.flash-highlight *) {
+    color: #cdb6ff !important;
+  }
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    background:
+      radial-gradient(circle at 1px 1px, rgba(109,40,217,.28) 1.6px, transparent 0) 0 0/18px 18px,
+      linear-gradient(180deg, var(--b-cream-deep), var(--b-cream) 40%, var(--b-cream) 60%, var(--b-cream-deep));
+    z-index: -1;
+  }
+  .side-rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, var(--b-gold) 10%, var(--b-gold) 90%, transparent);
+  }
+  .side-rail.right { right: 0; }
+  .side-rail.right::after { left: 0; }
+  .side-rail.left { left: 0; }
+  .side-rail.left::after { right: 0; }
+  @media (min-width: 860px) {
+    .side-rail { display: block; }
+  }
+  .brand-topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000002 !important;
+    background: linear-gradient(135deg, var(--b-forest-dark), var(--b-forest)) !important;
+    color: #fff !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 14px !important;
+    padding: 12px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    direction: rtl !important;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25) !important;
+    margin: 0 !important;
+  }
+  .brand-topbar span { color: #fff !important; }
+  .brand-topbar-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
+  .brand-topbar .brand-badge {
+    background: rgba(255,255,255,.15) !important;
+    border: 1px solid rgba(255,255,255,.35) !important;
+    border-radius: 999px !important;
+    padding: 3px 12px !important;
+    font-size: 12.5px !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+  }
+  .brand-topbar .brand-badge:hover { background: rgba(255,255,255,.26) !important; }
+  .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000001 !important;
+    top: 55px !important;
+    background: var(--b-cream-deep) !important;
+    color: var(--b-forest-dark) !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    padding: 8px 16px !important;
+    direction: rtl !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--b-gold-light) !important;
+    margin: 0 !important;
+  }
+  .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
+  .ref-menu-wrap { position: relative !important; display: inline-block !important; margin-right: 4px !important; }
+  .ref-menu-trigger {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: underline !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+  }
+  .ref-menu-trigger:hover { color: var(--b-forest) !important; }
+  .ref-menu-dots { font-weight: 900 !important; letter-spacing: 1px !important; text-decoration: none !important; }
+  .ref-menu-dropdown {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    right: 50% !important;
+    transform: translateX(50%) !important;
+    background: var(--b-cream) !important;
+    border: 1px solid var(--b-gold-light) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 6px 18px rgba(76,29,149,.22) !important;
+    padding: 6px !important;
+    min-width: 190px !important;
+    z-index: 1000003 !important;
+    text-align: right !important;
+  }
+  .ref-menu-dropdown.ref-menu-open { display: block !important; }
+  .ref-menu-dropdown a {
+    display: block !important;
+    padding: 7px 12px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    border-radius: 5px !important;
+    white-space: nowrap !important;
+    font-size: 13px !important;
+  }
+  .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
+  .ref-menu-label { display: block !important; }
+  .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
+  /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
+  body.dark-mode .ref-menu-dropdown {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background: #1c1826 !important;
+    border-color: rgba(227,200,118,.55) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.6) !important;
+  }
+  body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
+  body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
+  body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
+  .fa-original-en {
+    direction: ltr !important;
+    text-align: left !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 15px !important;
+    line-height: 1.8 !important;
+    color: #4a4458 !important;
+    background: #f4f2fa !important;
+    border-right: none !important;
+    border-left: 4px solid var(--b-gold) !important;
+    border-radius: 6px !important;
+    padding: 12px 16px !important;
+    padding-left: 0.4cm !important;
+    margin: 10px 0 6px 0 !important;
+    box-sizing: border-box !important;
+}
+  .fa-original-en .fa-original-en-label {
+    display: block !important;
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: bold !important;
+    color: var(--b-forest-dark) !important;
+    margin-bottom: 6px !important;
+    text-indent: 0 !important;
+  }
+  .fa-original-en-text { display: block; }
+  .fa-translation {
+    font-size: 15px !important;
+    color: #333 !important;
+    margin: 0 0 18px !important;
+    text-indent: 0 !important;
+  }
+  .fa-translation b { color: var(--b-forest-dark) !important; }
+  mark.flash-highlight {
+    background: rgba(227,200,118,.55);
+    color: #2a1a05;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  #back-to-top-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -0.35em;
+    width: 22px;
+    height: 22px;
+    margin: 0 .3em;
+    border-radius: 50%;
+    background: var(--b-gold);
+    color: #2a1a05;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 13px;
+    font-family: Arial, "Segoe UI Symbol", sans-serif;
+    text-indent: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    cursor: pointer;
+    line-height: 1;
+  }
+  #back-to-top-link:hover { background: var(--b-gold-light); }
+</style>
+
+</head>
+<body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
+
+<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، ترجمه‌شده‌یِ متنِ استخراج‌شده از یک منبع PDF است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://files.tyndale.com/thpdata/firstchapters/978-0-8423-6591-8.pdf" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/48.pdf#page=9" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span></a></div></span></div>
+
+<div class="wrap">
+
+<div class="cite-box">
+<b>McDowell, J.</b> (۲۰۰۲). <i><span dir="ltr">Why True Love Waits: The Definitive Book on How to Help Your Youth Resist Sexual Pressure</span></i>. Tyndale House Publishers.
+</div>
+
+<div class="pdf-page-label">صفحه‌ی ۳ کتاب (فصل ۱):</div>
+<p class="fa-translation"><b>ترجمه:</b> «او می‌داند که کلامِ خدا رابطه‌ی جنسیِ پیش از ازدواج را ممنوع کرده، و در میانِ سقوطِ استانداردهای اخلاقیِ فرهنگ، به این معیار پایبند مانده است.»</p>
+<div class="fa-original-en" dir="ltr">
+<span class="fa-original-en-label">متنِ اصلیِ انگلیسی:</span><span class="fa-original-en-text">
+He is still a virgin. <span id="ref-target-1">He knows that God's Word forbids premarital sex, and he has lived by that standard in the midst of the culture's plummeting moral standards.</span> And it was relatively easy for him to live a pure life—until he met Michelle. <a id="back-to-top-link" href="#" title="رفتن به بالا" aria-label="رفتن به بالا">↑</a>
+</span></div>
+
+</div>
+
+<script id="ref-flash-script">
+(function() {
+  var TARGET_IDS = ["ref-target-1"];
+  TARGET_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var mark = document.createElement("mark");
+    mark.className = "flash-highlight";
+    while (el.firstChild) mark.appendChild(el.firstChild);
+    el.appendChild(mark);
+  });
+  requestAnimationFrame(function() {
+    var m = document.querySelector("mark.flash-highlight");
+    if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
+  });
+})();
+</script>
+
+<script id="dark-mode-script">
+(function() {
+  var DARK_MODE_KEY = "roohbakhshDarkMode";
+  var FORCED_ATTR = "data-dm-forced";
+  var CONTENT_COLOR = "rgb(231, 226, 242)";
+  var LINK_COLOR = "rgb(205, 182, 255)";
+  var MARK_COLOR = "rgb(42, 26, 5)";
+
+  function patchStubbornColors() {
+    var all = document.body.querySelectorAll("*");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
+      var cs = getComputedStyle(el);
+      if (el.closest("mark.flash-highlight, .flash-highlight")) {
+        if (cs.color !== MARK_COLOR) {
+          el.style.setProperty("color", "#2a1a05", "important");
+          el.setAttribute(FORCED_ATTR, "1");
+        }
+        continue;
+      }
+      if (cs.color !== CONTENT_COLOR && cs.color !== LINK_COLOR) {
+        el.style.setProperty("color", "#e7e2f2", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+      if (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") {
+        el.style.setProperty("background-color", "transparent", "important");
+        el.style.setProperty("background-image", "none", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+    }
+  }
+  function unpatchStubbornColors() {
+    var all = document.body.querySelectorAll("[" + FORCED_ATTR + "]");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.removeProperty("color");
+      all[i].style.removeProperty("background-color");
+      all[i].style.removeProperty("background-image");
+      all[i].removeAttribute(FORCED_ATTR);
+    }
+  }
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
+    var button = document.getElementById("darkModeToggle");
+    if (button) {
+      button.textContent = enabled ? "☀️" : "🌙";
+      button.title = enabled ? "حالت روز" : "حالت شب";
+      button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+    }
+    if (enabled) {
+      patchStubbornColors();
+    } else {
+      unpatchStubbornColors();
+    }
+  }
+  var toggle = document.getElementById("darkModeToggle");
+  if (toggle) {
+    var saved = false;
+    try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+    applyDarkMode(saved);
+    toggle.addEventListener("click", function() {
+      var enabled = !document.body.classList.contains("dark-mode");
+      applyDarkMode(enabled);
+      try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+    });
+  }
+})();
+</script>
+<script id="ref-menu-script">
+(function() {
+  "use strict";
+  function closeAll() {
+    document.querySelectorAll(".ref-menu-dropdown.ref-menu-open").forEach(function(d) { d.classList.remove("ref-menu-open"); });
+    document.querySelectorAll('.ref-menu-trigger[aria-expanded="true"]').forEach(function(b) { b.setAttribute("aria-expanded", "false"); });
+  }
+  document.querySelectorAll(".ref-menu-trigger").forEach(function(btn) {
+    var dropdown = btn.nextElementSibling;
+    if (!dropdown) return;
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      var isOpen = dropdown.classList.contains("ref-menu-open");
+      closeAll();
+      if (!isOpen) {
+        dropdown.classList.add("ref-menu-open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+  document.addEventListener("click", closeAll);
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeAll();
+  });
+})();
+</script>
+<script id="dynamic-offset-script">
+(function() {
+  function applyOffset() {
+    var tb = document.querySelector('.brand-topbar');
+    var rb = document.querySelector('.ref-source-banner');
+    var tbH = tb ? tb.offsetHeight : 0;
+    if (rb) rb.style.setProperty('top', tbH + 'px', 'important');
+    var rbH = rb ? rb.offsetHeight : 0;
+    document.body.style.marginTop = (tbH + rbH) + 'px';
+  }
+  applyOffset();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOffset);
+  } else {
+    applyOffset();
+  }
+  window.addEventListener('load', applyOffset);
+  window.addEventListener('resize', applyOffset);
+})();
+</script>
+<script id="text-bounds-guard-script">
+(function() {
+  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt";
+  function isRtlText(str) {
+    var faCount = 0, total = 0;
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c === 32 || c === 10 || c === 9) continue;
+      total++;
+      if ((c >= 0x0600 && c <= 0x06FF) || (c >= 0xFB50 && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)) faCount++;
+    }
+    if (total === 0) return true;
+    return (faCount / total) > 0.35;
+  }
+  function applyBounds() {
+    document.querySelectorAll(SELECTOR).forEach(function(el) {
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) return;
+      el.style.maxWidth = "760px";
+      var dir = isRtlText(el.textContent) ? "rtl" : "ltr";
+      el.setAttribute("dir", dir);
+      el.style.direction = dir;
+      var rect = el.getBoundingClientRect();
+      var margin = 90;
+      if (dir === "rtl") {
+        var distRight = window.innerWidth - rect.right;
+        if (distRight < margin) el.style.marginRight = (margin - distRight) + "px";
+      } else {
+        if (rect.left < margin) el.style.marginLeft = (margin - rect.left) + "px";
+      }
+    });
+  }
+  applyBounds();
+  document.addEventListener("DOMContentLoaded", applyBounds);
+  window.addEventListener("load", applyBounds);
+  window.addEventListener("resize", applyBounds);
+  if (window.MutationObserver) {
+    new MutationObserver(function() { applyBounds(); }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+<script id="back-to-top-script">
+(function() {
+  var link = document.getElementById("back-to-top-link");
+  if (!link) return;
+  link.addEventListener("click", function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+
+</body>
+</html>
