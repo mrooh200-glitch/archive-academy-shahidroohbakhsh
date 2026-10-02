@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چرا اسلام لقمه‌ی حرام رو فقط یه تخلفِ حقوقی نمی‌دونه؟ | مطالعات تکمیلی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri+Quran&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-cream: #faf9fc;
+    --c-cream-deep: #ede9fe;
+    --c-forest: #6d28d9;
+    --c-forest-dark: #4c1d95;
+    --c-maroon: #6b2fb3;
+    --c-gold: #b8912a;
+    --c-gold-light: #e3c876;
+    --c-ink: #201a2b;
+    --c-line: #e6e1f0;
+    --c-quote-bg: #fff7e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+    background: var(--c-cream);
+    color: var(--c-ink);
+    line-height: 1.9;
+  }
+  /* فیلتر مستقیم رو body نیست: هر جدِ دارایِ filter برای فرزندانِ
+     position:fixed (topbar/side-rail) containing block تازه می‌سازه و
+     "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو خودِ هر بلاکِ
+     سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  body.dark-mode .m-topbar,
+  body.dark-mode .m-wrap,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  /* حالتِ شب: نوارِ کناری و خطِ طلاییِ آن با opacity پایین تقریباً نامرئی می‌شد */
+  body.dark-mode .side-rail { opacity: .65; }
+  body.dark-mode .side-rail.right { border-left-width: 3px; }
+  body.dark-mode .side-rail.left { border-right-width: 3px; }
+  body.dark-mode img,
+  body.dark-mode iframe,
+  body.dark-mode video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  .m-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .m-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 40px;
+    background-image: radial-gradient(var(--c-forest) 1.3px, transparent 1.3px);
+    background-size: 14px 14px;
+    opacity: .35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .side-rail.right { right: 0; border-left: 2px solid var(--c-gold); }
+  .side-rail.left  { left: 0;  border-right: 2px solid var(--c-gold); }
+  @media (min-width: 860px) { .side-rail { display: block; } }
+
+  .m-topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000002;
+    background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25);
+  }
+  .m-topbar .m-title { font-weight: 600; }
+  .m-topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .m-topbar .m-badge {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .m-topbar a.m-badge:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  @media (max-width: 560px) {
+    .m-topbar { padding: 10px 12px; gap: 8px; }
+    .m-topbar .m-title { white-space: nowrap; }
+    .m-topbar .m-title-extra { display: none; }
+    .m-topbar-actions { gap: 6px; }
+    .m-topbar .m-badge { font-size: 11.5px; padding: 3px 9px; }
+  }
+  @media (max-width: 360px) {
+    .m-topbar { padding: 8px 10px; }
+    .m-topbar .m-title { font-size: 12px; }
+    .m-topbar .m-badge { font-size: 10.5px; padding: 3px 6px; }
+    .m-topbar .m-dark-toggle { width: 28px; height: 28px; font-size: 13px; }
+    .m-topbar-actions { gap: 4px; }
+  }
+
+  .m-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 70px;
+    background: var(--c-cream);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--c-line);
+  }
+  .m-wrap::before, .m-wrap::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
+    opacity: .55;
+  }
+  .m-wrap::before { right: 0; }
+  .m-wrap::after  { left: 0; }
+
+  .m-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--c-cream-deep);
+    color: var(--c-forest-dark);
+    font-weight: 800; font-size: 18px;
+    border: 1.5px solid var(--c-gold-light);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 24px; font-weight: 800;
+    color: var(--c-forest-dark);
+    margin: 0 0 28px;
+    line-height: 1.6;
+    border-bottom: 2px solid var(--c-line);
+    padding-bottom: 18px;
+  }
+  p.m-p { font-size: 17px; font-weight: 500; margin: 0 0 18px; text-align: right; text-indent: 0.4cm; }
+
+  h2.m-sub { font-size: 19px; font-weight: 800; color: var(--c-forest-dark); margin: 30px 0 10px; line-height: 1.6; text-align: right; text-indent: 0; border-right: 3px solid var(--c-gold-light); padding-right: 10px; }
+
+  blockquote.m-quote {
+    margin: 26px 0;
+    padding: 18px 20px;
+    background: var(--c-quote-bg);
+    border-right: 4px solid var(--c-gold);
+    border-radius: 6px;
+    font-size: 17px;
+    line-height: 1.95;
+  }
+  blockquote.m-quote .arabic {
+    display: block;
+    font-family: "Amiri Quran", "Vazirmatn", serif;
+    font-size: 23px; font-weight: 400;
+    color: var(--c-forest-dark);
+    margin-bottom: 10px;
+    text-indent: 0.4cm;
+  }
+  blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
+  blockquote.m-quote .translation { display: block; color: var(--c-ink); text-indent: 0.4cm; margin-top: 8px; }
+
+  sup.fn-ref, .m-footnotes li { scroll-margin-top: var(--topbar-h, 90px); }
+  sup.fn-ref { font-size: 12px; }
+  sup.fn-ref a {
+    color: var(--c-forest-dark);
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0 1px;
+  }
+  sup.fn-ref a:hover { text-decoration: underline; }
+
+  a.ref-link {
+    color: var(--c-forest);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--c-forest);
+    font-size: 14px;
+  }
+  a.ref-link:hover { color: var(--c-maroon); }
+
+  .m-footnotes {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--c-gold-light);
+    font-size: 14.5px;
+    color: #4a4356;
+  }
+  .m-footnotes-title { font-weight: 800; color: var(--c-forest-dark); margin-bottom: 10px; font-size: 14.5px; }
+  .m-footnotes ol { margin: 0; padding-inline-start: 22px; list-style-type: persian; }
+  .m-footnotes li { margin-bottom: 14px; line-height: 1.85; }
+  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0.4cm; }
+  .m-footnotes .fn-p:first-child { text-indent: 0; }
+  .m-footnotes .fn-p:last-child { margin-bottom: 0; }
+  .m-footnotes a.fn-back { color: var(--c-forest); text-decoration: none; font-weight: 700; font-size: 12.5px; margin-inline-end: 6px; }
+  .m-footnotes a.fn-back:hover { color: var(--c-maroon); }
+  .fn-p.fn-quote-en {
+    direction: ltr;
+    text-align: left;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #4a4458;
+    background: #f4f2fa;
+    border-left: 3px solid var(--c-gold);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 6px 0 12px !important;
+  }
+
+  .m-nav {
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-line);
+    display: flex; justify-content: space-between;
+    font-size: 14.5px;
+  }
+  .m-nav a { color: var(--c-forest); text-decoration: none; font-weight: 600; }
+  .m-nav a:hover { color: var(--c-maroon); }
+  .m-nav .disabled { color: #b9b3c6; pointer-events: none; }
+</style>
+</head>
+<body>
+  <div class="side-rail right"></div>
+  <div class="side-rail left"></div>
+  <div class="m-topbar">
+    <span class="m-title">مطالعات تکمیلی<span class="m-title-extra"> — اصول اعتقادی</span></span>
+    <div class="m-topbar-actions">
+      <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/" target="_blank" rel="noopener">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+      <button id="darkModeToggle" type="button" class="m-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button>
+    </div>
+  </div>
+  <script id="dark-mode-script">
+  (function() {
+    var DARK_MODE_KEY = "roohbakhshDarkMode";
+    function applyDarkMode(enabled) {
+      document.body.classList.toggle("dark-mode", enabled);
+      document.documentElement.classList.toggle("dark-mode", enabled);
+      var button = document.getElementById("darkModeToggle");
+      if (button) {
+        button.textContent = enabled ? "☀️" : "🌙";
+        button.title = enabled ? "حالت روز" : "حالت شب";
+        button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+      }
+    }
+    var toggle = document.getElementById("darkModeToggle");
+    if (toggle) {
+      var saved = false;
+      try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+      applyDarkMode(saved);
+      toggle.addEventListener("click", function() {
+        var enabled = !document.body.classList.contains("dark-mode");
+        applyDarkMode(enabled);
+        try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+      });
+    }
+  })();
+  </script>
+  <script id="dynamic-offset-script">
+  (function() {
+    function applyOffset() {
+      var bar = document.querySelector('.m-topbar');
+      if (!bar) return;
+      var h = bar.getBoundingClientRect().height;
+      document.body.style.paddingTop = h + 'px';
+      document.documentElement.style.setProperty('--topbar-h', (h + 16) + 'px');
+    }
+    applyOffset();
+    document.addEventListener('DOMContentLoaded', applyOffset);
+    window.addEventListener('load', applyOffset);
+    window.addEventListener('resize', applyOffset);
+    setTimeout(applyOffset, 50);
+  })();
+  </script>
+  <div class="m-wrap"><div class="m-num">۱۱</div>
+    <h1>چرا اسلام لقمه‌ی حرام رو فقط یه تخلفِ حقوقی نمی‌دونه؟</h1>
+    <p class="m-p">اگه انسان رو یه سخت‌افزار و روانِ او رو یه نرم‌افزارِ پیچیده فرض کنیم، تنها کسی که به تمام کدهای پنهانِ انسان آگاهه، «برنامه‌نویسِ» این سیستمه.</p>
+    <p class="m-p">یکی از کدهای پنهان، ارتباط تنگاتنگ بین ماده‌ی غذایی و روح انسان هست.<sup class="fn-ref" id="fnref-1"><a href="#fn-1">۱</a></sup> تو رویکرد سیستمیِ اسلام به تغذیه، مرز بینِ «ماده» و «روح» برداشته می‌شه. تو این نگاه، مفاهیمی مثل لقمه‌ی حرام، صرفاً یه تخلفِ حقوقی نیستن، بلکه ایجادکننده‌ی نوعی «مسمومیتِ شناختی و معنوی» محسوب می‌شن.</p>
+    <p class="m-p">تو این سیستمِ یکپارچه، یه سیبِ ارگانیک و کاملاً سالم (طیّب)، اگه از مال دزدی به دست اومده باشه (غیرحلال)، بلافاصله به‌عنوان یه «باگ» تو سیستم عمل کرده، گیرنده‌های معنوی قلب رو مسدود می‌کنه و اندیشه رو به انحراف می‌کشونه.</p>
+    <p class="m-p">برای درکِ بهترِ این سازوکار، می‌شه از یه تمثیلِ علمی کمک گرفت: همون‌طور که تو پزشکی مدرن، مفهومِ «محور روده-مغز» (Gut-Brain Axis) نشون داده که باکتری‌های دستگاه گوارش، از راه‌هایی مثل مولکول‌های عصبی-هورمونی، بر سیستم عصبی، خلق‌وخو و رفتار اجتماعیِ انسان تأثیر می‌ذارن.<sup class="fn-ref" id="fnref-2"><a href="#fn-2">۲</a></sup></p>
+    <div class="m-footnotes">
+      <div class="m-footnotes-title">پی‌نوشت‌ها</div>
+      <ol>
+        <li id="fn-1">
+          <p class="fn-p"><a class="fn-back" href="#fnref-1" aria-label="بازگشت به متن">↑</a>لقمانی، احمد. (۱۳۹۳، تیر). «غذای پاکیزه بخورید». <em>پیام زن</em>، ۲۳(۲۶۸). <a class="ref-link" href="../p/59.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Elgharbawy, A., &amp; Azmi, N. A. N. (2022). How eating halal and toyyib contributes to a balanced lifestyle. <em>Halalsphere, 2</em>(1), 86–97.</span> <a class="ref-link" href="../p/60.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-2">
+          <p class="fn-p"><a class="fn-back" href="#fnref-2" aria-label="بازگشت به متن">↑</a>باباخانی، سجاد؛ و حسینی، فرزانه. (۱۳۹۷). «میکروبیوتای روده: عاملی مؤثر بر مغز و رفتار انسان». <em>مجله‌ی علوم اعصاب شفای خاتم</em>، ۷(۱)، ۱۰۶–۱۱۸. <a class="ref-link" href="../p/61.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+      </ol>
+    </div>
+    <div class="m-nav">
+      <a href="10.html">« قبلی</a>
+      <a href="12.html">بعدی »</a>
+    </div>
+  </div>
+
+</body>
+</html>

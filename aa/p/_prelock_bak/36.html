@@ -1,0 +1,630 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html lang=fa><style id="brand-style">
+  :root {
+    --b-cream: #faf9fc;
+    --b-cream-deep: #ede9fe;
+    --b-forest: #6d28d9;
+    --b-forest-dark: #4c1d95;
+    --b-gold: #b8912a;
+    --b-gold-light: #e3c876;
+  }
+  body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
+  body.dark-mode .brand-topbar,
+  body.dark-mode .ref-source-banner,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .brand-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #e7e2f2 !important;
+    border-color: rgba(255,255,255,.2) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+    background: rgba(227,200,118,.55) !important;
+    color: #2a1a05 !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+    color: #2a1a05 !important;
+    background: rgba(227,200,118,.55) !important;
+  }
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+    color: #cdb6ff !important;
+  }
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    background:
+      radial-gradient(circle at 1px 1px, rgba(109,40,217,.28) 1.6px, transparent 0) 0 0/18px 18px,
+      linear-gradient(180deg, var(--b-cream-deep), var(--b-cream) 40%, var(--b-cream) 60%, var(--b-cream-deep));
+    z-index: -1;
+  }
+  .side-rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, var(--b-gold) 10%, var(--b-gold) 90%, transparent);
+  }
+  .side-rail.right { right: 0; }
+  .side-rail.right::after { left: 0; }
+  .side-rail.left { left: 0; }
+  .side-rail.left::after { right: 0; }
+  @media (min-width: 860px) {
+    .side-rail { display: block; }
+  }
+  .brand-topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000002 !important;
+    background: linear-gradient(135deg, var(--b-forest-dark), var(--b-forest)) !important;
+    color: #fff !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 14px !important;
+    padding: 12px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    direction: rtl !important;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25) !important;
+    margin: 0 !important;
+  }
+  .brand-topbar span { color: #fff !important; }
+  .brand-topbar-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
+  .brand-topbar .brand-badge {
+    background: rgba(255,255,255,.15) !important;
+    border: 1px solid rgba(255,255,255,.35) !important;
+    border-radius: 999px !important;
+    padding: 3px 12px !important;
+    font-size: 12.5px !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+  }
+  .brand-topbar .brand-badge:hover { background: rgba(255,255,255,.26) !important; }
+  .ref-source-banner {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000001 !important;
+    top: 55px !important;
+    background: var(--b-cream-deep) !important;
+    color: var(--b-forest-dark) !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    padding: 8px 16px !important;
+    direction: rtl !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--b-gold-light) !important;
+    margin: 0 !important;
+  }
+  .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
+  .ref-menu-wrap { position: relative !important; display: inline-block !important; margin-right: 4px !important; }
+  .ref-menu-trigger {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 13px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: underline !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+  }
+  .ref-menu-trigger:hover { color: var(--b-forest) !important; }
+  .ref-menu-dots { font-weight: 900 !important; letter-spacing: 1px !important; text-decoration: none !important; }
+  .ref-menu-dropdown {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    right: 50% !important;
+    transform: translateX(50%) !important;
+    background: var(--b-cream) !important;
+    border: 1px solid var(--b-gold-light) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 6px 18px rgba(76,29,149,.22) !important;
+    padding: 6px !important;
+    min-width: 190px !important;
+    z-index: 1000003 !important;
+    text-align: right !important;
+  }
+  .ref-menu-dropdown.ref-menu-open { display: block !important; }
+  .ref-menu-dropdown a {
+    display: block !important;
+    padding: 7px 12px !important;
+    color: var(--b-forest-dark) !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    border-radius: 5px !important;
+    white-space: nowrap !important;
+    font-size: 13px !important;
+  }
+  .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
+  .ref-menu-label { display: block !important; }
+  .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
+  /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
+  body.dark-mode .ref-menu-dropdown {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background: #1c1826 !important;
+    border-color: rgba(227,200,118,.55) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.6) !important;
+  }
+  body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
+  body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
+  body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
+  mark.flash-highlight {
+    background: rgba(227,200,118,.45);
+    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    color: inherit;
+  }
+  .fa-original-en {
+    direction: ltr !important;
+    text-align: left !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+    color: #4a4458 !important;
+    background: #f4f2fa !important;
+    border-right: none !important;
+    border-left: 4px solid var(--b-gold) !important;
+    border-radius: 6px !important;
+    padding: 12px 16px !important;
+    margin: 10px 0 18px 0 !important;
+    box-sizing: border-box !important;
+    text-indent: 0.4cm !important;
+  }
+  .fa-original-en .fa-original-en-label {
+    display: block !important;
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: bold !important;
+    color: var(--b-forest-dark) !important;
+    margin-bottom: 6px !important;
+    text-indent: 0 !important;
+  }
+  dialog, dialog[open], dialog::backdrop { display: none !important; }
+</style>
+<div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div><div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://www.bbc.com/persian/worldnews/story/2006/11/printable/061116_si-vatican-celibacy#:~:text=%D8%A7%D8%B2%20%D8%A7%D9%88%D8%A7%D8%AE%D8%B1%20%D8%B3%D8%AF%D9%87%20%D8%B3%D9%88%D9%85,%D9%86%DA%A9%D9%86%D9%86%D8%AF" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../pdf/36.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد</span></a></div></span></div><!--
+ Page saved with SingleFile 
+ url: https://www.bbc.com/persian/worldnews/story/2006/11/printable/061116_si-vatican-celibacy 
+ saved date: Sun Sep 27 2026 13:40:49 GMT+0330 (وقت عادی ایران)
+--><meta charset=utf-8>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+<style>body{transition:opacity ease-in 0.2s}</style>
+<meta http-equiv=Content-Language content=fa><title>BBCPersian.com</title><meta http-equiv=expires content=now><meta http-equiv=pragma content=no-cache><meta name=description content="واتيکان در پی رايزنی پاپ با مشاورانش بار ديگر حمايت خود را از سنت تجرد برای کشيش های کاتوليک اعلام داشته است."><meta name=keywords content="کشيش، واتيکان، کليسای کاتوليک، تجرد، بی همسری، تاهل، متاهل، مجرد"><meta name=created content=2006-11-16T22:17:07+00:00><meta name=updated content=2006-11-16T22:22:37+00:00><script src=data:application/javascript;base64,bXl3aW4gPSBudWxsOwp2YXIgdW5Mb2FkOwp2YXIgc3VybDsKZnVuY3Rpb24gb3BlbndpbmRvdyh1cmwsIHdpZHRoLCBoZWlnaHQsIHNjcm9sbGFibGVCb29sZWFuKSB7CgkJCQkJCQkJCSBpZiAoaGVpZ2h0PT0zNzUpIHNjcm9sbGFibGVCb29sZWFuPTE7IC8vIEZPUkNFIFNDUk9MTEJBUiBGT1IgRS1TVVJWRVkgCglzdXJsID0gdXJsOwoJKHNjcm9sbGFibGVCb29sZWFuPT0wKSA/IHNjcm9sbGFibGU9Im5vIjogc2Nyb2xsYWJsZT0ieWVzIjsKCWlmICh1cmwgIT0gIiIpIHsKCQlpZiAoIW15d2luKSB7CgkJCW15d2luID0gd2luZG93Lm9wZW4odXJsLCJteXdpbiIsICJzdGF0dXM9bm8sIHNjcm9sbGJhcnM9IiArIHNjcm9sbGFibGUgKyAiLCByZXNpemFibGU9eWVzLCB3aWR0aD0iICsgd2lkdGggKyAiLCBoZWlnaHQ9IiArIGhlaWdodCArICIsc2NyZWVuWD0xMCxzY3JlZW5ZPTEwLHRvcD0xMCxsZWZ0PTEwIik7CgkJCXVuTG9hZCA9IChmdW5jdGlvbiAoKSB7bXl3aW4gPSBudWxsO30pOwoJCQlteXdpbi5vbnVubG9hZCA9IHVuTG9hZDsKCQl9CgkJZWxzZSB7CgkJCWlmIChteXdpbi5jbG9zZWQpIHsKCQkJCW15d2luID0gbnVsbDsKCQkJCW9wZW53aW5kb3coc3VybCwgd2lkdGgsIGhlaWdodCwgc2Nyb2xsYWJsZUJvb2xlYW4pOwoJCQl9CgkJCW15d2luLmZvY3VzKCk7CgkJCW15d2luLmxvY2F0aW9uLmhyZWYgPSB1cmw7CgkJfQoJfSAJCQkJCQp9CmZ1bmN0aW9uIHBvcG1haWx3aW4oeCwgeSkgewogIHdpbmRvdy5vcGVuKHgseSwnc3RhdHVzPW5vLHNjcm9sbGJhcnM9bm8scmVzaXphYmxlPXllcyx3aWR0aD0zNzAsaGVpZ2h0PTQ1MCcpOwp9CgpmdW5jdGlvbiBsYXVuY2hBVkNvbnNvbGVTdG9yeShzdG9yeWlkLCBwYXRodG9jb25zb2xlLHBhdGh0b3N0b3J5KQp7CglpZihiYmNWMlRzdCgpKQoJewoJCgkJY29uc29sZXVybCA9ICJodHRwOi8vd3d3LmJiYy5jby51ay9tZWRpYXNlbGVjdG9yL2NoZWNrIitwYXRodG9jb25zb2xlKyI/cmVkaXJlY3Q9ZnMuc2h0bWwmbmJyYW09MSZuYndtPTEmd3Nfc3RvcnlpZD0iICsgc3RvcnlpZCArIiZ3c19wYXRodG9zdG9yeT0iK3BhdGh0b3N0b3J5OwoKCQlpZiggCgkJKHBhdGh0b2NvbnNvbGUuaW5kZXhPZigndXJkdScpID09IC0xKSAKCQkmJiAocGF0aHRvY29uc29sZS5pbmRleE9mKCdwb3J0dWd1ZXNlJykgPT0gLTEpCgkJJiYgKHBhdGh0b2NvbnNvbGUuaW5kZXhPZignYXJhYmljJykgPT0gLTEpCgkJJiYgKHBhdGh0b2NvbnNvbGUuaW5kZXhPZigncGVyc2lhbicpID09IC0xKQoJCSYmIChwYXRodG9jb25zb2xlLmluZGV4T2YoJ3NwYW5pc2gnKSA9PSAtMSkKCQkpIHsKCQkKCQl9IGVsc2UgewoJCQl2YXIgcmVzZXRTdHIgPSByZXNldE1lZGlhU2VsZWN0b3JQcmVmKHBhdGh0b2NvbnNvbGUpOwoJCQljb25zb2xldXJsID0gY29uc29sZXVybCsnJmJicmFtPTEmYmJ3bT0xJyArIHJlc2V0U3RyOwoJCX0KCQljbGlja21haW49d2luZG93Lm9wZW4oY29uc29sZXVybCwiY29uc29sZSIsInRvb2xiYXI9MCxsb2NhdGlvbj0wLHN0YXR1cz0wLG1lbnViYXI9MCxzY3JvbGxiYXJzPTEscmVzaXphYmxlPTAsd2lkdGg9NjgxLGhlaWdodD0zODciKTsKCgkJY2xpY2ttYWluLmZvY3VzKCk7CgoJfQoJZWxzZQoJewoJCXNlbGYubG9jYXRpb24uaHJlZj0iaHR0cDovL25ld3MuYmJjLmNvLnVrLzIvaGkvaGVscC8zNjgxOTM4LnN0bSI7Cgl9Cn0KCmZ1bmN0aW9uIGxhdW5jaEFWQ29uc29sZVYzKHBhdGh0b3NlY3Rpb24scGF0aHRvY29uc29sZSkKewoJaWYoYmJjVjJUc3QoKSkKCXsJCgkKCQl2YXIgdXJsID0gImh0dHA6Ly93d3cuYmJjLmNvLnVrL21lZGlhc2VsZWN0b3IvY2hlY2siK3BhdGh0b2NvbnNvbGUrIj9yZWRpcmVjdD1mcy5zaHRtbCZuYnJhbT0xJm5id209MSI7CQoKCQlpZigKCQkocGF0aHRvc2VjdGlvbi5pbmRleE9mKCd1cmR1JykgPT0gLTEpCgkJJiYocGF0aHRvc2VjdGlvbi5pbmRleE9mKCdwb3J0dWd1ZXNlJykgPT0gLTEpCgkJJiYgKHBhdGh0b3NlY3Rpb24uaW5kZXhPZignYXJhYmljJykgPT0gLTEpCgkJJiYgKHBhdGh0b3NlY3Rpb24uaW5kZXhPZigncGVyc2lhbicpID09IC0xKQoJCSYmIChwYXRodG9zZWN0aW9uLmluZGV4T2YoJ3NwYW5pc2gnKSA9PSAtMSkKCQkpIHsKCQkKCQl9IGVsc2UgewoJCSAgICB2YXIgcmVzZXRTdHIgPSByZXNldE1lZGlhU2VsZWN0b3JQcmVmKHBhdGh0b3NlY3Rpb24pOwoJCQl1cmwgPSB1cmwrJyZiYnJhbT0xJmJid209MScgKyByZXNldFN0cjsKCQl9CgoJCWlmIChwYXRodG9zZWN0aW9uKQoJCXsKCQkJdXJsID0gdXJsICsgIiZ3c19wYXRodG9zdG9yeT0iICsgcGF0aHRvc2VjdGlvbjsKCQl9CgkJY2xpY2ttYWluPXdpbmRvdy5vcGVuKHVybCwiY29uc29sZSIsInRvb2xiYXI9MCxsb2NhdGlvbj0wLHN0YXR1cz0wLG1lbnViYXI9MCxzY3JvbGxiYXJzPTEscmVzaXphYmxlPTAsd2lkdGg9NjgxLGhlaWdodD0zODciKTsKCgpjbGlja21haW4uZm9jdXMoKTsKCgl9CgllbHNlCgl7CgkJc2VsZi5sb2NhdGlvbi5ocmVmPSJodHRwOi8vbmV3cy5iYmMuY28udWsvMi9oaS9oZWxwLzM2ODE5Mzguc3RtIjsKCX0KfQoKCmZ1bmN0aW9uIGJiY1YyVHN0KCl7CgoJdmFyIHR5cGUgPSBnZXRCcm93c2VyVHlwZSgpOwoJCglyZXR1cm4gKHR5cGUgICE9ICJvdGhlciIgJiYodHlwZSA9PSAiaWU1IiB8fCB0eXBlID09ICJuYXY2IiB8fCB0eXBlID09ICJkb21Db21wbGlhbnQiKSk7Cn0KCmZ1bmN0aW9uIGdldFBsYXRmb3JtKCkKewoJdmFyIG15VXNlckFnZW50OwoJbXlVc2VyQWdlbnQgPSBuYXZpZ2F0b3IudXNlckFnZW50LnRvTG93ZXJDYXNlKCk7CgoJaWYgKChteVVzZXJBZ2VudC5pbmRleE9mKCJ3aW4iKSAhPSAtMSkgfHwgIChteVVzZXJBZ2VudC5pbmRleE9mKCIxNmJpdCIpICE9IC0xKSkKCXsKCQlyZXR1cm4gIndpbiI7Cgl9CgkKCWlmIChteVVzZXJBZ2VudC5pbmRleE9mKCJtYWMiKSAhPSAtMSkKCXsKCQlyZXR1cm4gIm1hYyI7Cgl9ICAKCQoJaWYgKG15VXNlckFnZW50LmluZGV4T2YoIngxMSIpICE9IC0xKQoJewoJCXJldHVybiAidW54IjsKCX0gIAoJCglyZXR1cm4gIm90aGVyIjsKfQoKZnVuY3Rpb24gZ2V0QnJvd3NlclR5cGUoKQp7Cgl2YXIgbXlVc2VyQWdlbnQ7CgoJdmFyIG15TWFqb3I7CglteVVzZXJBZ2VudD0gbmF2aWdhdG9yLnVzZXJBZ2VudC50b0xvd2VyQ2FzZSgpOwoJbXlNYWpvcj0gcGFyc2VJbnQobmF2aWdhdG9yLmFwcFZlcnNpb24pOwoJaWYoIChteVVzZXJBZ2VudC5pbmRleE9mKCdtb3ppbGxhJykhPSAtMSkgJiYobXlVc2VyQWdlbnQuaW5kZXhPZignc3Bvb2ZlcicpPT0gLTEpICYmKG15VXNlckFnZW50LmluZGV4T2YoJ2NvbXBhdGlibGUnKSA9PSAtMSkgJiYobXlVc2VyQWdlbnQuaW5kZXhPZignb3BlcmEnKSA9PSAtMSkgJiYobXlVc2VyQWdlbnQuaW5kZXhPZignd2VidHYnKSAgPT0gLTEpICkKCXsgIAoJCWlmIChteU1ham9yID4gNCApCgkJCXsKCQkJCXJldHVybiAibmF2NiI7CgkJCX0gCgkJZWxzZSBpZiAoKG15TWFqb3IgPT0gNCApIHx8IChteU1ham9yID09IDUgKSkKCQkJewoJCQkJcmV0dXJuICJuYXY0IjsKCQkJfQoJfQoJCglpZiAobXlVc2VyQWdlbnQuaW5kZXhPZigibXNpZSIpID09IDQpCgkJewoJCQlyZXR1cm4gImllNCI7CgkJCQoJfQoJZWxzZSBpZiAobXlVc2VyQWdlbnQuaW5kZXhPZigibXNpZSIpID09IDUpCgkJewoJCQlyZXR1cm4gImllNSI7CgkJfQkKLy8gZG9tIGNvbXBsaWFudCBicm93c2VycyBhcmUgYWxsb3dlZAoJaWYoZG9jdW1lbnQuYm9keS5maXJzdENoaWxkKSAKCXJldHVybiAiZG9tQ29tcGxpYW50IjsKCXJldHVybiAib3RoZXIiOwp9CgoKZnVuY3Rpb24gZ2V0QnJvd3NlclZlcnNpb24oKSAvL3RoaXMgaXMgZm9yIHRoZSB0aWNrZXIgdG8gaWRlbnRpZnkgYmV0d2VlbiBtYWMgSUU0IGFuZCBJRTUKewoJdmFyIHMgPSBuYXZpZ2F0b3IuYXBwVmVyc2lvbjsKCXMgPSBzLnN1YnN0cihzLmluZGV4T2YoIigiKSxzLmxlbmd0aCk7Cgl3aGlsZSAoaXNOYU4ocGFyc2VJbnQocykpKQoJewoJCXMgPSBzLnN1YnN0cigxLHMubGVuZ3RoKTsKCX0KCXJldHVybiBwYXJzZUludChzKTsKfQoKLy8gZm9yIHNwZWNpYWxzIHJlc2l6aW5nCmZ1bmN0aW9uIHJlc2l6ZVBvcHVwKHdpZHRoLGhlaWdodCkKewp2YXIgYWdlbnQgPSBuYXZpZ2F0b3IudXNlckFnZW50LnRvTG93ZXJDYXNlKCk7CnZhciBtYWpvciAgPSBwYXJzZUludChuYXZpZ2F0b3IuYXBwVmVyc2lvbik7CnZhciBpc0lFICAgICA9ICgoYWdlbnQuaW5kZXhPZigibXNpZSIpIT0gLTEpICYmCiAgICAgICAgICAgICAgICAoYWdlbnQuaW5kZXhPZigib3BlcmEiKT09IC0xKSk7CnZhciBpZTcgICAgPSAoaXNJRSAmJiAobWFqb3IgPT0gNCkgJiYgKGFnZW50LmluZGV4T2YoIm1zaWUgNy4wIikgICAgIT0gLTEpKTsKCnZhciB0aGVXaWR0aCA9IHdpZHRoKzg7CnZhciB0aGVIZWlnaHQgPSBoZWlnaHQ7CgppZihkb2N1bWVudC5hbGwpIHsgCnRoZUhlaWdodCA9IGRvY3VtZW50LmFsbC5wb2ludGEub2Zmc2V0SGVpZ2h0KzQwOyAKaWYoaWU3KSB7IHRoZUhlaWdodCArPSA1MDt9Cn0KZWxzZSB7IHRoZUhlaWdodCA9IGRvY3VtZW50LmhlaWdodCs1NTsgfQp3aW5kb3cucmVzaXplVG8odGhlV2lkdGgsdGhlSGVpZ2h0KTsKCn0gLy8gIGVuZCBvZiBmdW5jdGlvbgoKICAgIGZ1bmN0aW9uIG1ha2VDcnVtYihuLHYsZCkgewogICAgICAgIHZhciBleHBpcmVzID0gJyc7CiAgICAJaWYgKGQpIHsKICAgIAkJdmFyIGRhdGUgPSBuZXcgRGF0ZSgpOwogICAgCQlkYXRlLnNldFRpbWUoZGF0ZS5nZXRUaW1lKCkrKGQqMjQqNjAqNjAqMTAwMCkpOwogICAgCQlleHBpcmVzID0gImV4cGlyZXM9IiArIGRhdGUudG9HTVRTdHJpbmcoKSArICI7IjsKICAgIAl9CgogICAgCWRvY3VtZW50LmNvb2tpZSA9IG4gKyAiPSIgKyB2ICsgIjsiICsgCiAgICAJICAgICAgICAgICAgICAgICAgZXhwaXJlcyArICIgcGF0aD0vOyBkb21haW49LmJiYy5jby51azsiOwogICAgfQoKICAgIGZ1bmN0aW9uIHJlYWRDcnVtYihuKSB7CiAgICAJdmFyIG5tID0gbiArICI9IjsKICAgIAl2YXIgY2MgPSBkb2N1bWVudC5jb29raWUuc3BsaXQoJzsnKTsKICAgIAlmb3IodmFyIGk9MDtpPGNjLmxlbmd0aDtpKyspIHsKICAgIAkJdmFyIGMgPSBjY1tpXTsKICAgIAkJd2hpbGUgKGMuY2hhckF0KDApPT0nICcpIGMgPSBjLnN1YnN0cmluZygxLGMubGVuZ3RoKTsKICAgIAkJaWYgKGMuaW5kZXhPZihubSkgPT0gMCkgcmV0dXJuIGMuc3Vic3RyaW5nKG5tLmxlbmd0aCxjLmxlbmd0aCk7CiAgICAJfQogICAgCXJldHVybiBudWxsOwogICAgfQoKICAgIGZ1bmN0aW9uIGVyYXNlQ3J1bWIobikgewogICAgCW1ha2VDcnVtYihuLCIiLC0xKTsKICAgIH0KCiAgICBmdW5jdGlvbiByZXNldE1lZGlhU2VsZWN0b3JQcmVmKHBhdGh0b2NvbnNvbGUpIHsKICAgICAgICB2YXIgcHJlZiA9IHJlYWRDcnVtYignQkJDTWVkaWFTZWxlY3RvcicpOwogICAgICAgIHZhciB0b3VjaCA9IHJlYWRDcnVtYignbXN0b3VjaCcpOwogICAgICAgIHByZWYgPSB1bmVzY2FwZShwcmVmKTsKICAgICAgICAvLyBDaGVja3MgZm9yICJicm9hZGJhbmQiIG9wdGlvbiBpbiBNZWRpYSBTZWxlY3RvciBjb29raWUgdjIuCiAgICAgICAgdmFyIGJiID0gL14uezd9YmIvOwoKICAgICAgICAgICAgaWYgKCAocHJlZiAmJiAhdG91Y2gpICYmIChwcmVmLnNlYXJjaChiYikgIT0gMSAmJiB0b3VjaCAhPSAxKSApIHsKICAgICAgICAgICAgICAgIGVyYXNlQ3J1bWIoJ0JCQ01lZGlhU2VsZWN0b3InKTsKICAgICAgICAgICAgICAgIG1ha2VDcnVtYignbXN0b3VjaCcsMSw5MCk7IC8vZXhwaXJlcyB0aGUgY29va2llIGluIDkwIGRheXMKICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgcmV0dXJuICcmcHJlZnM9MScgKyBwYXNzTVNMYW5nKHBhdGh0b2NvbnNvbGUpOzsKICAgICAgICAgICAgfQogICAgICAgICByZXR1cm4gcGFzc01TTGFuZyhwYXRodG9jb25zb2xlKTsKICAgIH0KICAgIAogICAgCiAgICBmdW5jdGlvbiBwYXNzTVNMYW5nKHVybCkgewogICAgICAgICAgICAgICAgICAgIGlmICh1cmwuaW5kZXhPZigncG9ydHVndWVzZScpICE9IC0xKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAiJmxhbmc9cHQtYnIiOwogICAgICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAodXJsLmluZGV4T2YoJ3VyZHUnKSAhPSAtMSkgewogICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gIiZsYW5nPXVyIjsKICAgICAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKHVybC5pbmRleE9mKCdwZXJzaWFuJykgIT0gLTEpIHsKICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuICImbGFuZz1mYSI7CiAgICAgICAgICAgICAgICAgICAgfSBlbHNlIGlmICh1cmwuaW5kZXhPZignc3BhbmlzaCcpICE9IC0xKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAiJmxhbmc9ZXMiOwogICAgICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAodXJsLmluZGV4T2YoJ3J1c3NpYW4nKSAhPSAtMSkgewogICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gIiZsYW5nPXJ1IjsKICAgICAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKHVybC5pbmRleE9mKCdhcmFiaWMnKSAhPSAtMSkgewogICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gIiZsYW5nPWFyIjsKICAgICAgICAgICAgICAgICAgICB9ICAgCiAgICB9></script><style>body{margin:0}body{font-family:"Times New Roman, Tahoma (Arabic)";margin-right:4px}.printableindent{margin-left:12px;margin-right:12px}.storytext{font-family:"Times New Roman, Tahoma (Arabic)";font-size:15px;line-height:19px;color:#000000;margin-right:4px}</style><meta name=referrer content=no-referrer><link type=image/x-icon rel="shortcut icon" href="data:image/x-icon;base64,AAABAAMAEBAAAAEAIABoBAAANgAAACAgAAABACAAqBAAAJ4EAAAwMAAAAQAgAKglAABGFQAAKAAAABAAAAAgAAAAAQAgAAAAAABABAAAAAAAAAAAAAAAAAAAAAAAAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAD/AAAA/wAAAP8AAAD//////wAAAP8AAAD/AAAA/wAAAP//////AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA//////8AAAD/AAAA/wAAAP8AAAD//////wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP//////AAAA/wAAAP8AAAD/AAAA//////8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD//////wAAAP8AAAD/AAAA/wAAAP//////AAAA/wAAAP8AAAD/AAAA//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAACAAAABAAAAAAQAgAAAAAACAEAAAAAAAAAAAAAAAAAAAAAAAAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA//////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD//////////////////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP//////////////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA//////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD//////////////////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP//////////////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA//////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA////////////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP///////////wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAwAAAAYAAAAAEAIAAAAAAAgCUAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="><link rel=canonical href=https://www.bbc.com/persian/worldnews/story/2006/11/printable/061116_si-vatican-celibacy><meta http-equiv=content-security-policy content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:; form-action 'none'; base-uri 'none';"><body bgcolor=#FFFFFF id=world-news><div class=printableindent dir=rtl><img height=40 border=0 vspace=0 hspace=0 src="data:image/gif;base64,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" alt=http://www.bbcpersian.com><p class=storytext>22:17 گرينويچ - پنج شنبه 16 نوامبر 2006 - 25 آبان 1385<p class=storytext><h1>پافشاری مجدد واتيکان بر اصل تجرد کشيش ها</h1><p class=storytext><b>واتيکان در پی رايزنی پاپ با مشاورانش بار ديگر حمايت خود را از سنت تجرد (عدم تاهل) برای کشيش های کاتوليک اعلام داشته است.</b><p class=storytext>پاپ و کاردينال های تحت فرمان او در اين جلسه در مورد يک اسقف اعظم آفريقايی که سال گذشته به خاطر ترفيع کشيش های متاهل برکنار شده بود بحث کردند.<p class=storytext>واتيکان پس از اين جلسه در بيانيه ای گفت: "ارزش گزينه تجرد کشيش ها... بار ديگر مورد تاکيد قرار گرفت."<p class=storytext>هزاران تن از چهارصد هزار کشيش کليساهای کاتوليک سراسر جهان در سال های اخير برای آنکه بتوانند ازدواج کنند کليسا را ترک کرده اند.<p class=storytext><b>نسل رو به کهولت</b><p class=storytext>پاپ در اين جلسه کليه مشاوران ارشد خود - کاردينال های سرپرست بخش های مختلف واتيکان - را فراخوانده بود تا با آنها درباره اسقف اعظم امانوئل ميلينگو، رئيس سابق کلسيای کاتوليک رومی در زامبيا بحث کند.<p class=storytext>آقای ميلينگو ماه گذشته پس ترفيع چهار کشيش متاهل به درجه اسقفی در آمريکا از کليسا اخراج شد.<p class=storytext>وی شخصا با يک زن کره ای ازدواج کرد و هرچند ابتدا موافقت کرد او را ترک کند، اما اکنون با او زندگی می کند.<p class=storytext>وی سازمانی موسوم به "اکنون کشيش های متاهل" تاسيس کرده است و در نظر دارد ماه آينده نشستی با حضور بيش از هزار کشيش متاهل کاتوليک در نيويورک برگزار کند.<p class=storytext>ديويد ويلی، خبرنگار بی بی سی در رم، می گويد که ميانگين سنی کشيش ها اکنون بيش از 60 سال است و اصل تجرد کشيش ها در بسياری کشورها باعث شده است به تعداد کافی متقاضی برای گرفتن جای نسل قبلی کشيش ها وجود نداشته باشد.<p class=storytext><b>قانون کليسا</b><p class=storytext>بر اساس مقررات کليسای کاتوليک، تنها مردان مجرد به عنوان کشيش پذيرفته می شوند و تعهد می کنند که هرگز ازدواج نکنند و با زنان روابط جنسی نداشته باشند. <p class=storytext>از اواخر سده سوم ميلادی، تجرد به عنوان شرطی برای دستيابی به برخی از رده های روحانيون کليسای غرب به اجرا در آمد و مقامات کليسا نيز که قبلا ازدواج کرده بودند متعهد می شدند که از همسران خود جدا زندگی کنند.<p class=storytext>اين شرط در اواسط قرون وسطی به رده کشيشان کاتوليک نيز تعميم داده شد که تنها در صورتی می توانسته اند به کسوت روحانی در آيند که مجرد باشند و هرگز ازدواج نکنند.<p class=storytext>در مورد اينکه آيا تجرد بايد شرط قبول مسئوليت کشيشی باشد، بين مفسران مسيحی اختلاف نظر وجود دارد و گروهی از آنان اين شرط را منطبق با اصول مذهبی نمی دانند.<p class=storytext>در مقابل، کليسای کاتوليک تاکيد داشته است که کشيشان به تبعيت از عيسی مسيح بايد از ارتباط های جنسی دوری جويند و همچنين، تمامی زندگی خود را صرفا وقف خدمت به کليسا کنند.<p class=storytext>گرچه تجرد به عنوان شرطی برای پذيرش در کسوت روحانيت در کليسای کاتوليک، و برای برخی رده های عالی تر روحانی در تعدادی از کليساهای شرقی وابسته به اين کليسا، رواج دارد اما حتی از نظر کليسای کاتوليک نيز چنين وضعيتی بخشی از اصول اعتقادی نيست بلکه از جمله مقرراتی است که رهبری کليسا حق تغيير آن را دارد.<p class=storytext>همچنين، شورای واتيکان در سال 1965 تصويب کرد که کشيشان متاهل پروتستان که به کليسای کاتوليک می پيوندند می توانند به مقام کشيشی اين کليسا منصوب شوند.<p class=storytext>در هرحال، هيچ کشيش کاتوليک حق ندارد پس از انتصاب به اين مقام ازدواج کند.</p></div><script id="kill-dialog-script">
+(function() {
+  "use strict";
+  function killDialogs() {
+    var dialogs = document.querySelectorAll("dialog");
+    for (var i = 0; i < dialogs.length; i++) {
+      var d = dialogs[i];
+      try { d.close(); } catch (e) {}
+      d.removeAttribute("open");
+      d.style.setProperty("display", "none", "important");
+    }
+  }
+  killDialogs();
+  document.addEventListener("DOMContentLoaded", killDialogs);
+  window.addEventListener("load", killDialogs);
+  if (window.MutationObserver) {
+    new MutationObserver(killDialogs).observe(document.documentElement, {
+      childList: true, subtree: true, attributes: true, attributeFilter: ["open"]
+    });
+  }
+})();
+</script>
+<script id="ref-flash-script">
+(function() {
+  "use strict";
+  var TARGETS = ['از اواخر سده سوم ميلادی، تجرد به عنوان شرطی برای دستيابی به برخی از رده های روحانيون کليسای غرب به اجرا در آمد و مقامات کليسا نيز که قبلا ازدواج کرده بودند متعهد می شدند که از همسران خود جدا زندگی کنند.','اين شرط در اواسط قرون وسطی به رده کشيشان کاتوليک نيز تعميم داده شد که تنها در صورتی می توانسته اند به کسوت روحانی در آيند که مجرد باشند و هرگز ازدواج نکنند.'];
+
+  function normalizeWithMap(s) {
+    var out = "";
+    var map = [];
+    var inWs = false;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (/[\s\u200c]/.test(ch)) {
+        if (!inWs && out.length > 0) {
+          out += " ";
+          map.push(i);
+          inWs = true;
+        }
+      } else {
+        out += ch;
+        map.push(i);
+        inWs = false;
+      }
+    }
+    if (out.charAt(out.length - 1) === " ") {
+      out = out.slice(0, -1);
+      map.pop();
+    }
+    return { text: out, map: map };
+  }
+
+  function run() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = node.parentNode;
+        if (p && (p.nodeName === "SCRIPT" || p.nodeName === "STYLE")) return NodeFilter.FILTER_REJECT;
+        if (p && p.closest && p.closest(".ref-source-banner")) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    var nodes = [];
+    var combined = "";
+    var n;
+    while ((n = walker.nextNode())) {
+      nodes.push({ node: n, start: combined.length, text: n.nodeValue });
+      combined += n.nodeValue;
+    }
+
+    var normC = normalizeWithMap(combined);
+
+    function locate(pos, useEnd) {
+      for (var i = 0; i < nodes.length; i++) {
+        var item = nodes[i];
+        var upper = item.start + item.text.length;
+        if (pos < upper || (useEnd && pos <= upper)) {
+          var offset = pos - item.start;
+          if (offset < 0) offset = 0;
+          if (offset > item.text.length) offset = item.text.length;
+          return { node: item.node, offset: offset };
+        }
+      }
+      var last = nodes[nodes.length - 1];
+      return { node: last.node, offset: last.text.length };
+    }
+
+    var firstMark = null;
+
+    TARGETS.forEach(function(TARGET, idx) {
+      var normT = normalizeWithMap(TARGET).text;
+      var idxFound = normC.text.indexOf(normT);
+      if (idxFound === -1) {
+        console.warn("ref-flash: target text not found on page", idx);
+        return;
+      }
+
+      var rawStart = normC.map[idxFound];
+      var rawEndInclusive = normC.map[idxFound + normT.length - 1];
+
+      var startLoc = locate(rawStart, false);
+      var endLoc = locate(rawEndInclusive + 1, true);
+
+      var range = document.createRange();
+      range.setStart(startLoc.node, startLoc.offset);
+      range.setEnd(endLoc.node, endLoc.offset);
+
+      var mark = document.createElement("mark");
+      mark.className = "flash-highlight";
+      var frag = range.extractContents();
+      mark.appendChild(frag);
+      range.insertNode(mark);
+
+      if (!firstMark) firstMark = mark;
+
+      walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          var p = node.parentNode;
+          if (p && (p.nodeName === "SCRIPT" || p.nodeName === "STYLE")) return NodeFilter.FILTER_REJECT;
+          if (p && p.closest && p.closest(".ref-source-banner")) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      nodes = [];
+      combined = "";
+      var n2;
+      while ((n2 = walker.nextNode())) {
+        nodes.push({ node: n2, start: combined.length, text: n2.nodeValue });
+        combined += n2.nodeValue;
+      }
+      normC = normalizeWithMap(combined);
+    });
+
+    if (firstMark) {
+      requestAnimationFrame(function() {
+        firstMark.scrollIntoView({ block: "center", behavior: "instant" });
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+})();
+</script>
+<script id="dark-mode-script">
+(function() {
+  var DARK_MODE_KEY = "roohbakhshDarkMode";
+  var FORCED_ATTR = "data-dm-forced";
+  var CONTENT_COLOR = "rgb(231, 226, 242)";
+  var LINK_COLOR = "rgb(205, 182, 255)";
+  var MARK_COLOR = "rgb(42, 26, 5)";
+
+  function patchStubbornColors() {
+    var all = document.body.querySelectorAll("*");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
+      if (el.id === "back-to-top-link") continue;
+      var cs = getComputedStyle(el);
+      if (el.closest("mark.flash-highlight")) {
+        if (cs.color !== MARK_COLOR) {
+          el.style.setProperty("color", "#2a1a05", "important");
+          el.setAttribute(FORCED_ATTR, "1");
+        }
+        continue;
+      }
+      if (cs.color !== CONTENT_COLOR && cs.color !== LINK_COLOR) {
+        el.style.setProperty("color", "#e7e2f2", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+      if (cs.backgroundColor !== "rgba(0, 0, 0, 0)" && cs.backgroundColor !== "transparent") {
+        el.style.setProperty("background-color", "transparent", "important");
+        el.style.setProperty("background-image", "none", "important");
+        el.setAttribute(FORCED_ATTR, "1");
+      }
+    }
+  }
+  function unpatchStubbornColors() {
+    var all = document.body.querySelectorAll("[" + FORCED_ATTR + "]");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.removeProperty("color");
+      all[i].style.removeProperty("background-color");
+      all[i].style.removeProperty("background-image");
+      all[i].removeAttribute(FORCED_ATTR);
+    }
+  }
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
+    document.documentElement.classList.toggle("dark-mode", enabled);
+    var button = document.getElementById("darkModeToggle");
+    if (button) {
+      button.textContent = enabled ? "\u2600\uFE0F" : "\uD83C\uDF19";
+      button.title = enabled ? "حالت روز" : "حالت شب";
+      button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+    }
+    if (enabled) {
+      patchStubbornColors();
+    } else {
+      unpatchStubbornColors();
+    }
+  }
+  var toggle = document.getElementById("darkModeToggle");
+  if (toggle) {
+    var saved = false;
+    try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+    applyDarkMode(saved);
+    toggle.addEventListener("click", function() {
+      var enabled = !document.body.classList.contains("dark-mode");
+      applyDarkMode(enabled);
+      try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+    });
+  }
+})();
+</script>
+<script id="dynamic-offset-script">
+(function() {
+  function applyOffset() {
+    var tb = document.querySelector('.brand-topbar');
+    var rb = document.querySelector('.ref-source-banner');
+    var tbH = tb ? tb.offsetHeight : 0;
+    if (rb) rb.style.setProperty('top', tbH + 'px', 'important');
+    var rbH = rb ? rb.offsetHeight : 0;
+    document.body.style.marginTop = (tbH + rbH) + 'px';
+  }
+  applyOffset();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOffset);
+  } else {
+    applyOffset();
+  }
+  window.addEventListener('load', applyOffset);
+  window.addEventListener('resize', applyOffset);
+})();
+</script>
+<style id="rtl-fix-style">
+  p, li, h1, h2, h3, h4, h5, h6,
+  blockquote, figcaption, dd, dt {
+    direction: rtl !important;
+    text-align: right !important;
+    unicode-bidi: isolate !important;
+    max-width: 760px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
+  }
+</style>
+<script id="text-bounds-guard-script">
+(function() {
+  var SAFE_GAP = 90;
+  var SELECTOR = 'p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt';
+
+  var backToTopLink = null;
+  function isBackToTopNeeded() {
+    var scrollY = window.scrollY || window.pageYOffset;
+    return scrollY > 40;
+  }
+  function ensureBackToTopLink() {
+    if (backToTopLink) return backToTopLink;
+    var hl0 = document.querySelector('mark.flash-highlight, .flash-highlight');
+    if (!hl0) return null;
+    if (!isBackToTopNeeded()) return null;
+
+    var link = document.createElement('a');
+    link.id = 'back-to-top-link';
+    link.href = '#';
+    link.textContent = '\u2191';
+    link.title = 'رفتن به بالای صفحه';
+    link.setAttribute('aria-label', 'رفتن به بالای صفحه');
+    link.style.setProperty('position', 'absolute', 'important');
+    link.style.setProperty('z-index', '500', 'important');
+    link.style.setProperty('display', 'flex', 'important');
+    link.style.setProperty('align-items', 'center', 'important');
+    link.style.setProperty('justify-content', 'center', 'important');
+    link.style.setProperty('width', '28px', 'important');
+    link.style.setProperty('height', '28px', 'important');
+    link.style.setProperty('color', '#4c1d95', 'important');
+    link.style.setProperty('background', '#e3c876', 'important');
+    link.style.setProperty('border-radius', '50%', 'important');
+    link.style.setProperty('font-weight', '800', 'important');
+    link.style.setProperty('font-size', '15px', 'important');
+    link.style.setProperty('text-decoration', 'none', 'important');
+    link.style.setProperty('cursor', 'pointer', 'important');
+    link.style.setProperty('line-height', '1', 'important');
+    link.style.setProperty('user-select', 'none', 'important');
+    link.style.setProperty('box-shadow', '0 1px 4px rgba(0,0,0,.25)', 'important');
+
+    link.addEventListener('click', function(e) {
+      if (e) e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.body.appendChild(link);
+    backToTopLink = link;
+    return link;
+  }
+
+  function positionBackToTopLink() {
+    var link = ensureBackToTopLink();
+    if (!link) return;
+    var hl = document.querySelector('mark.flash-highlight, .flash-highlight');
+    if (!hl) return;
+    var block = hl.closest('p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, div, td, th') || hl;
+    var blockRect = block.getBoundingClientRect();
+    var hlRect = hl.getBoundingClientRect();
+    var scrollX = window.scrollX || window.pageXOffset;
+    var scrollY = window.scrollY || window.pageYOffset;
+    var vw = window.innerWidth;
+    var SIZE = 28;
+    var GAP = 12;
+
+    var spaceRight = vw - blockRect.right;
+    var spaceLeft = blockRect.left;
+
+    if (spaceRight >= SIZE + GAP) {
+      link.style.setProperty('left', Math.round(scrollX + blockRect.right + GAP) + 'px', 'important');
+    } else if (spaceLeft >= SIZE + GAP) {
+      link.style.setProperty('left', Math.round(scrollX + blockRect.left - SIZE - GAP) + 'px', 'important');
+    } else {
+      link.style.setProperty('left', Math.round(scrollX + Math.max(4, blockRect.left)) + 'px', 'important');
+    }
+    link.style.setProperty('top', Math.round(scrollY + hlRect.top) + 'px', 'important');
+  }
+
+  function fixTextBounds() {
+    var vw = window.innerWidth;
+    var maxW = Math.max(280, Math.min(760, vw - SAFE_GAP * 2));
+    var els = document.querySelectorAll(SELECTOR);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.closest('.side-rail') || el.closest('.brand-topbar') || el.id === 'back-to-top-link') continue;
+      el.style.setProperty('max-width', maxW + 'px', 'important');
+      el.style.setProperty('box-sizing', 'border-box', 'important');
+      el.style.setProperty('margin-left', 'auto', 'important');
+      el.style.setProperty('margin-right', 'auto', 'important');
+      el.style.setProperty('float', 'none', 'important');
+      var rect = el.getBoundingClientRect();
+      if (rect.width === 0) continue;
+      if (rect.left < SAFE_GAP) {
+        var curL = parseFloat(getComputedStyle(el).marginLeft) || 0;
+        el.style.setProperty('margin-left', (curL + (SAFE_GAP - rect.left)) + 'px', 'important');
+      }
+      var rect2 = el.getBoundingClientRect();
+      if (rect2.right > vw - SAFE_GAP) {
+        var curR = parseFloat(getComputedStyle(el).marginRight) || 0;
+        el.style.setProperty('margin-right', (curR + (rect2.right - (vw - SAFE_GAP))) + 'px', 'important');
+      }
+    }
+    positionBackToTopLink();
+  }
+
+  var pending = null;
+  function scheduleFix() {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(fixTextBounds, 150);
+  }
+
+  fixTextBounds();
+  window.addEventListener('load', fixTextBounds);
+  window.addEventListener('resize', scheduleFix);
+
+  if (window.MutationObserver) {
+    var observer = new MutationObserver(scheduleFix);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>
+<script id="ref-menu-script">
+(function() {
+  "use strict";
+  function closeAll() {
+    document.querySelectorAll(".ref-menu-dropdown.ref-menu-open").forEach(function(d) { d.classList.remove("ref-menu-open"); });
+    document.querySelectorAll('.ref-menu-trigger[aria-expanded="true"]').forEach(function(b) { b.setAttribute("aria-expanded", "false"); });
+  }
+  document.querySelectorAll(".ref-menu-trigger").forEach(function(btn) {
+    var dropdown = btn.nextElementSibling;
+    if (!dropdown) return;
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      var isOpen = dropdown.classList.contains("ref-menu-open");
+      closeAll();
+      if (!isOpen) {
+        dropdown.classList.add("ref-menu-open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+  document.addEventListener("click", closeAll);
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeAll();
+  });
+})();
+</script>

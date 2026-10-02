@@ -103,6 +103,21 @@
   }
   .m-topbar a.m-badge:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
 
+  @media (max-width: 560px) {
+    .m-topbar { padding: 10px 12px; gap: 8px; }
+    .m-topbar .m-title { white-space: nowrap; }
+    .m-topbar .m-title-extra { display: none; }
+    .m-topbar-actions { gap: 6px; }
+    .m-topbar .m-badge { font-size: 11.5px; padding: 3px 9px; }
+  }
+  @media (max-width: 360px) {
+    .m-topbar { padding: 8px 10px; }
+    .m-topbar .m-title { font-size: 12px; }
+    .m-topbar .m-badge { font-size: 10.5px; padding: 3px 6px; }
+    .m-topbar .m-dark-toggle { width: 28px; height: 28px; font-size: 13px; }
+    .m-topbar-actions { gap: 4px; }
+  }
+
   .m-wrap {
     position: relative;
     z-index: 1;
@@ -230,7 +245,7 @@
   <div class="side-rail right"></div>
   <div class="side-rail left"></div>
   <div class="m-topbar">
-    <span class="m-title">مطالعات تکمیلی — اصول اعتقادی</span>
+    <span class="m-title">مطالعات تکمیلی<span class="m-title-extra"> — اصول اعتقادی</span></span>
     <div class="m-topbar-actions">
       <a class="m-badge" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/" target="_blank" rel="noopener">پایگاه علمی‌پژوهشی شهید روحبخش</a>
       <button id="darkModeToggle" type="button" class="m-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button>
@@ -310,9 +325,11 @@
       <div class="m-footnotes-title">پی‌نوشت‌ها</div>
       <ol>
         <li id="fn-4-1">
-          <p class="fn-p"><a class="fn-back" href="#fnref-4-1" aria-label="بازگشت به متن">↑</a>یزدی، سیده منور؛ درویزه، زهرا؛ و شیخی، زهرا. (۱۳۹۳). «مقایسة نارسایی‌های شناختی و شیوه‌های مقابله با استرس در بیماران مبتلا به اختلال افسردگی اساسی، اختلال اضطراب فراگیر و همبود». فصلنامة مطالعات روان‌شناختی، ۱۱(۳)، ۷-۲۸. <a class="ref-link" href="../p/28.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
-          <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع خارجی:</p>
-          <p class="fn-p" dir="ltr">Dilakshini, V. L., &amp; Kumar, S. M. (2020). "Cognitive dissonance: A psychological unrest." <em>Current Journal of Applied Science and Technology</em> 39(30), 54-60. <a class="ref-link" href="../p/29.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>        </li>
+          
+    <p class="fn-p"><a class="fn-back" href="#fnref-4-1" aria-label="بازگشت به متن">↑</a>یزدی، سیده منور؛ درویزه، زهرا؛ و شیخی، زهرا. (۱۳۹۳). «مقایسة نارسایی‌های شناختی و شیوه‌های مقابله با استرس در بیماران مبتلا به اختلال افسردگی اساسی، اختلال اضطراب فراگیر و همبود». فصلنامة مطالعات روان‌شناختی، ۱۱(۳)، ۷-۲۸. <a class="ref-link" href="../p/28.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+    <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع دیگر:</p>
+    <p class="fn-p" dir="ltr">Dilakshini, V. L., &amp; Kumar, S. M. (2020). "Cognitive dissonance: A psychological unrest." <em>Current Journal of Applied Science and Technology</em> 39(30), 54-60. <a class="ref-link" href="../p/29.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+  </li>
 
         <li id="fn-4-2"><a class="fn-back" href="#fnref-4-2" aria-label="بازگشت به متن">↑</a>سوره انعام، آیه ۳۸ — <a class="ref-link" href="../p/27.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</li>
 
