@@ -31,7 +31,7 @@ BRANCH="$(git symbolic-ref --short HEAD)"
 [ -z "$(git status --porcelain)" ] || { echo "Uncommitted changes present. Commit or stash first." >&2; exit 1; }
 
 # Junk files that should never be kept (macOS/Windows leftovers, backups, temp files).
-JUNK="$(git ls-files | grep -E '(^|/)(\._[^/]*|\.DS_Store|Thumbs\.db|[^/]*~|[^/]*\.(bak|orig|tmp|swp))$|(^|/)_?[a-z]*_?bak/|(^|/)_prelock_bak/' || true)"
+JUNK="$(git ls-files | grep -E '(^|/)(\._[^/]*|\.DS_Store|Thumbs\.db|[^/]*~|[^/]*\.(bak|orig|tmp|swp))$|(^|/)(_[a-z]*bak|bak|backup)/' || true)"
 
 echo "Branch to keep:      $BRANCH"
 echo "Commits in history:  $(git rev-list --count HEAD)"
@@ -54,7 +54,7 @@ echo "-----"
 echo "Backup mirror -> $BACKUP"
 git clone --mirror . "$BACKUP" >/dev/null 2>&1
 
-[ -n "$JUNK" ] && printf '%s\n' "$JUNK" | xargs -d '\n' git rm -q -r --cached --
+[ -n "$JUNK" ] && printf '%s\n' "$JUNK" | xargs -d '\n' git rm -q -r -f --
 
 TMP="reset-tmp-$$"
 git checkout -q --orphan "$TMP"
@@ -65,7 +65,7 @@ git -c user.name="${GIT_AUTHOR_NAME:-$(git config user.name || echo repo-owner)}
 git branch -M "$TMP" "$BRANCH"
 # drop old tags and every other local branch so nothing keeps the old history alive
 git tag -l | xargs -r git tag -d >/dev/null
-git for-each-ref --format='%(refname:short)' refs/heads | grep -vx "$BRANCH" | xargs -r git branch -D >/dev/null
+git for-each-ref --format='%(refname:short)' refs/heads | { grep -vx "$BRANCH" || true; } | xargs -r git branch -D >/dev/null
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive -q
 echo "Done locally. Commits: $(git rev-list --count HEAD)   .git size: $(du -sh .git | cut -f1)"
@@ -73,7 +73,7 @@ echo "Done locally. Commits: $(git rev-list --count HEAD)   .git size: $(du -sh 
 if [ "$PUSH" -eq 1 ]; then
   git push --force -u origin "$BRANCH"
   if [ "$DEL_OTHERS" -eq 1 ]; then
-    git ls-remote --heads --tags origin | awk '{print $2}' | grep -v "^refs/heads/$BRANCH$" | grep -v '\^{}$' \
+    git ls-remote --heads --tags origin | awk '{print $2}' | { grep -v "^refs/heads/$BRANCH$" || true; } | { grep -v '\^{}$' || true; } \
       | while read -r ref; do git push origin --delete "$ref" || true; done
   fi
   echo "Pushed. On other computers: delete the old clone and run git clone again."
