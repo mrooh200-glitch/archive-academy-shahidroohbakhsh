@@ -6,7 +6,7 @@
   // لود نشده باشه) نداره - برای همین آدرس رو این‌جا هم جدا نگه می‌داریم.
   // آدرس قبلی (workers.dev) از شبکهٔ فعلی در دسترس نبود؛ همان Custom
   // Domain استفاده‌شده در search-widget.js اینجا هم به کار می‌رود.
-  const STATS_WORKER_URL = "https://roohbakhsh-api.ostadmilani.ir";
+  const STATS_WORKER_URL = "https://api.sroohbakhsh.ir";
 
   // Item جدید (خروج خودِ صاحبِ سایت از آمار): همون پرچمِ localStorage
   // که در index.htm تنظیم می‌شه (با ?notrack=1 یک‌بار در آدرسِ سایت) -

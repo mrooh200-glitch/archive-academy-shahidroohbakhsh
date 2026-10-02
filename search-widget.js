@@ -10,9 +10,10 @@
 
 // آدرس قبلی (roohbakhsh-archive-ai.mrooh200.workers.dev) از شبکهٔ فعلی اصلاً
 // در دسترس نبود (حتی Worker قدیمیِ سایت میلانی هم با همین الگوی دامنه به
-// همین مشکل می‌خورد) - به همین خاطر یک Custom Domain زیر ostadmilani.ir
-// (که قبلاً روی Cloudflare است) برای همین Worker ساخته و جایگزین شد.
-const WORKER_URL = "https://roohbakhsh-api.ostadmilani.ir";
+// همین مشکل می‌خورد) - به همین خاطر یک Custom Domain برای همین Worker ساخته شد.
+// (۱۴۰۵/۰۷/۱۰ - ۲۰۲۶-۱۰-۰۲): از زیر ostadmilani.ir به api.sroohbakhsh.ir
+// (دامنهٔ خودِ همین سایت) منتقل شد، چون دامنهٔ سایت حالا ساخته شده است.
+const WORKER_URL = "https://api.sroohbakhsh.ir";
 
 let EMBEDDINGS = null; // کل داده‌های embeddings.json بعد از بارگذاری اینجا نگه داشته می‌شه
 let embeddingsLoadingPromise = null; // جلوگیری از دانلود همزمان/تکراری وقتی چند جست‌وجو هم‌پوشانی دارن
