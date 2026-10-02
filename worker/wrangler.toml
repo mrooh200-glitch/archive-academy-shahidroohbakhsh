@@ -10,6 +10,14 @@ kv_namespaces = [
   { binding = "STATS_KV", id = "b9f41a41d6a648ddae8d22edc72c0ed5" }
 ]
 
+# فضای ذخیرهٔ فایل‌های embeddings (R2). فایل‌های embeddings.json و
+# embeddings-version.json دیگه داخل گیت نگه‌داری نمی‌شن تا تاریخچهٔ مخزن
+# با هر بار ساخت (حدود ۲۵ مگابایت) بزرگ نشه.
+# ساخت با: npx wrangler r2 bucket create roohbakhsh-embeddings
+r2_buckets = [
+  { binding = "EMBEDDINGS_BUCKET", bucket_name = "roohbakhsh-embeddings" }
+]
+
 # اتصال به Workers AI (برای مدل BGE-M3) -- نیازی به کلید نداره
 [ai]
 binding = "AI"

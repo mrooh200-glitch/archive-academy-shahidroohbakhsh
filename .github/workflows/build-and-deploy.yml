@@ -32,16 +32,33 @@ jobs:
           node-version: "20"
       - name: Install dependencies
         run: npm install cheerio
+      # embeddings.json دیگه داخل گیت نگه‌داری نمی‌شه (هر نسخه ~۲۵ مگابایت به
+      # تاریخچه اضافه می‌کرد). نسخهٔ قبلی از R2 گرفته می‌شه تا ساخت افزایشی
+      # بمونه (فقط تکه‌های جدید embed بشن)، و نسخهٔ جدید دوباره به R2 می‌ره.
+      - name: Download previous embeddings from R2 (ok if none yet)
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object get roohbakhsh-embeddings/embeddings.json --file embeddings.json --remote
       - name: Build embeddings.json
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node scripts/build-embeddings.js
-      - name: Commit embeddings.json back to repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Upload embeddings.json to R2
+        uses: cloudflare/wrangler-action@v3
         with:
-          commit_message: "chore: به‌روزرسانی خودکار embeddings.json"
-          file_pattern: "embeddings.json embeddings-version.json"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put roohbakhsh-embeddings/embeddings.json --file embeddings.json --content-type application/json --remote
+      - name: Upload embeddings-version.json to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put roohbakhsh-embeddings/embeddings-version.json --file embeddings-version.json --content-type application/json --remote
   deploy-worker:
     needs: build-embeddings
     runs-on: ubuntu-latest

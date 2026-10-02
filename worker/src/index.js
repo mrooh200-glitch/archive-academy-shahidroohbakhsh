@@ -68,6 +68,14 @@ export default {
     const url = new URL(request.url);
 
     try {
+      // فایل‌های embeddings از R2 سرو می‌شن (نه از گیت)
+      if (
+        (url.pathname === "/embeddings.json" || url.pathname === "/embeddings-version.json") &&
+        request.method === "GET"
+      ) {
+        return await handleEmbeddingsFile(url, env);
+      }
+
       if (url.pathname === "/embed" && request.method === "POST") {
         return await handleEmbed(request, env);
       }
@@ -104,6 +112,28 @@ export default {
     }
   },
 };
+
+// ---------- /embeddings.json و /embeddings-version.json : خواندن از R2 ----------
+// نسخه همیشه تازه خونده می‌شه (no-store)؛ خودِ embeddings.json چون آدرسش با
+// ?v=<نسخه> عوض می‌شه، می‌تونه با خیال راحت مدت طولانی کش بشه.
+async function handleEmbeddingsFile(url, env) {
+  if (!env.EMBEDDINGS_BUCKET) {
+    return jsonResponse({ error: "R2 (EMBEDDINGS_BUCKET) بایند نشده" }, 404);
+  }
+  const key = url.pathname.slice(1);
+  const object = await env.EMBEDDINGS_BUCKET.get(key);
+  if (!object) {
+    return jsonResponse({ error: "فایل پیدا نشد" }, 404);
+  }
+  const isVersion = key === "embeddings-version.json";
+  return new Response(object.body, {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": isVersion ? "no-store" : "public, max-age=31536000, immutable",
+      ...CORS_HEADERS,
+    },
+  });
+}
 
 // ---------- /embed : ساخت بردار عبارت جست‌وجو (با کش مشترک بین کاربران) ----------
 async function handleEmbed(request, env) {

@@ -76,10 +76,18 @@ function base64ToVector(b64) {
 // خودِ build-embeddings.js هر بار با هش واقعی محتوای جدید می‌سازه.
 async function getRemoteVersion() {
   try {
-    const res = await fetch("embeddings-version.json", { cache: "no-store" });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.version || null;
+    // اول از Worker (R2)، اگه نبود از فایل کنار سایت (سازگاری با دورهٔ انتقال)
+    for (const base of [`${WORKER_URL}/`, ""]) {
+      try {
+        const res = await fetch(`${base}embeddings-version.json`, { cache: "no-store" });
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (json.version) return json.version;
+      } catch {
+        // برو سراغ منبع بعدی
+      }
+    }
+    return null;
   } catch {
     return null;
   }
@@ -109,10 +117,17 @@ async function loadEmbeddings() {
     // GitHub Pages (که با هدر cache به‌تنهایی کنترل نمی‌شه) نمی‌تونه جواب قدیمی
     // برگردونه، چون از نظر فنی این یه URL کاملاً متفاوته. اگه گرفتن نسخه شکست
     // خورده باشه (currentVersion خالیه)، مثل قبل بدون query string درخواست می‌دیم.
-    const embeddingsUrl = currentVersion
-      ? `embeddings.json?v=${encodeURIComponent(currentVersion)}`
-      : "embeddings.json";
-    const res = await fetch(embeddingsUrl, { cache: "no-store" });
+    const query = currentVersion ? `?v=${encodeURIComponent(currentVersion)}` : "";
+    let res = null;
+    for (const base of [`${WORKER_URL}/`, ""]) {
+      try {
+        const r = await fetch(`${base}embeddings.json${query}`, { cache: "no-store" });
+        if (r.ok) { res = r; break; }
+      } catch {
+        // برو سراغ منبع بعدی
+      }
+    }
+    if (!res) throw new Error("embeddings.json در دسترس نیست");
     const raw = await res.json();
     const decoded = raw.map((item) => ({ ...item, vector: base64ToVector(item.vector) }));
 
