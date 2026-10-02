@@ -67,7 +67,7 @@ git branch -M "$TMP" "$BRANCH"
 git tag -l | xargs -r git tag -d >/dev/null
 git for-each-ref --format='%(refname:short)' refs/heads | { grep -vx "$BRANCH" || true; } | xargs -r git branch -D >/dev/null
 git reflog expire --expire=now --all
-git gc --prune=now --aggressive -q
+git gc --prune=now -q
 echo "Done locally. Commits: $(git rev-list --count HEAD)   .git size: $(du -sh .git | cut -f1)"
 
 if [ "$PUSH" -eq 1 ]; then
