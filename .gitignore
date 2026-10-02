@@ -1,0 +1,10 @@
+# OS / editor leftovers
+._*
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.bak
+*.orig
+*.tmp
+_prelock_bak/

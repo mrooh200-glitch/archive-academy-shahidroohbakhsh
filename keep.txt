@@ -1,0 +1,32 @@
+# Files/folders that must stay in the repository. Everything else is removed
+# by scripts/prune-unlisted.sh when you run it by hand.
+# One entry per line. A trailing "/" means a whole folder. "*" wildcards work.
+# Lines starting with # are comments.
+
+# site
+CNAME
+index.htm
+stats.html
+sw.js
+manifest.json
+icon-*.png
+roohbakhsh-hero.jpg
+in-page-search.js
+search-widget.js
+nahjol-balaghih.htm
+embeddings.json
+embeddings-version.json
+
+# content folders
+aa/
+Seyed_Kazem_Roohbakhsh/
+
+# code / automation
+worker/
+scripts/
+.github/
+
+# repo housekeeping
+keep.txt
+.gitignore
+README.md
