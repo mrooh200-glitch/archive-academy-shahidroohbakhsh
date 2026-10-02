@@ -969,7 +969,9 @@ error code: 522
     link.style.width = size + "px"; link.style.height = size + "px";
     link.style.fontSize = Math.round(fontSize * 0.885) + "px";
     link.addEventListener("click", function(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
-    if (cut <= 0) {
+    if (cut > 0 && (block.tagName === "TD" || block.tagName === "TH")) {
+      mark.parentNode.insertBefore(link, mark);
+    } else if (cut <= 0) {
       block.insertBefore(link, block.firstChild);
     } else {
       var pt = pointAt(block, mark, cut);
