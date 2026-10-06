@@ -112,8 +112,22 @@ async function loadEmbeddings() {
     const embeddingsUrl = currentVersion
       ? `embeddings.json?v=${encodeURIComponent(currentVersion)}`
       : "embeddings.json";
-    const res = await fetch(embeddingsUrl, { cache: "no-store" });
-    const raw = await res.json();
+    // فایل حدود ۲۵ مگابایتی روی اینترنت ضعیف گاهی وسط راه قطع می‌شود؛ تا
+    // ۳ بار با وقفه تلاش می‌کنیم و در نهایت به‌جای خطای خام «Failed to
+    // fetch» پیام روشن فارسی می‌دهیم.
+    let raw = null;
+    for (let attempt = 1; attempt <= 3 && !raw; attempt++) {
+      try {
+        const res = await fetch(embeddingsUrl, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        raw = await res.json();
+      } catch (err) {
+        if (attempt === 3) {
+          throw new Error("بارگذاری پایگاه جست‌وجو کامل نشد (اتصال ضعیف یا قطع است). لطفاً دوباره تلاش کنید.");
+        }
+        await new Promise((r) => setTimeout(r, 800 * attempt));
+      }
+    }
     const decoded = raw.map((item) => ({ ...item, vector: base64ToVector(item.vector) }));
 
     EMBEDDINGS = decoded;
@@ -522,8 +536,14 @@ function escapeHtmlAi(text) {
 function linkifyAnswerAi(text) {
   if (!text) return text;
 
+  // امنیت (XSS): پاسخ از مدل می‌آید و می‌تواند تحت‌تأثیر متن‌های آرشیو یا
+  // پیام کاربر باشد. پس اول کلِ متن escape می‌شود - برچسب و نقل‌قولِ
+  // خام هیچ‌وقت به DOM نمی‌رسند - و فقط بعد از آن، لینک‌های http/https به
+  // <a> تبدیل می‌شوند. (" هم escape شده، پس آدرس نمی‌تواند از href بیرون بزند.)
+  const escaped = escapeHtmlAi(text);
+
   // اول لینک‌های به‌سبک مارک‌داون: [متن](آدرس)
-  let result = String(text).replace(
+  let result = escaped.replace(
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     (match, label, url) => `<a href="${url}" target="_blank" rel="noopener">${label}</a>`
   );
@@ -1892,7 +1912,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="ai-chat-turn-select">
                 <input type="checkbox" class="ai-chat-turn-checkbox" data-chat-index="${originalIndex}" ${chatSelectedIndexes.has(originalIndex) ? "checked" : ""} title="انتخاب این پرسش‌وپاسخ" aria-label="انتخاب این پرسش‌وپاسخ">
               </div>
-              <div class="ai-chat-bubble ai-chat-bubble-user">${turn.question}</div>
+              <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(turn.question)}</div>
               <div class="ai-chat-bubble ai-chat-bubble-assistant">
                 <div>${linkifyAnswerAi(turn.answer)}</div>
                 ${turn.sourceLinksHtml ? `<div class="ai-chat-sources">منابع: ${turn.sourceLinksHtml}</div>` : ""}
@@ -1968,7 +1988,7 @@ document.addEventListener("DOMContentLoaded", () => {
       preview.style.display = "flex";
       preview.innerHTML = `
         <img src="${imageSrc}" alt="" title="برای دیدن نمای کامل کلیک کنید" style="cursor:zoom-in;">
-        <span>${pendingAttachment.name}</span>
+        <span>${escapeHtmlAi(pendingAttachment.name)}</span>
         <button type="button" id="aiChatAttachmentRemove">حذف ✕</button>
       `;
 
@@ -2029,7 +2049,7 @@ document.addEventListener("DOMContentLoaded", () => {
       aiChatOutput.insertAdjacentHTML(
         "afterbegin",
         `<div class="ai-chat-turn" id="aiChatPending-${myToken}">
-          <div class="ai-chat-bubble ai-chat-bubble-user">${question}</div>
+          <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(question)}</div>
           <div class="ai-chat-bubble ai-chat-bubble-assistant ai-chat-pending">در حال بررسی و تنظیم پاسخ…</div>
         </div>`
       );
@@ -2107,7 +2127,7 @@ document.addEventListener("DOMContentLoaded", () => {
           pendingEl.textContent = message;
           pendingEl.classList.add("ai-chat-error");
         } else {
-          aiChatOutput.insertAdjacentHTML("afterbegin", `<div class="ai-chat-error">${message}</div>`);
+          aiChatOutput.insertAdjacentHTML("afterbegin", `<div class="ai-chat-error">${escapeHtmlAi(message)}</div>`);
         }
         console.error(err);
       }
