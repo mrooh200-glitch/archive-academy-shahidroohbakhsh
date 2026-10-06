@@ -351,19 +351,27 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   const relevant = mode === "general" ? [] : await semanticSearch(question, 5, bookFilter);
   const contextTexts = relevant.map((r) => r.text);
 
-  const chatRes = await fetch(`${WORKER_URL}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      question,
-      context: contextTexts,
-      history,
-      mode,
-      image,
-      // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
-      customInstructions: getAiCustomInstructionsAi() || undefined,
-    }),
-  });
+  // قطعیِ اتصال (offline، فیلتر، DNS) با پیام انگلیسیِ خامِ مرورگر نشون داده
+  // نمی‌شه؛ پیام روشن فارسی می‌گیره. سقف انتظارِ کل درخواست هم ۶۰ ثانیه‌ست.
+  let chatRes;
+  try {
+    chatRes = await fetch(`${WORKER_URL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question,
+        context: contextTexts,
+        history,
+        mode,
+        image,
+        // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
+        customInstructions: getAiCustomInstructionsAi() || undefined,
+      }),
+      signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined,
+    });
+  } catch {
+    throw new Error("اتصال به دستیار برقرار نشد. اینترنت‌تون رو بررسی کنید و دوباره بپرسید.");
+  }
 
   if (!chatRes.ok) {
     let message = "خطا در دریافت پاسخ از دستیار";
@@ -389,33 +397,54 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   let answer = "";
   let usedReferences = null;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  let gotDone = false;
 
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      let msg;
-      try {
-        msg = JSON.parse(trimmed);
-      } catch {
-        continue;
-      }
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
 
-      if (msg.type === "delta" && typeof msg.text === "string") {
-        answer += msg.text;
-        if (typeof onDelta === "function") onDelta(msg.text, answer);
-      } else if (msg.type === "done") {
-        usedReferences = msg.references ?? null;
-      } else if (msg.type === "error") {
-        throw new Error(msg.message || "خطا در دریافت پاسخ از دستیار");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        let msg;
+        try {
+          msg = JSON.parse(trimmed);
+        } catch {
+          continue;
+        }
+
+        if (msg.type === "delta" && typeof msg.text === "string") {
+          answer += msg.text;
+          if (typeof onDelta === "function") onDelta(msg.text, answer);
+        } else if (msg.type === "done") {
+          gotDone = true;
+          usedReferences = msg.references ?? null;
+        } else if (msg.type === "error") {
+          throw new Error(msg.message || "خطا در دریافت پاسخ از دستیار");
+        }
       }
     }
+  } catch (err) {
+    // پیام‌های خودِ Worker (type:"error") دست‌نخورده می‌رسن؛ فقط قطعیِ
+    // اتصال حین پخش به پیام فارسی تبدیل می‌شه.
+    if (err instanceof TypeError || (err && err.name === "AbortError")) {
+      throw new Error("اتصال حین دریافت پاسخ قطع شد. لطفاً دوباره بپرسید.");
+    }
+    throw err;
+  }
+
+  // پخش بدون «done» یعنی پاسخ وسط راه قطع شده؛ پاسخ ناقص رو به‌عنوان
+  // پاسخ کامل ذخیره نمی‌کنیم و منبع‌های نامرتبط هم نشون نمی‌دیم.
+  if (!gotDone) {
+    throw new Error("پاسخ کامل دریافت نشد (اتصال قطع شد). لطفاً دوباره بپرسید.");
+  }
+  if (!answer.trim()) {
+    throw new Error("دستیار پاسخی تولید نکرد. لطفاً سؤال را کمی متفاوت بپرسید یا دوباره تلاش کنید.");
   }
 
   // آیتم ۱۰ (فیلتر ارتباط): اگه Worker گفته کدوم بخش‌ها رو واقعاً

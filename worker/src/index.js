@@ -119,9 +119,13 @@ async function handleEmbed(request, env) {
   let cacheKey = null;
   if (env.EMBEDDING_CACHE) {
     cacheKey = await embeddingCacheKey(query);
-    const cached = await env.EMBEDDING_CACHE.get(cacheKey, "json");
-    if (cached) {
-      return jsonResponse({ vector: cached });
+    try {
+      const cached = await env.EMBEDDING_CACHE.get(cacheKey, "json");
+      if (cached) {
+        return jsonResponse({ vector: cached });
+      }
+    } catch (err) {
+      console.error("embedding cache read failed", err); // کش اختیاریه؛ بدونش ادامه بده
     }
   }
 
@@ -130,9 +134,14 @@ async function handleEmbed(request, env) {
   const vector = result.data[0];
 
   if (env.EMBEDDING_CACHE && cacheKey) {
-    await env.EMBEDDING_CACHE.put(cacheKey, JSON.stringify(vector), {
-      expirationTtl: EMBEDDING_CACHE_TTL_SECONDS,
-    });
+    // سقف نوشتن روزانهٔ KV که پر بشه، put خطا می‌ده؛ نباید جلوی جواب رو بگیره.
+    try {
+      await env.EMBEDDING_CACHE.put(cacheKey, JSON.stringify(vector), {
+        expirationTtl: EMBEDDING_CACHE_TTL_SECONDS,
+      });
+    } catch (err) {
+      console.error("embedding cache write failed", err);
+    }
   }
 
   return jsonResponse({ vector });
@@ -167,45 +176,98 @@ function parseRetryAfterMs(res) {
   return null;
 }
 
-async function fetchGeminiWithRetry(geminiUrl, requestBody, maxAttempts = 3) {
-  let lastRes;
-  let lastErr;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
-    try {
-      lastRes = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: requestBody,
-        signal: controller.signal,
-      });
-      lastErr = null;
-    } catch (err) {
-      lastErr = err;
-      lastRes = null;
-    } finally {
-      clearTimeout(timeoutId);
+// Item جدید (پایداری اتصال): مدل اصلی (GEMINI_MODEL) گاهی به‌خاطر شلوغی
+// 503 می‌دهد و چند تلاش پشت‌سرهم هم جواب نمی‌دهد. حالا هر مدل چند بار با
+// وقفهٔ فزاینده (+ کمی نوسان تصادفی) امتحان می‌شود و اگر باز هم نشد، خودکار
+// به مدل بعدیِ فهرست می‌رود. نام مدل‌ها از متغیرهای محیطی خوانده می‌شود تا
+// بدون تغییر کد قابل عوض‌کردن باشد:
+//  - GEMINI_MODEL: مدل اصلی (پیش‌فرض gemini-3.7-flash)
+//  - GEMINI_FALLBACK_MODELS: فهرست مدل‌های جایگزین، با کاما جدا شده
+//    (پیش‌فرض gemini-2.5-flash,gemini-2.5-flash-lite)
+const DEFAULT_GEMINI_MODEL = "gemini-3.7-flash";
+const DEFAULT_GEMINI_FALLBACKS = "gemini-2.5-flash,gemini-2.5-flash-lite";
+const GEMINI_ATTEMPTS_PER_MODEL = 2;
+const GEMINI_TOTAL_BUDGET_MS = 25000; // سقف کل زمانی که کاربر معطل می‌ماند
+
+function geminiModelList(env) {
+  const primary = (env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL).trim();
+  const fallbacks = (env.GEMINI_FALLBACK_MODELS ?? DEFAULT_GEMINI_FALLBACKS)
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  return [primary, ...fallbacks.filter((m) => m !== primary)];
+}
+
+// خطاهای موقتیِ سمت Gemini: ارزش دوباره‌امتحان‌کردن (و بعد رفتن به مدل بعدی) دارن.
+function isTransientGeminiStatus(status) {
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+// برمی‌گردونه { res, model } برای اولین پاسخ موفق، یا { res, model } آخرین
+// پاسخِ ناموفق (تا پیام خطا بر اساس status ساخته بشه)، یا { err } اگه هیچ
+// پاسخی نیومده (قطعی شبکه/تایم‌اوت در همهٔ تلاش‌ها).
+async function fetchGeminiWithFallback(env, requestBody) {
+  const models = geminiModelList(env);
+  const deadline = Date.now() + GEMINI_TOTAL_BUDGET_MS;
+  let last = { res: null, err: null, model: models[0] };
+
+  for (const model of models) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+
+    for (let attempt = 1; attempt <= GEMINI_ATTEMPTS_PER_MODEL; attempt++) {
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) return last;
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), Math.min(GEMINI_TIMEOUT_MS, remaining));
+      let res = null;
+      let err = null;
+      try {
+        res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+          body: requestBody,
+          signal: controller.signal,
+        });
+      } catch (e) {
+        err = e;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+
+      if (res && res.ok) return { res, model };
+      last = { res, err, model };
+
+      // مدل پیدا نشد / برای این کلید در دسترس نیست: بی‌درنگ مدل بعدی.
+      if (res && res.status === 404) break;
+      // خطای غیرموقتی (کلید نامعتبر، درخواست خراب، ...): با مدل دیگه هم درست نمی‌شه.
+      if (res && !isTransientGeminiStatus(res.status)) return last;
+      // تایم‌اوت/قطعی اتصال: همین مدل رو دوباره امتحان نکن، برو مدل بعدی.
+      if (err) break;
+
+      if (attempt < GEMINI_ATTEMPTS_PER_MODEL) {
+        const retryAfterMs = parseRetryAfterMs(res);
+        const backoff = retryAfterMs ?? 600 * attempt + Math.floor(Math.random() * 400);
+        if (Date.now() + backoff >= deadline) return last;
+        await new Promise((r) => setTimeout(r, backoff));
+      }
     }
-
-    if (lastRes && lastRes.ok) return lastRes;
-
-    // برای خطاهای موقتی (503 شلوغی مدل، یا 429 سهمیهٔ لحظه‌ای) دوباره
-    // تلاش کن. برای تایم‌اوت/قطعیِ اتصال دوباره تلاش نمی‌کنیم - چون
-    // این‌جور خطاها معمولاً به این زودی‌ها درست نمی‌شن و تلاش دوباره فقط
-    // باعث می‌شه کاربر چند برابر بیشتر بی‌خبر منتظر بمونه؛ بهتره سریع
-    // خطای روشن بدیم تا کاربر بتونه دوباره تلاش کنه.
-    const isRetryableStatus = !lastErr && lastRes && (lastRes.status === 503 || lastRes.status === 429);
-    if (!isRetryableStatus || attempt === maxAttempts) {
-      if (lastErr) throw lastErr;
-      return lastRes;
-    }
-
-    const retryAfterMs = parseRetryAfterMs(lastRes);
-    await new Promise((r) => setTimeout(r, retryAfterMs ?? 700 * attempt)); // کمی صبر قبل از تلاش بعدی
   }
-  if (lastErr) throw lastErr;
-  return lastRes;
+  return last;
+}
+
+// پیام روشن و فارسی برای کاربر - بدون جزئیات فنی Gemini.
+function geminiErrorMessage(status) {
+  if (status === 429) {
+    return "دستیار هوشمند موقتاً شلوغه (سهمیهٔ لحظه‌ای پر شده). لطفاً چند ثانیه صبر کنید و دوباره بپرسید.";
+  }
+  if (status === 503 || status === 500 || status === 502 || status === 504) {
+    return "سرویس هوش مصنوعی الان زیر فشار زیاده و پاسخ نداد. چند لحظه بعد دوباره بپرسید.";
+  }
+  if (status === 401 || status === 403) {
+    return "دسترسی دستیار هوشمند به سرویس برقرار نیست. لطفاً به مدیر سایت اطلاع بدید.";
+  }
+  return "خطا در تماس با دستیار هوشمند. لطفاً دوباره تلاش کنید.";
 }
 
 // ---------- /chat : پاسخ‌سازی با Gemini بر اساس متن‌های مرتبط ----------
@@ -284,8 +346,6 @@ REFERENCES: 1,3
 متن‌های مرتبط:
 ${contextText}`;
 
-  const geminiStreamUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
-
   // Item جدید (گفتگوی ادامه‌دار): هر تبادل قبلیِ همین نشست، به‌صورت یک
   // نوبت واقعی user + یک نوبت واقعی model قبل از سؤال فعلی اضافه می‌شه -
   // این‌جوری Gemini واقعاً می‌بینه چه سؤال‌هایی قبلاً پرسیده شده و چه
@@ -341,25 +401,16 @@ ${contextText}`;
       const encoder = new TextEncoder();
       const send = (obj) => controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
 
-      let geminiRes;
-      try {
-        geminiRes = await fetchGeminiWithRetry(geminiStreamUrl, geminiRequestBody);
-      } catch (err) {
-        send({ type: "error", message: "خطا در برقراری ارتباط با Gemini" });
-        controller.close();
-        return;
-      }
+      const { res: geminiRes, err: geminiErr, model: usedModel } = await fetchGeminiWithFallback(env, geminiRequestBody);
 
-      if (!geminiRes.ok) {
-        const errText = await geminiRes.text().catch(() => "");
-        // رفع باگ (پیام مبهم برای کاربر): وقتی همهٔ تلاش‌های دوباره هم با
-        // 429 (سهمیهٔ لحظه‌ای پر) شکست بخوره، به‌جای پیام کلی و گنگ، یه
-        // پیام روشن و قابل‌اقدام نشون بده - چون این حالت معمولاً چند
-        // ثانیه بعد خودش برطرف می‌شه.
-        const message = geminiRes.status === 429
-          ? "دستیار هوشمند موقتاً شلوغه (سهمیهٔ لحظه‌ای پر شده). لطفاً چند ثانیه صبر کنید و دوباره بپرسید."
-          : "خطا در تماس با Gemini";
-        send({ type: "error", message, detail: errText });
+      if (!geminiRes || !geminiRes.ok) {
+        // جزئیات فنی فقط تو لاگ Worker می‌مونه، نه برای کاربر.
+        const errText = geminiRes ? await geminiRes.text().catch(() => "") : String(geminiErr);
+        console.error("Gemini failed", usedModel, geminiRes ? geminiRes.status : "network", errText.slice(0, 500));
+        const message = geminiRes
+          ? geminiErrorMessage(geminiRes.status)
+          : "اتصال به سرویس هوش مصنوعی برقرار نشد. اینترنت‌تون رو چک کنید و دوباره بپرسید.";
+        send({ type: "error", message });
         controller.close();
         return;
       }
