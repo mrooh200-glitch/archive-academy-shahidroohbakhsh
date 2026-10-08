@@ -465,6 +465,35 @@ const MAX_IMAGE_BASE64_CHARS = 8 * 1024 * 1024; // حدود ۶ مگابایت ف
 const ALLOWED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif|heic|heif)$/i;
 
 // ---------- /chat : پاسخ‌سازی با Gemini بر اساس متن‌های مرتبط ----------
+// ---------- استخراج مقاوم خط REFERENCES (حالت grounded) ----------
+// Gemini همیشه خط «REFERENCES: 1,3» را دقیقاً مطابق دستور نمی‌نویسد؛ گاهی
+// بولد/کد‌بلاک می‌کند (**REFERENCES:** 1)، عدد فارسی یا «،» می‌گذارد، [1, 3]
+// می‌نویسد، توضیح یا یک خط اضافه بعدش می‌آورد. هر کدام از این‌ها قبلاً
+// باعث می‌شد خط خام به کاربر برسد. این تابع آخرین خطِ شروع‌شده با
+// REFERENCES (فقط اگر در انتهای متن باشد، حداکثر ۲۰۰ نویسه مانده) را از
+// پاسخ جدا می‌کند و شماره‌ها را برمی‌گرداند. بدون خط: references = null.
+const REFERENCES_LINE_RE = /(?:^|\n)[ \t>*_`#-]*references[\s*_`]*[:：]/gi;
+const REFERENCES_MAX_TAIL = 200;
+
+function extractReferencesLine(fullText) {
+  let last = null;
+  REFERENCES_LINE_RE.lastIndex = 0;
+  for (let m; (m = REFERENCES_LINE_RE.exec(fullText)); ) last = m;
+  if (!last || fullText.length - last.index > REFERENCES_MAX_TAIL) {
+    return { answer: fullText.trim(), references: null };
+  }
+  const answer = fullText.slice(0, last.index).replace(/\s*```\s*$/, "").trim();
+  // فقط خط REFERENCES؛ عددهای فارسی/عربی به لاتین تبدیل می‌شوند.
+  const line = fullText
+    .slice(last.index + last[0].length)
+    .split("\n")[0]
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660));
+  if (/\bnone\b|هیچ/i.test(line) && !/\d/.test(line)) return { answer, references: [] };
+  const nums = (line.match(/\d+/g) || []).map((n) => parseInt(n, 10)).filter((n) => n > 0);
+  return { answer, references: [...new Set(nums)] };
+}
+
 async function handleChat(request, env) {
   let body;
   try {
@@ -659,7 +688,7 @@ ${contextText}
   // پایانِ پخش، همون منطق قبلیِ استخراج REFERENCES رو روی کل متن اجرا
   // می‌کنیم و فقط باقی‌ماندهٔ واقعیِ پاسخ (بدون خط REFERENCES) رو در یک
   // «delta» نهایی می‌فرستیم.
-  const HOLD_BACK = 80;
+  const HOLD_BACK = REFERENCES_MAX_TAIL; // هم‌اندازهٔ بیشینهٔ دنبالهٔ خط REFERENCES
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -789,16 +818,9 @@ ${contextText}
       let usedReferences = null;
 
       if (mode === "grounded") {
-        const match = fullText.match(/\n?REFERENCES:\s*([^\n]*)\s*$/i);
-        if (match) {
-          finalAnswer = fullText.slice(0, match.index).trim();
-          const refsRaw = match[1].trim().toLowerCase();
-          usedReferences = refsRaw === "none" || refsRaw === ""
-            ? []
-            : refsRaw.split(",").map(s => parseInt(s.trim(), 10)).filter(n => Number.isInteger(n) && n > 0);
-        } else {
-          finalAnswer = fullText.trim();
-        }
+        const extracted = extractReferencesLine(fullText);
+        finalAnswer = extracted.answer;
+        usedReferences = extracted.references;
 
         // هرچی از finalAnswer هنوز فرستاده نشده (یعنی تو pendingTail
         // نگه‌داشته شده بود) رو الان به‌صورت یک تکهٔ نهایی می‌فرستیم.
