@@ -1,0 +1,61 @@
+name: Eval chat (ارزیابی گفتگوی هوشمند)
+# مجموعهٔ scripts/eval-questions.json را روی Worker زنده اجرا می‌کند (بازیابی +
+# پاسخ /chat) و نتیجهٔ کامل را در شاخهٔ claude/eval-results ذخیره می‌کند.
+# فقط دستی اجرا می‌شود؛ روی main چیزی commit یا deploy نمی‌کند.
+# ورودی‌ها:
+#  - label: نام نتیجه (مثلاً baseline یا after-threshold)
+#  - args: آرگومان‌های اضافهٔ scripts/eval-chat.js (مثلاً --variant k8 --chat in,follow)
+permissions:
+  contents: write
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: "نام نتیجه"
+        required: true
+        default: "run"
+      args:
+        description: "آرگومان‌های اضافه برای eval-chat.js"
+        required: false
+        default: ""
+concurrency:
+  group: eval-chat
+  cancel-in-progress: false
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run evaluation
+        env:
+          LABEL: ${{ inputs.label }}
+          EXTRA_ARGS: ${{ inputs.args }}
+        run: node scripts/eval-chat.js --label "$LABEL" $EXTRA_ARGS
+      - name: Save results to claude/eval-results
+        env:
+          LABEL: ${{ inputs.label }}
+        run: |
+          set -e
+          mkdir -p /tmp/res && cd /tmp/res
+          git init -q -b claude/eval-results
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git fetch -q --depth 1 origin claude/eval-results; then
+            git checkout -q -B claude/eval-results FETCH_HEAD
+          fi
+          cp -r "$GITHUB_WORKSPACE/eval-results/." .
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "eval results: $LABEL" || { echo "چیزی برای ذخیره نیست"; exit 0; }
+          for i in 1 2 3; do
+            git push -q origin claude/eval-results && exit 0
+            git fetch -q --depth 1 origin claude/eval-results && git rebase -q FETCH_HEAD || true
+            sleep 3
+          done
+          exit 1
