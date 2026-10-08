@@ -34,7 +34,12 @@ const CHAT_SET = new Set(String(args.chat === undefined ? "in,off,adjacent,follo
 const CHAT_VARIANT = args.variant || "k5";
 const RETRIEVAL_VARIANTS = String(args.variants || "k5,k6,k8,k5n1,k5n2,k8n1").split(",");
 const QUESTIONS_FILE = args.questions || "scripts/eval-questions.json";
-const PAUSE_MS = Number(args.pause || 1500);
+const PAUSE_MS = Number(args.pause || 6000);
+// خطاهای موقتیِ Gemini (سهمیه/شلوغی/تایم‌اوت) باعث می‌شود کیفیت پاسخ اندازه‌گیری نشود؛ پس
+// هر پرسش تا RETRY بار دوباره امتحان می‌شود و تعداد تلاش جدا گزارش می‌شود.
+const RETRY = Number(args.retry === undefined ? 2 : args.retry);
+const RETRY_WAIT_MS = Number(args.retryWait || 20000);
+const TRANSIENT_CODES = new Set(["busy", "quota", "timeout", "network", "stream_interrupted"]);
 const ORIGIN = args.origin || "https://sroohbakhsh.ir";
 // پرسش‌هایی که فقط به‌خاطر انتخاب زیرمجموعه اجرا شوند (جداشده با کاما)
 const ONLY_IDS = args.ids ? new Set(String(args.ids).split(",")) : null;
@@ -118,7 +123,7 @@ async function embedQuery(text) {
 // ---------- یک تماس /chat ----------
 async function callChat(body) {
   const t0 = Date.now();
-  const out = { http: 0, answer: "", refs: undefined, error: null, ttfb: null, firstDelta: null, total: null, attempts: null, usage: null, model: null, rawDebug: [] };
+  const out = { http: 0, answer: "", refs: undefined, error: null, code: null, ttfb: null, firstDelta: null, total: null, attempts: null, usage: null, model: null, rawDebug: [] };
   try {
     const res = await fetch(BASE + "/chat", {
       method: "POST",
@@ -140,7 +145,7 @@ async function callChat(body) {
         if (out.firstDelta === null) out.firstDelta = Date.now() - t0;
         out.answer += o.text || "";
       } else if (o.type === "done") out.refs = o.references;
-      else if (o.type === "error") out.error = o.message || "error";
+      else if (o.type === "error") { out.error = o.message || "error"; out.code = o.code || null; }
       else if (o.error) out.error = o.error;
     };
     const reader = res.body.getReader();
@@ -179,7 +184,7 @@ async function callChat(body) {
     const key = q.id;
     if (cached[key] && (args.loose || cached[key].text === searchText)) {
       result.vectors[key] = cached[key];
-    } else if (args.vectors) {
+    } else if (args.offline) {
       throw new Error("بردار ذخیره‌شده برای " + key + " نیست یا متن جست‌وجو فرق دارد");
     } else {
       const v = await embedQuery(searchText);
@@ -246,10 +251,18 @@ async function callChat(body) {
         history: q.history || [],
         mode: "grounded",
         debug: true,
-        topScore: scored[0].score,
+        // --nogate: topScore نفرستد تا رفتار «قبل از گیت آستانه» روی همان Worker زنده اندازه‌گیری شود.
+        topScore: args.nogate ? undefined : scored[0].score,
         topScores: scored.slice(0, 5).map((s) => Number(s.score.toFixed(4))),
       };
-      const r = await callChat(body);
+      let r = await callChat(body);
+      let tries = 1;
+      const firstError = r.error ? r.code || "error" : null;
+      while (r.error && tries <= RETRY && (!r.code || TRANSIENT_CODES.has(r.code))) {
+        await sleep(RETRY_WAIT_MS);
+        r = await callChat(body);
+        tries++;
+      }
       const ans = fold(r.answer);
       const notFound = answerIndicatesNotFound(r.answer);
       const kwGroups = q.keywords || [];
@@ -258,6 +271,7 @@ async function callChat(body) {
       const refsCorrect = q.expect && refsList ? refsList.some((n) => ctx[n - 1] && matchesExpect(EMB[ctx[n - 1].idx].text, q.expect)) : null;
       const rec = {
         category: q.category,
+        tries, firstError,
         http: r.http, error: r.error, answer: r.answer, refs: r.refs === undefined ? "no-done" : r.refs,
         notFound, leak: /REFERENCES/i.test(r.answer), len: r.answer.length,
         kw: kwGroups.length ? `${kwMatched}/${kwGroups.length}` : null,
@@ -266,12 +280,13 @@ async function callChat(body) {
         ctxHit: q.expect ? ctx.some((c) => matchesExpect(EMB[c.idx].text, q.expect)) : null,
         ttfb: r.ttfb, firstDelta: r.firstDelta, total: r.total, model: r.model, usage: r.usage,
         attempts: r.attempts,
+        gated: r.rawDebug.some((d) => d.gate === "below_threshold"),
       };
       result.chat[q.id] = rec;
       const att = (r.attempts || []).map((a) => `${a.model.replace("gemini-", "")}=${a.status}`).join(">");
       lines.push(
         `${q.category.padEnd(8)} ${q.id.padEnd(20)} http=${r.http} ${r.error ? "ERR[" + r.error.slice(0, 60) + "]" : "ok"} len=${rec.len} notFound=${notFound} refs=${JSON.stringify(rec.refs)} refsOk=${refsCorrect} kw=${rec.kw ?? "-"} leak=${rec.leak} ` +
-          `t=${r.total}ms first=${r.firstDelta ?? "-"}ms tok(in/out/think)=${r.usage ? `${r.usage.prompt}/${r.usage.output}/${r.usage.thoughts ?? 0}` : "-"} ${att}`
+          `gated=${rec.gated} tries=${tries} t=${r.total}ms first=${r.firstDelta ?? "-"}ms tok(in/out/think)=${r.usage ? `${r.usage.prompt}/${r.usage.output}/${r.usage.thoughts ?? 0}` : "-"} ${att}`
       );
       await sleep(PAUSE_MS);
     }
@@ -287,7 +302,7 @@ async function callChat(body) {
       lines.push(
         `positives n=${pos.length}: answered=${pos.filter((r) => !r.error && !r.notFound).length} (${pct(pos.filter((r) => !r.error && !r.notFound).length, pos.length)}) ` +
           `kwOk=${pos.filter((r) => r.kwOk).length} (${pct(pos.filter((r) => r.kwOk).length, pos.length)}) ` +
-          `ctxHit=${pos.filter((r) => r.ctxHit).length} refsCorrect=${pos.filter((r) => r.refsCorrect).length} leaks=${pos.filter((r) => r.leak).length} errors=${pos.filter((r) => r.error).length} ` +
+          `ctxHit=${pos.filter((r) => r.ctxHit).length} refsCorrect=${pos.filter((r) => r.refsCorrect).length} leaks=${pos.filter((r) => r.leak).length} errors=${pos.filter((r) => r.error).length} first_try_failures=${pos.filter((r) => r.firstError).length} ` +
           `median_t=${median(pos.map((r) => r.total))}ms tokens_in_avg=${Math.round(mean(pos.filter((r) => r.usage).map((r) => r.usage.prompt)) || 0)} out_avg=${Math.round(mean(pos.filter((r) => r.usage).map((r) => r.usage.output)) || 0)}`
       );
       void answered;
@@ -295,7 +310,7 @@ async function callChat(body) {
     if (neg.length) {
       lines.push(
         `negatives n=${neg.length}: correct_notFound=${neg.filter((r) => !r.error && r.notFound).length} (${pct(neg.filter((r) => !r.error && r.notFound).length, neg.length)}) ` +
-          `answered_anyway=${neg.filter((r) => !r.error && !r.notFound).length} leaks=${neg.filter((r) => r.leak).length} errors=${neg.filter((r) => r.error).length} ` +
+          `answered_anyway=${neg.filter((r) => !r.error && !r.notFound).length} leaks=${neg.filter((r) => r.leak).length} errors=${neg.filter((r) => r.error).length} first_try_failures=${neg.filter((r) => r.firstError).length} ` +
           `median_t=${median(neg.map((r) => r.total))}ms tokens_in_avg=${Math.round(mean(neg.filter((r) => r.usage).map((r) => r.usage.prompt)) || 0)}`
       );
     }
