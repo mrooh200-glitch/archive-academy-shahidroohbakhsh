@@ -28,7 +28,7 @@ async function one(body) {
       try { o = JSON.parse(line); } catch { out.msg = "non-json: " + line.slice(0, 80); return; }
       if (o.type === "debug") out.attempts = o.attempts;
       else if (o.type === "delta") { if (firstDelta === null) firstDelta = Date.now() - t0; out.chars += (o.text || "").length; }
-      else if (o.type === "done") out.result = "done";
+      else if (o.type === "done") { out.result = "done"; out.refs = o.references; }
       else if (o.type === "error") { out.result = "error"; out.msg = o.message || ""; }
       else if (o.error) { out.result = "error"; out.msg = o.error; }
     };
@@ -61,7 +61,7 @@ async function one(body) {
       n++;
       if (r.result === "done" && r.chars > 0) { ok++; totals.push(r.total); }
       const att = r.attempts ? r.attempts.map((a) => `${a.model}#${a.attempt}=${a.status}${a.reason ? "/" + a.reason : ""}(${a.ms}ms)`).join(" > ") : "no-debug";
-      lines.push(`${test.name}[${i + 1}] http=${r.http} ${r.result} chars=${r.chars} firstDelta=${r.firstDelta}ms total=${r.total}ms | ${att}${r.msg ? " | " + r.msg : ""}`);
+      lines.push(`${test.name}[${i + 1}] http=${r.http} ${r.result} chars=${r.chars}${r.refs !== undefined && r.refs !== null ? " refs=" + JSON.stringify(r.refs) : ""} firstDelta=${r.firstDelta}ms total=${r.total}ms | ${att}${r.msg ? " | " + r.msg : ""}`);
       if (test.pauseMs) await new Promise((res) => setTimeout(res, test.pauseMs));
     }
   }

@@ -1,14 +1,11 @@
 name: Chat probe (تست سلامت گفتگو با هوش)
 # چند درخواست واقعی به /chat روی Worker زنده می‌فرستد و زمان و وضعیت هر
-# کدام را گزارش می‌کند. فقط دستی (Run workflow) یا با تغییر فایل تنظیم
-# تست اجرا می‌شود؛ چیزی را commit یا deploy نمی‌کند.
+# کدام را گزارش می‌کند. فقط دستی (Run workflow) اجرا می‌شود؛ چیزی را
+# commit یا deploy نمی‌کند. تست‌ها در .github/chat-probe/probe.json هستند.
 permissions:
   contents: read
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/chat-probe/**"
 jobs:
   probe:
     runs-on: ubuntu-latest
