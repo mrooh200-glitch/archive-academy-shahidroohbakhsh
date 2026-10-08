@@ -763,6 +763,7 @@ function archiveCurrentChatConversationAi(chatTurns) {
     turns: chatTurns.map((turn) => ({
       question: turn.question,
       answer: turn.answer,
+      mode: turn.mode || "grounded",
       sourcesInfo: turn.sourcesInfo || [],
     })),
     sourcesInfo: collectConversationSourcesAi(chatTurns),
@@ -821,6 +822,7 @@ function renderChatArchivePanelAi() {
                 <div class="ai-chat-turn">
                   <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(normalizeQuestionTextAi(turn.question))}</div>
                   <div class="ai-chat-bubble ai-chat-bubble-assistant">
+                    ${freeAnswerBadgeHtmlAi(turn.mode)}
                     ${linkifyAnswerAi(turn.answer)}
                     ${sourcesLine ? `<div class="ai-chat-sources">پاسخ از کتاب ${sourcesLine}</div>` : ""}
                   </div>
@@ -992,6 +994,13 @@ function answerIndicatesNotFoundAi(answerText) {
     /اطلاعاتی\s*(در|درباره).*(نیست|ندار)/,
   ];
   return patterns.some((pattern) => pattern.test(answerText || ""));
+}
+
+// برچسب روشن برای پاسخ‌های حالت «پاسخ آزاد» که مستند به آرشیو نیستند.
+const FREE_ANSWER_BADGE_TEXT_AI = "این پاسخ مستند به آرشیو نیست";
+function freeAnswerBadgeHtmlAi(mode) {
+  if (mode !== "general") return "";
+  return `<div class="ai-chat-free-badge" role="note" style="display:inline-block;margin:0 0 6px;padding:2px 8px;border-radius:10px;font-size:0.8em;background:rgba(217,119,6,0.15);border:1px solid rgba(217,119,6,0.55);">⚠ ${FREE_ANSWER_BADGE_TEXT_AI}</div>`;
 }
 
 function formatSourcesInfoLineAi(sourcesInfo) {
@@ -1932,6 +1941,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
               <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(turn.question)}</div>
               <div class="ai-chat-bubble ai-chat-bubble-assistant">
+                ${freeAnswerBadgeHtmlAi(turn.mode)}
                 <div>${linkifyAnswerAi(turn.answer)}</div>
                 ${turn.sourceLinksHtml ? `<div class="ai-chat-sources">منابع: ${turn.sourceLinksHtml}</div>` : ""}
               </div>
@@ -1958,6 +1968,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatTurns.push({
           question: turn.question,
           answer: turn.answer,
+          mode: turn.mode || "grounded",
           sourceLinksHtml: formatSourcesInfoHtmlAi(turn.sourcesInfo),
           sourcesText: (turn.sourcesInfo || []).map((s) => s.book).join("، "),
           sourcesInfo: turn.sourcesInfo || [],
@@ -2085,14 +2096,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // شکل‌گیریِ پاسخ جایگزین می‌کنیم - دیگه لازم نیست کاربر صبر کنه
         // تا کل پاسخ یک‌جا آماده بشه.
         let streamedBubbleEl = null;
+        let streamedTextEl = null;
         const onDelta = (_chunk, soFar) => {
           if (myToken !== chatToken) return;
           if (!streamedBubbleEl) {
             const pendingTurnEl = document.getElementById(`aiChatPending-${myToken}`);
             streamedBubbleEl = pendingTurnEl ? pendingTurnEl.querySelector(".ai-chat-pending") : null;
-            if (streamedBubbleEl) streamedBubbleEl.classList.remove("ai-chat-pending");
+            if (streamedBubbleEl) {
+              streamedBubbleEl.classList.remove("ai-chat-pending");
+              // در پاسخ آزاد، برچسب «مستند به آرشیو نیست» از همان ابتدای پخش دیده شود.
+              streamedBubbleEl.innerHTML = `${freeAnswerBadgeHtmlAi(chatMode)}<div class="ai-chat-stream-text"></div>`;
+              streamedTextEl = streamedBubbleEl.querySelector(".ai-chat-stream-text");
+            }
           }
-          if (streamedBubbleEl) streamedBubbleEl.textContent = soFar;
+          if (streamedTextEl) streamedTextEl.textContent = soFar;
         };
 
         const { answer, sources } = await askQuestion(question, history, chatMode, attachmentForThisMessage, aiChatBookScope, onDelta);
@@ -2131,6 +2148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatTurns.push({
           question,
           answer,
+          mode: chatMode,
           sourceLinksHtml,
           sourcesText: sources.map((s) => s.source).join("، "),
           sourcesInfo,
