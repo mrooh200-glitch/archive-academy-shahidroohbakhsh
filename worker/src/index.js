@@ -671,6 +671,7 @@ ${contextText}
       let pendingTail = ""; // آخرین چند ده کاراکترِ هنوز نفرستاده
       let finishReason = ""; // دلیل پایانِ پاسخ از دید Gemini (STOP، SAFETY، MAX_TOKENS، ...)
       let blockReason = ""; // اگر خودِ پرسش رد شده باشد
+      let usage = null; // شمارش توکن‌های Gemini (فقط برای ردِ debug)
 
       // اگر Gemini وسط پخش ساکت بماند، به‌جای معطل‌ماندنِ بی‌پایان خطا می‌دهیم.
       const readWithIdleTimeout = () => {
@@ -718,6 +719,7 @@ ${contextText}
             } catch {
               continue; // خطِ ناقص/غیرمنتظره - نادیده بگیر
             }
+            if (chunk?.usageMetadata) usage = chunk.usageMetadata;
             const candidate = chunk?.candidates?.[0];
             if (candidate?.finishReason) finishReason = candidate.finishReason;
             if (chunk?.promptFeedback?.blockReason) blockReason = chunk.promptFeedback.blockReason;
@@ -786,6 +788,23 @@ ${contextText}
         }
       } else if (pendingTail) {
         send({ type: "delta", text: pendingTail });
+      }
+
+      // عیب‌یابی: مدل پاسخ‌دهنده و تعداد توکن‌ها (فقط وقتی کلاینت debug:true فرستاده).
+      if (debug) {
+        send({
+          type: "debug",
+          model: usedModel,
+          finishReason,
+          usage: usage
+            ? {
+                prompt: usage.promptTokenCount ?? null,
+                output: usage.candidatesTokenCount ?? null,
+                thoughts: usage.thoughtsTokenCount ?? 0,
+                total: usage.totalTokenCount ?? null,
+              }
+            : null,
+        });
       }
 
       send({ type: "done", references: usedReferences });
