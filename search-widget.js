@@ -2061,8 +2061,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ارسال هم‌زمان: تا پایان پاسخ در حال پخش، ارسال غیرفعال است تا پاسخ اول
+    // با پرسش دوم بی‌صدا گم نشود. متن پرسش دوم در کادر می‌ماند و پاک نمی‌شود.
+    let chatBusy = false;
+    const aiChatSubmitButton = aiChatForm.querySelector('button[type="submit"], button:not([type])');
+    const aiChatIdlePlaceholder = aiChatInput.placeholder;
+    const setChatBusy = (busy) => {
+      chatBusy = busy;
+      if (aiChatSubmitButton) aiChatSubmitButton.disabled = busy;
+      aiChatInput.placeholder = busy ? "تا پایان پاسخ فعلی صبر کنید…" : aiChatIdlePlaceholder;
+    };
+
     aiChatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (chatBusy) return;
       const question = aiChatInput.value.trim();
       if (!question) return;
 
@@ -2084,6 +2096,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       aiChatOutput.scrollTop = 0;
 
+      setChatBusy(true);
       try {
         // Item جدید (گفتگوی ادامه‌دار): تاریخچهٔ تبادل‌های قبلی همین
         // نشست، جدا از پرسش فعلی، به askQuestion فرستاده می‌شه.
@@ -2166,6 +2179,8 @@ document.addEventListener("DOMContentLoaded", () => {
           aiChatOutput.insertAdjacentHTML("afterbegin", `<div class="ai-chat-error">${escapeHtmlAi(message)}</div>`);
         }
         console.error(err);
+      } finally {
+        setChatBusy(false);
       }
     });
 
