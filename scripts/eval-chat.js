@@ -228,7 +228,7 @@ async function callChat(body) {
     const hits = withExpect.filter((q) => result.retrieval[q.id].variants[v].hit).length;
     const ns = withExpect.map((q) => result.retrieval[q.id].variants[v].n);
     const cs = withExpect.map((q) => result.retrieval[q.id].variants[v].chars);
-    lines.push(`variant=${v} hit=${hits}/${withExpect.length} (${pct(hits, withExpect.length)}) chunks_avg=${mean(ns).toFixed(1)} chars_avg=${Math.round(mean(cs))}`);
+    lines.push(`variant=${v} hit=${hits}/${withExpect.length} (${pct(hits, withExpect.length)}) chunks_avg=${(mean(ns) ?? 0).toFixed(1)} chars_avg=${Math.round(mean(cs) ?? 0)}`);
   }
   const rankMiss = withExpect.filter((q) => result.retrieval[q.id].rank === null).length;
   lines.push(`rank_of_first_correct: median=${median(withExpect.map((q) => result.retrieval[q.id].rank).filter((x) => x !== null))} not_in_top50=${rankMiss}`);
