@@ -184,7 +184,7 @@ async function callChat(body) {
     const key = q.id;
     if (cached[key] && (args.loose || cached[key].text === searchText)) {
       result.vectors[key] = cached[key];
-    } else if (args.vectors) {
+    } else if (args.offline) {
       throw new Error("بردار ذخیره‌شده برای " + key + " نیست یا متن جست‌وجو فرق دارد");
     } else {
       const v = await embedQuery(searchText);
