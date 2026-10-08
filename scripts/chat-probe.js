@@ -142,10 +142,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     }
     all.push(...block);
     console.log(block.join("\n"));
-    // یک annotation برای هر تست، تا نتیجه بدون بازکردن لاگ هم دیده شود.
-    const esc = block.join("\n").replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
-    console.log(`::notice title=probe ${test.name}::${esc}`);
     if (test.waitAfterMs) await sleep(test.waitAfterMs);
+  }
+  // GitHub فقط ۱۰ annotation (notice) برای هر step نگه می‌دارد؛ پس خروجی در
+  // چند تکهٔ ۱۰ خطی می‌آید تا بدون بازکردن لاگ دیده شود.
+  for (let k = 0; k < all.length && k < 100; k += 10) {
+    const esc = all.slice(k, k + 10).join("\n").replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+    console.log(`::notice title=probe part ${k / 10 + 1}::${esc}`);
   }
   totals.sort((a, b) => a - b);
   const med = totals.length ? totals[Math.floor(totals.length / 2)] : null;
