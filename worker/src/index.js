@@ -832,6 +832,18 @@ ${contextText}
         send({ type: "delta", text: pendingTail });
       }
 
+      // پاسخ ناتمام: اگر Gemini وسط پاسخ به‌دلیل سقف طول یا فیلتر ایمنی متوقف شده
+      // باشد (finishReason غیر از STOP)، کاربر نباید پاسخ نیمه‌کاره را کامل ببیند.
+      if (finishReason && finishReason !== "STOP") {
+        const cutByLength = finishReason === "MAX_TOKENS";
+        send({
+          type: "delta",
+          text: cutByLength
+            ? "\n\n(پاسخ به‌دلیل محدودیت طول ناقص ماند. برای ادامه بنویسید: «ادامه بده».)"
+            : "\n\n(پاسخ به‌دلیل محدودیت‌های محتوایی سرویس هوش مصنوعی ناقص ماند. لطفاً سؤال را با عبارت دیگری بپرسید.)",
+        });
+      }
+
       // عیب‌یابی: مدل پاسخ‌دهنده و تعداد توکن‌ها (فقط وقتی کلاینت debug:true فرستاده).
       if (debug) {
         send({
