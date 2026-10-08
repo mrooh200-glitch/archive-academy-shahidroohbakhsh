@@ -451,6 +451,13 @@ function geminiErrorMessage(failure) {
 // سوء از Worker به‌عنوان پروکسیِ رایگان Gemini را می‌گیرد.
 const MAX_QUESTION_CHARS = 2000;
 const MAX_CONTEXT_CHUNKS = 10;
+// آستانهٔ شباهتِ نزدیک‌ترین تکه در حالت grounded. مقدار از ارزیابی ۴۷ پرسش
+// آمده (scripts/eval-chat.js): بالاترین شباهتِ پرسش‌های بی‌ربط ۰٫۴۸۵ و
+// پایین‌ترین شباهتِ پرسش‌های آرشیوی ۰٫۵۳۷ بود؛ ۰٫۵۰ بین این دو می‌افتد.
+// پرسش‌های «هم‌جوار» (مثل اضطراب امتحان، ۰٫۵۱ تا ۰٫۶۴) با شباهت تنها
+// از آرشیوی‌ها جدا نمی‌شوند و همچنان به Gemini می‌روند.
+const MIN_TOP_SCORE = 0.5;
+const NOT_FOUND_ANSWER = "در منابع موجود پاسخی یافت نشد. اگر می‌خواهید، سؤال را با کلمات دیگری بپرسید یا حالت «پاسخ آزاد» را انتخاب کنید (آن پاسخ مستند به آرشیو نیست).";
 const MAX_CONTEXT_CHUNK_CHARS = 3000;
 const MAX_HISTORY_TURNS = 10;
 const MAX_HISTORY_FIELD_CHARS = 4000;
@@ -516,6 +523,19 @@ async function handleChat(request, env) {
   // اصلاً بر پایهٔ متون آرشیو کار نمی‌کنه، پس این پارامتر رو لازم نداره.
   if (mode === "grounded" && contextChunks.length === 0) {
     return jsonResponse({ error: "پارامتر context (آرایه‌ای از متن‌های مرتبط) لازمه" }, 400);
+  }
+
+  // آستانهٔ شباهت: اگر نزدیک‌ترین تکه (که کلاینت با همان embedding حساب
+  // کرده) از حد پایین‌تر باشد، بدون تماس با Gemini همان پاسخ «یافت نشد»
+  // برمی‌گردد. اگر کلاینت topScore نفرستد (کلاینت قدیمی)، گیت اعمال نمی‌شود.
+  const topScore = typeof body.topScore === "number" && Number.isFinite(body.topScore) ? body.topScore : null;
+  if (mode === "grounded" && !body.image && topScore !== null && topScore < MIN_TOP_SCORE) {
+    const lines = [];
+    if (body.debug === true) lines.push({ type: "debug", gate: "below_threshold", topScore, threshold: MIN_TOP_SCORE });
+    lines.push({ type: "delta", text: NOT_FOUND_ANSWER }, { type: "done", references: [] });
+    return new Response(lines.map((o) => JSON.stringify(o)).join("\n") + "\n", {
+      headers: { "Content-Type": "application/x-ndjson; charset=utf-8" },
+    });
   }
 
   // Item ۱۲ (خصوصیاتِ شخصی‌سازیِ گفتگو): متن دلخواهی که کاربر از سمتِ

@@ -394,6 +394,8 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
         history,
         mode,
         image,
+        // بالاترین شباهتِ تکه‌های بازیابی‌شده؛ Worker زیر آستانه بدون Gemini «یافت نشد» می‌دهد.
+        topScore: mode === "general" || relevant.length === 0 ? undefined : relevant[0].score,
         // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
         customInstructions: getAiCustomInstructionsAi() || undefined,
       }),

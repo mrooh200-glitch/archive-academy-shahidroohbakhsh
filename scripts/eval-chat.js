@@ -251,7 +251,8 @@ async function callChat(body) {
         history: q.history || [],
         mode: "grounded",
         debug: true,
-        topScore: scored[0].score,
+        // --nogate: topScore نفرستد تا رفتار «قبل از گیت آستانه» روی همان Worker زنده اندازه‌گیری شود.
+        topScore: args.nogate ? undefined : scored[0].score,
         topScores: scored.slice(0, 5).map((s) => Number(s.score.toFixed(4))),
       };
       let r = await callChat(body);
@@ -279,12 +280,13 @@ async function callChat(body) {
         ctxHit: q.expect ? ctx.some((c) => matchesExpect(EMB[c.idx].text, q.expect)) : null,
         ttfb: r.ttfb, firstDelta: r.firstDelta, total: r.total, model: r.model, usage: r.usage,
         attempts: r.attempts,
+        gated: r.rawDebug.some((d) => d.gate === "below_threshold"),
       };
       result.chat[q.id] = rec;
       const att = (r.attempts || []).map((a) => `${a.model.replace("gemini-", "")}=${a.status}`).join(">");
       lines.push(
         `${q.category.padEnd(8)} ${q.id.padEnd(20)} http=${r.http} ${r.error ? "ERR[" + r.error.slice(0, 60) + "]" : "ok"} len=${rec.len} notFound=${notFound} refs=${JSON.stringify(rec.refs)} refsOk=${refsCorrect} kw=${rec.kw ?? "-"} leak=${rec.leak} ` +
-          `tries=${tries} t=${r.total}ms first=${r.firstDelta ?? "-"}ms tok(in/out/think)=${r.usage ? `${r.usage.prompt}/${r.usage.output}/${r.usage.thoughts ?? 0}` : "-"} ${att}`
+          `gated=${rec.gated} tries=${tries} t=${r.total}ms first=${r.firstDelta ?? "-"}ms tok(in/out/think)=${r.usage ? `${r.usage.prompt}/${r.usage.output}/${r.usage.thoughts ?? 0}` : "-"} ${att}`
       );
       await sleep(PAUSE_MS);
     }
