@@ -28,8 +28,24 @@ jobs:
           sed -i "s/const CACHE_VERSION = \"roohbakhsh-cache-[^\"]*\";/const CACHE_VERSION = \"roohbakhsh-cache-${SHORT_SHA}\";/" sw.js
           echo "New CACHE_VERSION: roohbakhsh-cache-${SHORT_SHA}"
 
+      # اگر workflowِ embeddings هم‌زمان روی main کامیت کرده باشد، push ساده
+      # با «non-fast-forward» رد می‌شود؛ پس قبل از push تغییرات تازه را
+      # می‌گیریم (rebase) و در صورت رقابت چند بار دوباره تلاش می‌کنیم.
       - name: Commit sw.js back to repo
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: به‌روزرسانی خودکار نسخهٔ کش Service Worker"
-          file_pattern: "sw.js"
+        run: |
+          git add sw.js
+          if git diff --cached --quiet; then
+            echo "sw.js تغییری نکرده؛ کامیتی لازم نیست."
+            exit 0
+          fi
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git commit -m "chore: به‌روزرسانی خودکار نسخهٔ کش Service Worker"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            sleep $((i * 3))
+          done
+          echo "push بعد از ۵ تلاش انجام نشد."
+          exit 1

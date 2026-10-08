@@ -37,13 +37,35 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node scripts/build-embeddings.js
+      # رفع باگ (deploy نشدنِ Worker بعد از merge): وقتی یک push هم
+      # search-widget.js و هم worker/ را عوض می‌کند، workflowِ «Update Service
+      # Worker cache version» هم‌زمان اجرا می‌شود و زودتر روی main کامیت
+      # می‌کند؛ push این‌جا با «non-fast-forward» رد می‌شد، job قرمز می‌شد و
+      # deploy-worker اصلاً اجرا نمی‌شد. حالا قبل از push، تغییرات تازهٔ main
+      # را می‌گیریم (rebase) و در صورت رقابت چند بار دوباره تلاش می‌کنیم.
       - name: Commit embeddings.json back to repo
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: به‌روزرسانی خودکار embeddings.json"
-          file_pattern: "embeddings.json embeddings-version.json"
+        run: |
+          git add embeddings.json embeddings-version.json
+          if git diff --cached --quiet; then
+            echo "embeddings تغییری نکرده؛ کامیتی لازم نیست."
+            exit 0
+          fi
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git commit -m "chore: به‌روزرسانی خودکار embeddings.json"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            sleep $((i * 3))
+          done
+          echo "push بعد از ۵ تلاش انجام نشد."
+          exit 1
   deploy-worker:
     needs: build-embeddings
+    # کد Worker به embeddings.json وابسته نیست؛ اگر ساخت embeddings شکست
+    # خورد، deploy نباید جا بماند (فقط اگر کل اجرا لغو شده باشد رد می‌شود).
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo

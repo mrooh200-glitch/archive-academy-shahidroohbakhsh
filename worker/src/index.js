@@ -100,7 +100,8 @@ export default {
       return jsonResponse({ error: "مسیر یا متد نامعتبر" }, 404);
     } catch (err) {
       console.error(err);
-      return jsonResponse({ error: "خطای داخلی سرور", detail: String(err) }, 500);
+      // متن خام خطا فقط در لاگ Worker می‌ماند، نه در پاسخ به کاربر.
+      return jsonResponse({ error: "خطای داخلی سرور. لطفاً چند لحظه بعد دوباره تلاش کنید." }, 500);
     }
   },
 };
@@ -166,28 +167,35 @@ async function handleEmbed(request, env) {
 // نشون داده می‌شد، حتی وقتی چند ثانیه بعد دوباره جواب می‌داد. حالا 429
 // هم مثل 503 قابل‌تلاش‌دوباره‌ست؛ اگه گوگل هدر Retry-After بده همونو
 // رعایت می‌کنیم، وگرنه از همون تأخیرِ فزاینده استفاده می‌کنیم.
-const GEMINI_TIMEOUT_MS = 20000;
-
-function parseRetryAfterMs(res) {
-  const header = res && res.headers ? res.headers.get("Retry-After") : null;
-  if (!header) return null;
-  const seconds = Number(header);
-  if (Number.isFinite(seconds) && seconds >= 0) return Math.min(seconds * 1000, 5000);
-  return null;
-}
-
-// Item جدید (پایداری اتصال): مدل اصلی (GEMINI_MODEL) گاهی به‌خاطر شلوغی
-// 503 می‌دهد و چند تلاش پشت‌سرهم هم جواب نمی‌دهد. حالا هر مدل چند بار با
-// وقفهٔ فزاینده (+ کمی نوسان تصادفی) امتحان می‌شود و اگر باز هم نشد، خودکار
-// به مدل بعدیِ فهرست می‌رود. نام مدل‌ها از متغیرهای محیطی خوانده می‌شود تا
-// بدون تغییر کد قابل عوض‌کردن باشد:
-//  - GEMINI_MODEL: مدل اصلی (پیش‌فرض gemini-3.7-flash)
+//
+// رفع ریشهٔ «خطای مبهم» (بر اساس ردِ debug روی Worker زنده، مهر ۱۴۰۵):
+//  ۱. مدل‌های جایگزینِ قبلی (gemini-2.5-flash و gemini-2.5-flash-lite) برای
+//     کلید این حساب 404 می‌دادند (گوگل آن‌ها را فقط به حساب‌هایی می‌دهد که
+//     قبلاً ازشان استفاده کرده‌اند)؛ پس عملاً هیچ جایگزینی وجود نداشت و
+//     کد 404 آخرین مدل به پیام عمومی «خطا در تماس با دستیار» تبدیل می‌شد.
+//  ۲. مدل اصلی با سطح تفکر پیش‌فرض (medium) حتی برای «سلام» حدود ۱۲ ثانیه
+//     تا اولین توکن طول می‌کشید و یک تایم‌اوت ۲۰ ثانیه‌ای تقریباً کل بودجهٔ
+//     زمانی را می‌خورد.
+//  ۳. خطای 503 خودش ۵ تا ۸ ثانیه طول می‌کشید؛ دوباره‌امتحان‌کردنِ همان
+//     مدلِ شلوغ فقط وقت تلف می‌کرد.
+// رفتار جدید: هر مدل در هر دور فقط یک بار امتحان می‌شود و با هر خطای موقتی
+// (503، 429، تایم‌اوت) بی‌درنگ مدل بعدی می‌آید؛ اگر همهٔ مدل‌ها در دور اول
+// خطای موقتی دادند و هنوز وقت هست، یک دور دیگر زده می‌شود.
+//
+// نام مدل‌ها و سطح تفکر از متغیرهای محیطی خوانده می‌شود تا بدون تغییر کد
+// قابل عوض‌کردن باشد:
+//  - GEMINI_MODEL: مدل اصلی
 //  - GEMINI_FALLBACK_MODELS: فهرست مدل‌های جایگزین، با کاما جدا شده
-//    (پیش‌فرض gemini-2.5-flash,gemini-2.5-flash-lite)
+//  - GEMINI_THINKING_LEVEL: minimal | low | medium | high، یا off برای
+//    این‌که اصلاً چیزی فرستاده نشود (پیش‌فرضِ خودِ مدل)
 const DEFAULT_GEMINI_MODEL = "gemini-3.7-flash";
-const DEFAULT_GEMINI_FALLBACKS = "gemini-2.5-flash,gemini-2.5-flash-lite";
-const GEMINI_ATTEMPTS_PER_MODEL = 2;
-const GEMINI_TOTAL_BUDGET_MS = 25000; // سقف کل زمانی که کاربر معطل می‌ماند
+const DEFAULT_GEMINI_FALLBACKS = "gemini-3.6-flash,gemini-3.5-flash,gemini-3.5-flash-lite";
+const DEFAULT_GEMINI_THINKING_LEVEL = "low";
+const GEMINI_THINKING_LEVELS = ["minimal", "low", "medium", "high", "off"];
+const GEMINI_FIRST_BYTE_TIMEOUT_MS = 12000; // سقف انتظار برای شروع پاسخِ هر مدل
+const GEMINI_STREAM_IDLE_TIMEOUT_MS = 25000; // سقف سکوت وسط پخش پاسخ
+const GEMINI_TOTAL_BUDGET_MS = 30000; // سقف کل زمانی که کاربر تا شروع پاسخ معطل می‌ماند
+const GEMINI_ROUNDS = 2;
 
 function geminiModelList(env) {
   const primary = (env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL).trim();
@@ -198,35 +206,76 @@ function geminiModelList(env) {
   return [primary, ...fallbacks.filter((m) => m !== primary)];
 }
 
-// خطاهای موقتیِ سمت Gemini: ارزش دوباره‌امتحان‌کردن (و بعد رفتن به مدل بعدی) دارن.
+function geminiThinkingLevel(env) {
+  const level = (env.GEMINI_THINKING_LEVEL || DEFAULT_GEMINI_THINKING_LEVEL).trim().toLowerCase();
+  return GEMINI_THINKING_LEVELS.includes(level) ? level : DEFAULT_GEMINI_THINKING_LEVEL;
+}
+
+// خطاهای موقتیِ سمت Gemini: ارزش رفتن به مدل بعدی و دورِ دوباره دارن.
 function isTransientGeminiStatus(status) {
   return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
 }
 
-// برمی‌گردونه { res, model } برای اولین پاسخ موفق، یا { res, model } آخرین
-// پاسخِ ناموفق (تا پیام خطا بر اساس status ساخته بشه)، یا { err } اگه هیچ
-// پاسخی نیومده (قطعی شبکه/تایم‌اوت در همهٔ تلاش‌ها).
-async function fetchGeminiWithFallback(env, requestBody, trace = null) {
-  const models = geminiModelList(env);
+// از بدنهٔ خطای Gemini فقط کد ثابتِ وضعیت (مثل NOT_FOUND یا UNAVAILABLE) را
+// برمی‌دارد - نه متن خام خطا را. متن خام فقط در لاگ Worker می‌ماند.
+async function readGeminiErrorReason(res, model) {
+  const text = await res.text().catch(() => "");
+  console.error("Gemini failed", model, res.status, text.slice(0, 500));
+  try {
+    const reason = JSON.parse(text)?.error?.status;
+    return typeof reason === "string" && /^[A-Z_]{3,40}$/.test(reason) ? reason : null;
+  } catch {
+    return null;
+  }
+}
+
+// نوع شکست، از مهم‌ترین به کم‌اهمیت‌ترین: اگر حتی یک مدل خطای موقتی داده،
+// پیامِ «شلوغی/کندی» درست‌تر از پیامِ «مدل پیدا نشد» است.
+const GEMINI_FAILURE_PRIORITY = ["no_model", "bad_request", "network", "timeout", "busy", "quota", "auth"];
+
+function worseGeminiFailure(current, next) {
+  if (!current) return next;
+  return GEMINI_FAILURE_PRIORITY.indexOf(next) >= GEMINI_FAILURE_PRIORITY.indexOf(current) ? next : current;
+}
+
+// برمی‌گردونه { res, model } برای اولین پاسخ موفق، یا { res: null, failure }
+// که failure یکی از مقدارهای GEMINI_FAILURE_PRIORITY است.
+// buildBody(withThinking) بدنهٔ درخواست را می‌سازد (با یا بدون thinkingConfig).
+async function fetchGeminiWithFallback(env, buildBody, options = {}) {
+  const trace = options.trace || null;
+  const models = options.models || geminiModelList(env);
   const deadline = Date.now() + GEMINI_TOTAL_BUDGET_MS;
-  let last = { res: null, err: null, model: models[0] };
+  const dead = new Set(); // مدل‌هایی که دوباره‌امتحان‌کردنشان بی‌فایده است (404/400)
+  const noThinking = new Set(); // مدل‌هایی که thinkingConfig را نپذیرفتند
+  let failure = null;
 
-  for (const model of models) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+  for (let round = 1; round <= GEMINI_ROUNDS; round++) {
+    const active = models.filter((m) => !dead.has(m));
+    if (active.length === 0) break;
 
-    for (let attempt = 1; attempt <= GEMINI_ATTEMPTS_PER_MODEL; attempt++) {
+    if (round > 1) {
+      const backoff = 500 + Math.floor(Math.random() * 400);
+      if (Date.now() + backoff >= deadline) break;
+      await new Promise((r) => setTimeout(r, backoff));
+    }
+
+    for (let i = 0; i < active.length; i++) {
+      const model = active[i];
       const remaining = deadline - Date.now();
-      if (remaining <= 0) return last;
+      if (remaining <= 0) return { res: null, failure: failure || "timeout" };
 
+      const withThinking = options.thinking !== false && !noThinking.has(model);
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), Math.min(GEMINI_TIMEOUT_MS, remaining));
+      const timeoutId = setTimeout(() => controller.abort(), Math.min(GEMINI_FIRST_BYTE_TIMEOUT_MS, remaining));
+      const startedAt = Date.now();
       let res = null;
       let err = null;
       try {
         res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-          body: requestBody,
+          body: buildBody(withThinking),
           signal: controller.signal,
         });
       } catch (e) {
@@ -235,40 +284,68 @@ async function fetchGeminiWithFallback(env, requestBody, trace = null) {
         clearTimeout(timeoutId);
       }
 
-      if (trace) trace.push({ model, attempt, status: res ? res.status : "network", ms: Date.now() - (deadline - remaining) });
-      if (res && res.ok) return { res, model };
-      last = { res, err, model };
+      if (res && res.ok) {
+        if (trace) trace.push({ model, attempt: round, status: res.status, ms: Date.now() - startedAt });
+        return { res, model };
+      }
 
-      // مدل پیدا نشد / برای این کلید در دسترس نیست: بی‌درنگ مدل بعدی.
-      if (res && res.status === 404) break;
-      // خطای غیرموقتی (کلید نامعتبر، درخواست خراب، ...): با مدل دیگه هم درست نمی‌شه.
-      if (res && !isTransientGeminiStatus(res.status)) return last;
-      // تایم‌اوت/قطعی اتصال: همین مدل رو دوباره امتحان نکن، برو مدل بعدی.
-      if (err) break;
+      const timedOut = !res && controller.signal.aborted;
+      const reason = res ? await readGeminiErrorReason(res, model) : null;
+      if (!res) console.error("Gemini failed", model, timedOut ? "timeout" : "network", String(err).slice(0, 200));
+      if (trace) {
+        const entry = { model, attempt: round, status: res ? res.status : timedOut ? "timeout" : "network", ms: Date.now() - startedAt };
+        if (reason) entry.reason = reason;
+        trace.push(entry);
+      }
 
-      if (attempt < GEMINI_ATTEMPTS_PER_MODEL) {
-        const retryAfterMs = parseRetryAfterMs(res);
-        const backoff = retryAfterMs ?? 600 * attempt + Math.floor(Math.random() * 400);
-        if (Date.now() + backoff >= deadline) return last;
-        await new Promise((r) => setTimeout(r, backoff));
+      if (!res) {
+        failure = worseGeminiFailure(failure, timedOut ? "timeout" : "network");
+      } else if (res.status === 401 || res.status === 403) {
+        // کلید نامعتبر/بی‌دسترسی: با هیچ مدل دیگری هم درست نمی‌شود.
+        return { res: null, failure: "auth" };
+      } else if (res.status === 404) {
+        // مدل پیدا نشد / برای این کلید در دسترس نیست.
+        dead.add(model);
+        failure = worseGeminiFailure(failure, "no_model");
+      } else if (res.status === 400) {
+        // شاید این مدل thinkingConfig را نمی‌شناسد: همین مدل را یک بار بدون آن امتحان کن.
+        if (withThinking) {
+          noThinking.add(model);
+          i--;
+        } else {
+          dead.add(model);
+          failure = worseGeminiFailure(failure, "bad_request");
+        }
+      } else if (isTransientGeminiStatus(res.status)) {
+        failure = worseGeminiFailure(failure, res.status === 429 ? "quota" : "busy");
+      } else {
+        dead.add(model);
+        failure = worseGeminiFailure(failure, "bad_request");
       }
     }
   }
-  return last;
+  return { res: null, failure: failure || "no_model" };
 }
 
-// پیام روشن و فارسی برای کاربر - بدون جزئیات فنی Gemini.
-function geminiErrorMessage(status) {
-  if (status === 429) {
-    return "دستیار هوشمند موقتاً شلوغه (سهمیهٔ لحظه‌ای پر شده). لطفاً چند ثانیه صبر کنید و دوباره بپرسید.";
+// پیام روشن و فارسی برای هر نوع شکست - بدون جزئیات فنی Gemini.
+function geminiErrorMessage(failure) {
+  switch (failure) {
+    case "quota":
+      return "دستیار هوشمند موقتاً شلوغه (سهمیهٔ لحظه‌ای پر شده). لطفاً چند ثانیه صبر کنید و دوباره بپرسید.";
+    case "busy":
+      return "سرویس هوش مصنوعی الان زیر فشار زیاده و پاسخ نداد. چند لحظه بعد دوباره بپرسید.";
+    case "timeout":
+      return "سرویس هوش مصنوعی در زمان مناسب پاسخ نداد (کندی موقت). چند لحظه بعد دوباره بپرسید.";
+    case "network":
+      return "ارتباط سرور سایت با سرویس هوش مصنوعی برقرار نشد. چند لحظه بعد دوباره بپرسید.";
+    case "auth":
+      return "دسترسی دستیار هوشمند به سرویس برقرار نیست. لطفاً به مدیر سایت اطلاع بدید.";
+    case "no_model":
+      return "مدل هوش مصنوعیِ تنظیم‌شده برای سایت در دسترس نیست. لطفاً به مدیر سایت اطلاع بدید.";
+    case "bad_request":
+    default:
+      return "سرویس هوش مصنوعی این درخواست را نپذیرفت. اگر عکس پیوست کرده‌اید بدون عکس امتحان کنید، یا سؤال را کوتاه‌تر بپرسید.";
   }
-  if (status === 503 || status === 500 || status === 502 || status === 504) {
-    return "سرویس هوش مصنوعی الان زیر فشار زیاده و پاسخ نداد. چند لحظه بعد دوباره بپرسید.";
-  }
-  if (status === 401 || status === 403) {
-    return "دسترسی دستیار هوشمند به سرویس برقرار نیست. لطفاً به مدیر سایت اطلاع بدید.";
-  }
-  return "خطا در تماس با دستیار هوشمند. لطفاً دوباره تلاش کنید.";
 }
 
 // سقف اندازهٔ ورودی /chat: جلوی پرکردنِ پرامپت، هزینهٔ بی‌جهت و استفادهٔ
@@ -283,7 +360,15 @@ const ALLOWED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif|heic|heif)$/i;
 
 // ---------- /chat : پاسخ‌سازی با Gemini بر اساس متن‌های مرتبط ----------
 async function handleChat(request, env) {
-  const body = await request.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ error: "درخواست نامعتبر است (بدنهٔ JSON خوانده نشد)." }, 400);
+  }
+  if (!body || typeof body !== "object") {
+    return jsonResponse({ error: "درخواست نامعتبر است." }, 400);
+  }
   const question = (body.question || "").trim();
   const contextChunks = Array.isArray(body.context)
     ? body.context
@@ -413,9 +498,29 @@ ${contextText}
   // دستورالعمل‌ها و متن‌های آرشیو در systemInstruction جدا می‌روند، نه
   // مخلوط با متن سؤال کاربر - این‌طور مدل بین «دستور» و «ورودیِ کاربر»
   // فرق می‌گذارد و تزریق پرامپت از طریق سؤال سخت‌تر می‌شود.
-  const geminiRequestBody = JSON.stringify({
+  //
+  // سطح تفکر (thinkingConfig): مدل‌های فلش به‌طور پیش‌فرض قبل از نوشتن
+  // پاسخ «فکر» می‌کنند و همین، شروع پاسخ را چند ثانیه عقب می‌اندازد. برای
+  // پرسش‌وپاسخ بر اساس متن آماده، سطح پایین کافی است.
+  const debug = body.debug === true;
+  let thinkingLevel = geminiThinkingLevel(env);
+  let modelsOverride = null;
+  if (debug) {
+    // فقط برای عیب‌یابی و اندازه‌گیری: انتخاب یکی از همان مدل‌های
+    // تنظیم‌شده (نه هر مدل دلخواه) و سطح تفکر. کلاینت سایت این‌ها را نمی‌فرستد.
+    if (typeof body.debugThinking === "string" && GEMINI_THINKING_LEVELS.includes(body.debugThinking)) {
+      thinkingLevel = body.debugThinking;
+    }
+    if (typeof body.debugModel === "string" && geminiModelList(env).includes(body.debugModel)) {
+      modelsOverride = [body.debugModel];
+    }
+  }
+  const buildGeminiBody = (withThinking) => JSON.stringify({
     systemInstruction: { parts: [{ text: systemPrompt }] },
     contents,
+    ...(withThinking && thinkingLevel !== "off"
+      ? { generationConfig: { thinkingConfig: { thinkingLevel } } }
+      : {}),
   });
 
   // Item جدید (پخش تدریجیِ پاسخ - streaming): به‌جای صبر برای کل پاسخ
@@ -444,18 +549,18 @@ ${contextText}
 
       // عیب‌یابی: فقط وقتی کلاینت {debug:true} بفرسته، ردِ تلاش‌ها (مدل/وضعیت/
       // زمان) به‌صورت یک پیام جدا برمی‌گردد. کلاینت سایت این را نمی‌فرستد.
-      const trace = body.debug === true ? [] : null;
-      const { res: geminiRes, err: geminiErr, model: usedModel } = await fetchGeminiWithFallback(env, geminiRequestBody, trace);
-      if (trace) send({ type: "debug", attempts: trace });
+      // فقط مدل، کد وضعیت و زمان؛ نه کلید و نه متن خام خطا.
+      const trace = debug ? [] : null;
+      const { res: geminiRes, failure, model: usedModel } = await fetchGeminiWithFallback(env, buildGeminiBody, {
+        trace,
+        models: modelsOverride,
+        thinking: thinkingLevel !== "off",
+      });
+      if (trace) send({ type: "debug", thinking: thinkingLevel, attempts: trace });
 
-      if (!geminiRes || !geminiRes.ok) {
+      if (!geminiRes) {
         // جزئیات فنی فقط تو لاگ Worker می‌مونه، نه برای کاربر.
-        const errText = geminiRes ? await geminiRes.text().catch(() => "") : String(geminiErr);
-        console.error("Gemini failed", usedModel, geminiRes ? geminiRes.status : "network", errText.slice(0, 500));
-        const message = geminiRes
-          ? geminiErrorMessage(geminiRes.status)
-          : "اتصال به سرویس هوش مصنوعی برقرار نشد. اینترنت‌تون رو چک کنید و دوباره بپرسید.";
-        send({ type: "error", message });
+        send({ type: "error", code: failure, message: geminiErrorMessage(failure) });
         controller.close();
         return;
       }
@@ -465,6 +570,17 @@ ${contextText}
       let sseBuffer = "";
       let fullText = "";
       let pendingTail = ""; // آخرین چند ده کاراکترِ هنوز نفرستاده
+      let finishReason = ""; // دلیل پایانِ پاسخ از دید Gemini (STOP، SAFETY، MAX_TOKENS، ...)
+      let blockReason = ""; // اگر خودِ پرسش رد شده باشد
+
+      // اگر Gemini وسط پخش ساکت بماند، به‌جای معطل‌ماندنِ بی‌پایان خطا می‌دهیم.
+      const readWithIdleTimeout = () => {
+        let timer;
+        const idle = new Promise((_, reject) => {
+          timer = setTimeout(() => reject(new Error("idle-timeout")), GEMINI_STREAM_IDLE_TIMEOUT_MS);
+        });
+        return Promise.race([reader.read(), idle]).finally(() => clearTimeout(timer));
+      };
 
       const flushSafe = () => {
         // فقط تو حالت grounded (که خط REFERENCES وجود داره) نگه‌داری
@@ -485,7 +601,7 @@ ${contextText}
 
       try {
         while (true) {
-          const { done, value } = await reader.read();
+          const { done, value } = await readWithIdleTimeout();
           if (done) break;
 
           sseBuffer += decoder.decode(value, { stream: true });
@@ -503,7 +619,14 @@ ${contextText}
             } catch {
               continue; // خطِ ناقص/غیرمنتظره - نادیده بگیر
             }
-            const deltaText = chunk?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const candidate = chunk?.candidates?.[0];
+            if (candidate?.finishReason) finishReason = candidate.finishReason;
+            if (chunk?.promptFeedback?.blockReason) blockReason = chunk.promptFeedback.blockReason;
+            // یک تکه می‌تواند چند part داشته باشد؛ partهای «فکر» (thought) جزو پاسخ نیستند.
+            const deltaText = (candidate?.content?.parts || [])
+              .filter((part) => part && !part.thought && typeof part.text === "string")
+              .map((part) => part.text)
+              .join("");
             if (deltaText) {
               fullText += deltaText;
               pendingTail += deltaText;
@@ -512,7 +635,30 @@ ${contextText}
           }
         }
       } catch (err) {
-        send({ type: "error", message: "خطا حین دریافت پاسخ از Gemini" });
+        console.error("Gemini stream failed", usedModel, String(err).slice(0, 200));
+        reader.cancel().catch(() => {});
+        send({
+          type: "error",
+          code: "stream_interrupted",
+          message: fullText
+            ? "پاسخ سرویس هوش مصنوعی وسط راه قطع شد. لطفاً دوباره بپرسید."
+            : "سرویس هوش مصنوعی پاسخ را شروع کرد ولی چیزی نفرستاد. لطفاً دوباره بپرسید.",
+        });
+        controller.close();
+        return;
+      }
+
+      // پاسخ خالی: به‌جای «done» بدون متن، دلیلش را روشن به کاربر می‌گوییم.
+      if (!fullText.trim()) {
+        console.error("Gemini empty answer", usedModel, finishReason, blockReason);
+        const blocked = Boolean(blockReason) || /SAFETY|PROHIBITED|BLOCKLIST|RECITATION|SPII/.test(finishReason);
+        send({
+          type: "error",
+          code: blocked ? "blocked" : "empty",
+          message: blocked
+            ? "سرویس هوش مصنوعی به‌خاطر محدودیت‌های محتوایی‌اش به این پرسش پاسخ نداد. لطفاً سؤال را با عبارت دیگری بپرسید."
+            : "دستیار پاسخی تولید نکرد. لطفاً سؤال را کمی متفاوت بپرسید یا دوباره تلاش کنید.",
+        });
         controller.close();
         return;
       }
