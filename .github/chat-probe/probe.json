@@ -2,147 +2,17 @@
   "baseUrl": "https://api.sroohbakhsh.ir",
   "tests": [
     {
-      "name": "cors-chat-site",
-      "headers": {
-        "Origin": "https://sroohbakhsh.ir"
-      },
-      "body": {
-        "question": "سلام",
-        "mode": "general"
-      }
-    },
-    {
-      "name": "cors-chat-ghpages",
-      "headers": {
-        "Origin": "https://mrooh200-glitch.github.io"
-      },
-      "body": {
-        "question": "سلام",
-        "mode": "general"
-      }
-    },
-    {
-      "name": "cors-embed-site",
-      "path": "/embed",
-      "headers": {
-        "Origin": "https://sroohbakhsh.ir"
-      },
-      "body": {
-        "query": "نماز جماعت"
-      }
-    },
-    {
-      "name": "cors-embed-ghpages",
-      "path": "/embed",
-      "headers": {
-        "Origin": "https://mrooh200-glitch.github.io"
-      },
-      "body": {
-        "query": "نماز جماعت"
-      }
-    },
-    {
-      "name": "cors-chat-evil",
-      "headers": {
-        "Origin": "https://evil.com"
-      },
-      "body": {
-        "question": "سلام",
-        "mode": "general"
-      }
-    },
-    {
-      "name": "cors-embed-evil",
-      "path": "/embed",
-      "headers": {
-        "Origin": "https://evil.com"
-      },
-      "body": {
-        "query": "نماز جماعت"
-      }
-    },
-    {
-      "name": "preflight-chat-site",
-      "method": "OPTIONS",
-      "path": "/chat",
-      "headers": {
-        "Origin": "https://sroohbakhsh.ir",
-        "Access-Control-Request-Method": "POST",
-        "Access-Control-Request-Headers": "content-type"
-      }
-    },
-    {
-      "name": "preflight-chat-ghpages",
-      "method": "OPTIONS",
-      "path": "/chat",
-      "headers": {
-        "Origin": "https://mrooh200-glitch.github.io",
-        "Access-Control-Request-Method": "POST",
-        "Access-Control-Request-Headers": "content-type"
-      }
-    },
-    {
-      "name": "preflight-embed-site",
-      "method": "OPTIONS",
-      "path": "/embed",
-      "headers": {
-        "Origin": "https://sroohbakhsh.ir",
-        "Access-Control-Request-Method": "POST",
-        "Access-Control-Request-Headers": "content-type"
-      }
-    },
-    {
-      "name": "preflight-chat-evil",
-      "method": "OPTIONS",
-      "path": "/chat",
-      "headers": {
-        "Origin": "https://evil.com",
-        "Access-Control-Request-Method": "POST",
-        "Access-Control-Request-Headers": "content-type"
-      }
-    },
-    {
-      "name": "no-origin-chat",
-      "body": {
-        "question": "سلام",
-        "mode": "general"
-      }
-    },
-    {
-      "name": "no-origin-embed",
-      "path": "/embed",
-      "body": {
-        "query": "نماز جماعت"
-      },
-      "waitAfterMs": 65000
-    },
-    {
-      "name": "ratelimit-chat-25",
-      "repeat": 25,
+      "name": "ratelimit-chat-120",
+      "repeat": 120,
       "aggregate": true,
-      "body": {},
-      "waitAfterMs": 70000
+      "body": {}
     },
     {
-      "name": "real-10",
-      "repeat": 10,
-      "pauseMs": 3000,
-      "archive": true,
-      "questions": [
-        "چشم‌چرانی چیست؟",
-        "چطور ترکش کنم؟",
-        "راه‌های کنترل نگاه چیست؟",
-        "توحید ذاتی یعنی چه؟",
-        "نماز جماعت چه شرایطی دارد؟",
-        "چطور اهمال‌کاری را کنار بگذارم؟",
-        "علت اضطراب امتحان چیست؟",
-        "حکم نگاه به نامحرم چیست؟",
-        "چرا خدا شر را خلق کرده؟",
-        "چگونه توبه کنیم؟"
-      ],
-      "headers": {
-        "Origin": "https://sroohbakhsh.ir"
-      }
+      "name": "ratelimit-contact-9",
+      "path": "/contact",
+      "repeat": 9,
+      "aggregate": true,
+      "body": {}
     }
   ]
 }
