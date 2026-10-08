@@ -34,18 +34,84 @@
  * فیلدهای خروجیِ /stats در آرایهٔ EVENT_TYPES پایین همین فایله.
  */
 
+// CORS: دیگر «*» نیست. هدر Access-Control-Allow-Origin فقط برای سایت‌های
+// مجاز (پایین) و به‌صورت پویا، بر اساس هدر Origin هر درخواست، گذاشته می‌شود.
+// فهرست پیش‌فرض را می‌شود با متغیر محیطی ALLOWED_ORIGINS (با کاما جدا) عوض کرد.
+// توجه: CORS فقط جلوی «صفحه‌های وب دیگر» را می‌گیرد. ابزارهایی مثل curl هدر
+// Origin نمی‌فرستند و با این مکانیزم بسته نمی‌شوند؛ برای آن‌ها rate limit
+// (پایین) و در صورت نیاز قانون Rate Limiting داشبورد Cloudflare لازم است.
+const DEFAULT_ALLOWED_ORIGINS = [
+  "https://sroohbakhsh.ir",
+  "https://www.sroohbakhsh.ir",
+  "https://mrooh200-glitch.github.io",
+];
+
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*", // اگه خواستی امن‌تر بشه، به‌جای * آدرس دقیق سایتت رو بذار
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Max-Age": "86400",
+  "Vary": "Origin",
 };
+
+function allowedOrigins(env) {
+  if (env && typeof env.ALLOWED_ORIGINS === "string" && env.ALLOWED_ORIGINS.trim()) {
+    return env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean);
+  }
+  return DEFAULT_ALLOWED_ORIGINS;
+}
+
+// برای توسعهٔ محلی (http://localhost:PORT) هم اجازه می‌دهیم.
+function isAllowedOrigin(origin, env) {
+  if (!origin) return true; // درخواست غیرمرورگری (curl، سرور) - فقط rate limit می‌شود
+  if (allowedOrigins(env).includes(origin)) return true;
+  return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function withCors(response, origin) {
+  const headers = new Headers(response.headers);
+  for (const [k, v] of Object.entries(CORS_HEADERS)) headers.set(k, v);
+  if (origin) headers.set("Access-Control-Allow-Origin", origin);
+  return new Response(response.body, { status: response.status, headers });
+}
+
+// Rate limit ساده، داخل حافظهٔ هر instance از Worker (بدون KV، پس نوشتن
+// اضافه روی سهمیهٔ KV نمی‌گذارد). «بهترین تلاش» است: instanceهای مختلف
+// شمارندهٔ جدا دارند، پس سقف واقعی کمی بالاتر از عدد زیر می‌تواند باشد.
+const RATE_LIMITS = {
+  "/chat": { limit: 20, windowMs: 60_000 },
+  "/embed": { limit: 60, windowMs: 60_000 },
+  "/contact": { limit: 5, windowMs: 600_000 },
+};
+const rateBuckets = new Map(); // کلید: مسیر|IP
+
+function checkRateLimit(pathname, request) {
+  const rule = RATE_LIMITS[pathname];
+  if (!rule) return null;
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const key = `${pathname}|${ip}`;
+  const now = Date.now();
+
+  if (rateBuckets.size > 5000) {
+    for (const [k, b] of rateBuckets) if (b.resetAt <= now) rateBuckets.delete(k);
+    if (rateBuckets.size > 5000) rateBuckets.clear();
+  }
+
+  let bucket = rateBuckets.get(key);
+  if (!bucket || bucket.resetAt <= now) {
+    bucket = { count: 0, resetAt: now + rule.windowMs };
+    rateBuckets.set(key, bucket);
+  }
+  bucket.count += 1;
+  if (bucket.count <= rule.limit) return null;
+  return Math.max(1, Math.ceil((bucket.resetAt - now) / 1000)); // ثانیه تا آزادشدن
+}
 
 const EMBEDDING_CACHE_TTL_SECONDS = 60 * 60; // یک ساعت
 
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -60,12 +126,36 @@ async function embeddingCacheKey(text) {
 
 export default {
   async fetch(request, env) {
-    // درخواست‌های preflight مرورگر (CORS)
-    if (request.method === "OPTIONS") {
-      return new Response(null, { headers: CORS_HEADERS });
+    const origin = request.headers.get("Origin");
+
+    // صفحه‌ای از سایتِ غیرمجاز: بدون هدر CORS رد می‌شود (مرورگر پاسخ را نشان نمی‌دهد).
+    if (!isAllowedOrigin(origin, env)) {
+      return new Response(JSON.stringify({ error: "این سایت اجازهٔ استفاده از این سرویس را ندارد." }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", Vary: "Origin" },
+      });
     }
 
+    // درخواست‌های preflight مرورگر (CORS)
+    if (request.method === "OPTIONS") {
+      return withCors(new Response(null, { status: 204 }), origin);
+    }
+
+    return withCors(await routeRequest(request, env), origin);
+  },
+};
+
+async function routeRequest(request, env) {
     const url = new URL(request.url);
+
+    if (request.method === "POST") {
+      const retryAfter = checkRateLimit(url.pathname, request);
+      if (retryAfter !== null) {
+        const res = jsonResponse({ error: `تعداد درخواست‌ها زیاد است. لطفاً ${retryAfter} ثانیهٔ دیگر دوباره تلاش کنید.` }, 429);
+        res.headers.set("Retry-After", String(retryAfter));
+        return res;
+      }
+    }
 
     try {
       if (url.pathname === "/embed" && request.method === "POST") {
@@ -103,8 +193,7 @@ export default {
       // متن خام خطا فقط در لاگ Worker می‌ماند، نه در پاسخ به کاربر.
       return jsonResponse({ error: "خطای داخلی سرور. لطفاً چند لحظه بعد دوباره تلاش کنید." }, 500);
     }
-  },
-};
+}
 
 // ---------- /embed : ساخت بردار عبارت جست‌وجو (با کش مشترک بین کاربران) ----------
 async function handleEmbed(request, env) {
@@ -702,7 +791,7 @@ ${contextText}
   });
 
   return new Response(stream, {
-    headers: { "Content-Type": "application/x-ndjson; charset=utf-8", ...CORS_HEADERS },
+    headers: { "Content-Type": "application/x-ndjson; charset=utf-8" },
   });
 }
 
