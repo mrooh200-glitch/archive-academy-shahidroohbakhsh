@@ -325,4 +325,4 @@ async function callChat(body) {
     const esc = lines.slice(k, k + 10).join("\n").replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
     console.log(`::notice title=eval ${LABEL} part ${k / 10 + 1}::${esc}`);
   }
-})().catch((e) => { console.error(e); process.exit(1); });
+})().catch((e) => { console.error(e); console.log("::error title=eval failed::" + String(e && e.stack || e).slice(0, 500).replace(/%/g, "%25").replace(/\n/g, "%0A")); process.exit(1); });
