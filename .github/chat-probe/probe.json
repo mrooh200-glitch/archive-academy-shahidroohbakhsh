@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://api.sroohbakhsh.ir",
+  "tests": [
+    { "name": "salam", "repeat": 4, "pauseMs": 1000, "body": { "question": "سلام", "mode": "general", "debug": true } }
+  ]
+}
