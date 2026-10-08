@@ -2,17 +2,22 @@
   "baseUrl": "https://api.sroohbakhsh.ir",
   "tests": [
     {
-      "name": "ratelimit-chat-120",
-      "repeat": 120,
+      "name": "ratelimit-track-130",
+      "path": "/track",
+      "repeat": 130,
       "aggregate": true,
-      "body": {}
+      "body": {
+        "type": "nope"
+      }
     },
     {
-      "name": "ratelimit-contact-9",
-      "path": "/contact",
-      "repeat": 9,
-      "aggregate": true,
-      "body": {}
+      "name": "track-limit-isolated-from-chat",
+      "waitAfterMs": 0,
+      "repeat": 1,
+      "body": {
+        "question": "سلام",
+        "mode": "general"
+      }
     }
   ]
 }
