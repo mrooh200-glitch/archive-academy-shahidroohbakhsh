@@ -81,6 +81,9 @@ const RATE_LIMITS = {
   "/chat": { limit: 20, windowMs: 60_000 },
   "/embed": { limit: 60, windowMs: 60_000 },
   "/contact": { limit: 5, windowMs: 600_000 },
+  // /track با هر رویداد در KV می‌نویسد و سقف نوشتن روزانهٔ KV کم است؛ پس
+  // سقفی سخاوتمندانه (بالاتر از استفادهٔ عادی یک بازدیدکننده) می‌گذاریم.
+  "/track": { limit: 120, windowMs: 60_000 },
 };
 const rateBuckets = new Map(); // کلید: مسیر|IP
 
@@ -146,53 +149,53 @@ export default {
 };
 
 async function routeRequest(request, env) {
-    const url = new URL(request.url);
+  const url = new URL(request.url);
 
-    if (request.method === "POST") {
-      const retryAfter = checkRateLimit(url.pathname, request);
-      if (retryAfter !== null) {
-        const res = jsonResponse({ error: `تعداد درخواست‌ها زیاد است. لطفاً ${retryAfter} ثانیهٔ دیگر دوباره تلاش کنید.` }, 429);
-        res.headers.set("Retry-After", String(retryAfter));
-        return res;
-      }
+  if (request.method === "POST") {
+    const retryAfter = checkRateLimit(url.pathname, request);
+    if (retryAfter !== null) {
+      const res = jsonResponse({ error: `تعداد درخواست‌ها زیاد است. لطفاً ${retryAfter} ثانیهٔ دیگر دوباره تلاش کنید.` }, 429);
+      res.headers.set("Retry-After", String(retryAfter));
+      return res;
+    }
+  }
+
+  try {
+    if (url.pathname === "/embed" && request.method === "POST") {
+      return await handleEmbed(request, env);
     }
 
-    try {
-      if (url.pathname === "/embed" && request.method === "POST") {
-        return await handleEmbed(request, env);
-      }
-
-      if (url.pathname === "/chat" && request.method === "POST") {
-        return await handleChat(request, env);
-      }
-
-      // Item ۸ (آمار سایت): دو endpoint جدید - یکی برای ثبت یک رویداد
-      // (بازدید صفحه، جست‌وجو، دانلود)، یکی برای خواندن جمع آن‌ها.
-      if (url.pathname === "/track" && request.method === "POST") {
-        return await handleTrack(request, env);
-      }
-
-      if (url.pathname === "/stats" && request.method === "GET") {
-        return await handleStats(request, env);
-      }
-
-      // Item جدید (ریست آمار): یک راه برای صفرکردن کامل آمار، بدون نیاز
-      // به رفتن به داشبورد Cloudflare و حذف دستیِ تک‌تک کلیدهای KV.
-      if (url.pathname === "/reset-stats" && request.method === "POST") {
-        return await handleResetStats(request, env);
-      }
-
-      // فرم «ارتباط با ما»: پیام رو به تلگرام/ایتا (بسته به موضوع) می‌فرسته.
-      if (url.pathname === "/contact" && request.method === "POST") {
-        return await handleContact(request, env);
-      }
-
-      return jsonResponse({ error: "مسیر یا متد نامعتبر" }, 404);
-    } catch (err) {
-      console.error(err);
-      // متن خام خطا فقط در لاگ Worker می‌ماند، نه در پاسخ به کاربر.
-      return jsonResponse({ error: "خطای داخلی سرور. لطفاً چند لحظه بعد دوباره تلاش کنید." }, 500);
+    if (url.pathname === "/chat" && request.method === "POST") {
+      return await handleChat(request, env);
     }
+
+    // Item ۸ (آمار سایت): دو endpoint جدید - یکی برای ثبت یک رویداد
+    // (بازدید صفحه، جست‌وجو، دانلود)، یکی برای خواندن جمع آن‌ها.
+    if (url.pathname === "/track" && request.method === "POST") {
+      return await handleTrack(request, env);
+    }
+
+    if (url.pathname === "/stats" && request.method === "GET") {
+      return await handleStats(request, env);
+    }
+
+    // Item جدید (ریست آمار): یک راه برای صفرکردن کامل آمار، بدون نیاز
+    // به رفتن به داشبورد Cloudflare و حذف دستیِ تک‌تک کلیدهای KV.
+    if (url.pathname === "/reset-stats" && request.method === "POST") {
+      return await handleResetStats(request, env);
+    }
+
+    // فرم «ارتباط با ما»: پیام رو به تلگرام/ایتا (بسته به موضوع) می‌فرسته.
+    if (url.pathname === "/contact" && request.method === "POST") {
+      return await handleContact(request, env);
+    }
+
+    return jsonResponse({ error: "مسیر یا متد نامعتبر" }, 404);
+  } catch (err) {
+    console.error(err);
+    // متن خام خطا فقط در لاگ Worker می‌ماند، نه در پاسخ به کاربر.
+    return jsonResponse({ error: "خطای داخلی سرور. لطفاً چند لحظه بعد دوباره تلاش کنید." }, 500);
+  }
 }
 
 // ---------- /embed : ساخت بردار عبارت جست‌وجو (با کش مشترک بین کاربران) ----------
