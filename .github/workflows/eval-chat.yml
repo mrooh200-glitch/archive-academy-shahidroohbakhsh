@@ -4,7 +4,8 @@ name: Eval chat (ارزیابی گفتگوی هوشمند)
 # فقط دستی اجرا می‌شود؛ روی main چیزی commit یا deploy نمی‌کند.
 # ورودی‌ها:
 #  - label: نام نتیجه (مثلاً baseline یا after-threshold)
-#  - args: آرگومان‌های اضافهٔ scripts/eval-chat.js (مثلاً --variant k8 --chat in,follow)
+#  - args: آرگومان‌های اضافهٔ scripts/eval-chat.js (مثلاً --variant k8 --chat in,follow
+#    --vectors prev/baseline.json برای استفاده از بردارهای ذخیره‌شدهٔ اجرای قبلی)
 permissions:
   contents: write
 on:
@@ -24,7 +25,7 @@ concurrency:
 jobs:
   eval:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -32,6 +33,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Fetch previous results (for --vectors prev/<label>.json)
+        run: |
+          mkdir -p prev
+          git fetch -q --depth 1 origin claude/eval-results && git archive FETCH_HEAD | tar -x -C prev || echo "نتیجهٔ قبلی نیست"
       - name: Run evaluation
         env:
           LABEL: ${{ inputs.label }}
