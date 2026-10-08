@@ -206,7 +206,7 @@ function isTransientGeminiStatus(status) {
 // برمی‌گردونه { res, model } برای اولین پاسخ موفق، یا { res, model } آخرین
 // پاسخِ ناموفق (تا پیام خطا بر اساس status ساخته بشه)، یا { err } اگه هیچ
 // پاسخی نیومده (قطعی شبکه/تایم‌اوت در همهٔ تلاش‌ها).
-async function fetchGeminiWithFallback(env, requestBody) {
+async function fetchGeminiWithFallback(env, requestBody, trace = null) {
   const models = geminiModelList(env);
   const deadline = Date.now() + GEMINI_TOTAL_BUDGET_MS;
   let last = { res: null, err: null, model: models[0] };
@@ -235,6 +235,7 @@ async function fetchGeminiWithFallback(env, requestBody) {
         clearTimeout(timeoutId);
       }
 
+      if (trace) trace.push({ model, attempt, status: res ? res.status : "network", ms: Date.now() - (deadline - remaining) });
       if (res && res.ok) return { res, model };
       last = { res, err, model };
 
@@ -441,7 +442,11 @@ ${contextText}
       const encoder = new TextEncoder();
       const send = (obj) => controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
 
-      const { res: geminiRes, err: geminiErr, model: usedModel } = await fetchGeminiWithFallback(env, geminiRequestBody);
+      // عیب‌یابی: فقط وقتی کلاینت {debug:true} بفرسته، ردِ تلاش‌ها (مدل/وضعیت/
+      // زمان) به‌صورت یک پیام جدا برمی‌گردد. کلاینت سایت این را نمی‌فرستد.
+      const trace = body.debug === true ? [] : null;
+      const { res: geminiRes, err: geminiErr, model: usedModel } = await fetchGeminiWithFallback(env, geminiRequestBody, trace);
+      if (trace) send({ type: "debug", attempts: trace });
 
       if (!geminiRes || !geminiRes.ok) {
         // جزئیات فنی فقط تو لاگ Worker می‌مونه، نه برای کاربر.
