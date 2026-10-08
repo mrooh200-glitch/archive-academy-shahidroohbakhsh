@@ -351,6 +351,21 @@ function textFragmentUrl(baseUrl, text, page) {
 // تاریخچه را به پرامپت Gemini اضافه کند) پاسخ بعدی واقعاً با در نظر
 // گرفتن سؤال‌های قبلی همین گفتگو ساخته شود - نه این‌که هر پرسش، بی‌خبر
 // از پرسش‌های قبلی، از صفر پاسخ داده شود.
+// بهبود بازیابی برای سؤال‌های پیگیری: عبارتی مثل «همان را ساده‌تر بگو» یا
+// «چرا؟» به‌تنهایی امبدینگ بی‌معنایی می‌دهد و تکه‌های بی‌ربط می‌آورد. اگر
+// سؤال کوتاه است و نشانهٔ ارجاع به گفتگوی قبلی دارد، سؤال قبلی را هم به
+// متن جست‌وجو اضافه می‌کنیم (فقط برای جست‌وجو؛ متن واقعی سؤال دست‌نخورده
+// به مدل می‌رسد). بدون تماس اضافه با مدل، پس هزینه و تأخیری ندارد.
+const FOLLOW_UP_MARKERS_AI = /(^|\s)(آن|این|همان|همین|اون|اینو|اونو|بیشتر|ادامه|چرا|چطور|چگونه|مثال|ساده‌تر|ساده تر|توضیح|دلیلش|دلیل|یعنی چی|باز کن|مفصل)(\s|$|؟|\?|،)/;
+
+function buildFollowUpSearchQueryAi(question, history) {
+  if (!Array.isArray(history) || history.length === 0) return question;
+  if (question.length > 60 || !FOLLOW_UP_MARKERS_AI.test(question)) return question;
+  const previous = history[history.length - 1].question;
+  if (!previous) return question;
+  return `${previous.slice(0, 300)}\n${question}`;
+}
+
 async function askQuestion(question, history = [], mode = "grounded", image = null, bookFilter = null, onDelta = null) {
   // آمار سایت: این تابع تنها نقطه‌ای‌ست که واقعاً سؤال کاربر رو به
   // Worker می‌فرسته (یک نقطه‌ی فراخوانی، رجوع کنید به renderChatTurns)،
@@ -362,7 +377,8 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   // Item جدید (پاسخ آزاد): تو این حالت، پاسخ قرار نیست به متون آرشیو
   // محدود باشه - پس نیازی به جست‌وجوی معنایی (که یه تماس شبکه‌ی اضافه‌ست)
   // نیست؛ context خالی می‌مونه و مآخذی هم نشون داده نمی‌شه.
-  const relevant = mode === "general" ? [] : await semanticSearch(question, 5, bookFilter);
+  const searchQuery = buildFollowUpSearchQueryAi(question, history);
+  const relevant = mode === "general" ? [] : await semanticSearch(searchQuery, 5, bookFilter);
   const contextTexts = relevant.map((r) => r.text);
 
   // قطعیِ اتصال (offline، فیلتر، DNS) با پیام انگلیسیِ خامِ مرورگر نشون داده
