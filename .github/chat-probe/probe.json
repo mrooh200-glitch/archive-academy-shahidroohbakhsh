@@ -2,69 +2,146 @@
   "baseUrl": "https://api.sroohbakhsh.ir",
   "tests": [
     {
-      "name": "grounded-3.5-low",
-      "repeat": 3,
-      "pauseMs": 1500,
-      "body": {
-        "question": "تکنیک پومودورو چیه و بعد از چند دوره باید استراحت طولانی کرد؟",
-        "context": [
-          "نماز جماعت: اگر مأموم بعد از رکوع امام برسد، آن رکعت برای او حساب نمی‌شود و باید صبر کند تا امام برای رکعت بعد بایستد. اگر در حال رکوع امام برسد و پیش از سر برداشتن امام به رکوع برود، رکعت او صحیح است.",
-          "مدیریت زمان در توسعهٔ فردی: تکنیک پومودورو یعنی ۲۵ دقیقه کار متمرکز و ۵ دقیقه استراحت. پس از چهار دوره، یک استراحت طولانی‌تر ۱۵ تا ۳۰ دقیقه‌ای لازم است. این روش برای کاهش اهمال‌کاری مفید است.",
-          "اضطراب امتحان: تنفس عمیق شکمی، خواب کافی شب قبل و مرور فعال به‌جای بازخوانی صرف، سه راهکار اصلی کاهش اضطراب امتحان هستند.",
-          "توحید در اعتقادات: توحید ذاتی یعنی خداوند یگانه است و شریک و مانندی ندارد؛ توحید افعالی یعنی هر اثری در جهان به اذن و ارادهٔ اوست.",
-          "روزهٔ مسافر: کسی که پیش از ظهر به وطن برسد و کاری که روزه را باطل می‌کند انجام نداده باشد، باید روزهٔ آن روز را بگیرد."
-        ],
-        "debug": true,
-        "debugModel": "gemini-3.5-flash",
-        "debugThinking": "low"
-      }
-    },
-    {
-      "name": "grounded-3.5-minimal",
-      "repeat": 3,
-      "pauseMs": 1500,
-      "body": {
-        "question": "تکنیک پومودورو چیه و بعد از چند دوره باید استراحت طولانی کرد؟",
-        "context": [
-          "نماز جماعت: اگر مأموم بعد از رکوع امام برسد، آن رکعت برای او حساب نمی‌شود و باید صبر کند تا امام برای رکعت بعد بایستد. اگر در حال رکوع امام برسد و پیش از سر برداشتن امام به رکوع برود، رکعت او صحیح است.",
-          "مدیریت زمان در توسعهٔ فردی: تکنیک پومودورو یعنی ۲۵ دقیقه کار متمرکز و ۵ دقیقه استراحت. پس از چهار دوره، یک استراحت طولانی‌تر ۱۵ تا ۳۰ دقیقه‌ای لازم است. این روش برای کاهش اهمال‌کاری مفید است.",
-          "اضطراب امتحان: تنفس عمیق شکمی، خواب کافی شب قبل و مرور فعال به‌جای بازخوانی صرف، سه راهکار اصلی کاهش اضطراب امتحان هستند.",
-          "توحید در اعتقادات: توحید ذاتی یعنی خداوند یگانه است و شریک و مانندی ندارد؛ توحید افعالی یعنی هر اثری در جهان به اذن و ارادهٔ اوست.",
-          "روزهٔ مسافر: کسی که پیش از ظهر به وطن برسد و کاری که روزه را باطل می‌کند انجام نداده باشد، باید روزهٔ آن روز را بگیرد."
-        ],
-        "debug": true,
-        "debugModel": "gemini-3.5-flash",
-        "debugThinking": "minimal"
-      }
-    },
-    {
-      "name": "grounded-3.5lite-low",
-      "repeat": 3,
-      "pauseMs": 1500,
-      "body": {
-        "question": "تکنیک پومودورو چیه و بعد از چند دوره باید استراحت طولانی کرد؟",
-        "context": [
-          "نماز جماعت: اگر مأموم بعد از رکوع امام برسد، آن رکعت برای او حساب نمی‌شود و باید صبر کند تا امام برای رکعت بعد بایستد. اگر در حال رکوع امام برسد و پیش از سر برداشتن امام به رکوع برود، رکعت او صحیح است.",
-          "مدیریت زمان در توسعهٔ فردی: تکنیک پومودورو یعنی ۲۵ دقیقه کار متمرکز و ۵ دقیقه استراحت. پس از چهار دوره، یک استراحت طولانی‌تر ۱۵ تا ۳۰ دقیقه‌ای لازم است. این روش برای کاهش اهمال‌کاری مفید است.",
-          "اضطراب امتحان: تنفس عمیق شکمی، خواب کافی شب قبل و مرور فعال به‌جای بازخوانی صرف، سه راهکار اصلی کاهش اضطراب امتحان هستند.",
-          "توحید در اعتقادات: توحید ذاتی یعنی خداوند یگانه است و شریک و مانندی ندارد؛ توحید افعالی یعنی هر اثری در جهان به اذن و ارادهٔ اوست.",
-          "روزهٔ مسافر: کسی که پیش از ظهر به وطن برسد و کاری که روزه را باطل می‌کند انجام نداده باشد، باید روزهٔ آن روز را بگیرد."
-        ],
-        "debug": true,
-        "debugModel": "gemini-3.5-flash-lite",
-        "debugThinking": "low"
-      }
-    },
-    {
-      "name": "salam-3.5-low",
-      "repeat": 3,
-      "pauseMs": 1500,
+      "name": "cors-chat-site",
+      "headers": {
+        "Origin": "https://sroohbakhsh.ir"
+      },
       "body": {
         "question": "سلام",
-        "mode": "general",
-        "debug": true,
-        "debugModel": "gemini-3.5-flash",
-        "debugThinking": "low"
+        "mode": "general"
+      }
+    },
+    {
+      "name": "cors-chat-ghpages",
+      "headers": {
+        "Origin": "https://mrooh200-glitch.github.io"
+      },
+      "body": {
+        "question": "سلام",
+        "mode": "general"
+      }
+    },
+    {
+      "name": "cors-embed-site",
+      "path": "/embed",
+      "headers": {
+        "Origin": "https://sroohbakhsh.ir"
+      },
+      "body": {
+        "query": "نماز جماعت"
+      }
+    },
+    {
+      "name": "cors-embed-ghpages",
+      "path": "/embed",
+      "headers": {
+        "Origin": "https://mrooh200-glitch.github.io"
+      },
+      "body": {
+        "query": "نماز جماعت"
+      }
+    },
+    {
+      "name": "cors-chat-evil",
+      "headers": {
+        "Origin": "https://evil.com"
+      },
+      "body": {
+        "question": "سلام",
+        "mode": "general"
+      }
+    },
+    {
+      "name": "cors-embed-evil",
+      "path": "/embed",
+      "headers": {
+        "Origin": "https://evil.com"
+      },
+      "body": {
+        "query": "نماز جماعت"
+      }
+    },
+    {
+      "name": "preflight-chat-site",
+      "method": "OPTIONS",
+      "path": "/chat",
+      "headers": {
+        "Origin": "https://sroohbakhsh.ir",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type"
+      }
+    },
+    {
+      "name": "preflight-chat-ghpages",
+      "method": "OPTIONS",
+      "path": "/chat",
+      "headers": {
+        "Origin": "https://mrooh200-glitch.github.io",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type"
+      }
+    },
+    {
+      "name": "preflight-embed-site",
+      "method": "OPTIONS",
+      "path": "/embed",
+      "headers": {
+        "Origin": "https://sroohbakhsh.ir",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type"
+      }
+    },
+    {
+      "name": "preflight-chat-evil",
+      "method": "OPTIONS",
+      "path": "/chat",
+      "headers": {
+        "Origin": "https://evil.com",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type"
+      }
+    },
+    {
+      "name": "no-origin-chat",
+      "body": {
+        "question": "سلام",
+        "mode": "general"
+      }
+    },
+    {
+      "name": "no-origin-embed",
+      "path": "/embed",
+      "body": {
+        "query": "نماز جماعت"
+      },
+      "waitAfterMs": 65000
+    },
+    {
+      "name": "ratelimit-chat-25",
+      "repeat": 25,
+      "aggregate": true,
+      "body": {},
+      "waitAfterMs": 70000
+    },
+    {
+      "name": "real-10",
+      "repeat": 10,
+      "pauseMs": 3000,
+      "archive": true,
+      "questions": [
+        "چشم‌چرانی چیست؟",
+        "چطور ترکش کنم؟",
+        "راه‌های کنترل نگاه چیست؟",
+        "توحید ذاتی یعنی چه؟",
+        "نماز جماعت چه شرایطی دارد؟",
+        "چطور اهمال‌کاری را کنار بگذارم؟",
+        "علت اضطراب امتحان چیست؟",
+        "حکم نگاه به نامحرم چیست؟",
+        "چرا خدا شر را خلق کرده؟",
+        "چگونه توبه کنیم؟"
+      ],
+      "headers": {
+        "Origin": "https://sroohbakhsh.ir"
       }
     }
   ]
