@@ -188,11 +188,18 @@ async function handleEmbed(request, env) {
 //  - GEMINI_FALLBACK_MODELS: فهرست مدل‌های جایگزین، با کاما جدا شده
 //  - GEMINI_THINKING_LEVEL: minimal | low | medium | high، یا off برای
 //    این‌که اصلاً چیزی فرستاده نشود (پیش‌فرضِ خودِ مدل)
-const DEFAULT_GEMINI_MODEL = "gemini-3.7-flash";
-const DEFAULT_GEMINI_FALLBACKS = "gemini-3.6-flash,gemini-3.5-flash,gemini-3.5-flash-lite";
+//
+// ترتیب مدل‌ها بر اساس اندازه‌گیری روی Worker زنده (۱۷ مهر ۱۴۰۵، پرسش «سلام»):
+//  - gemini-3.5-flash و gemini-3.5-flash-lite: هر بار موفق، اولین توکن در
+//    حدود ۰٫۵ تا ۲ ثانیه.
+//  - gemini-3.7-flash: سهمیهٔ رایگانش خیلی زود پر می‌شود (429) و گاهی 503.
+//  - gemini-3.6-flash: در حدود نیمی از تلاش‌ها بیش از ۱۲ ثانیه ساکت ماند.
+// پس مدل سریع و پایدار اول می‌آید و بقیه فقط پشتیبان‌اند.
+const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash";
+const DEFAULT_GEMINI_FALLBACKS = "gemini-3.5-flash-lite,gemini-3.7-flash,gemini-3.6-flash";
 const DEFAULT_GEMINI_THINKING_LEVEL = "low";
 const GEMINI_THINKING_LEVELS = ["minimal", "low", "medium", "high", "off"];
-const GEMINI_FIRST_BYTE_TIMEOUT_MS = 12000; // سقف انتظار برای شروع پاسخِ هر مدل
+const GEMINI_FIRST_BYTE_TIMEOUT_MS = 8000; // سقف انتظار برای شروع پاسخِ هر مدل
 const GEMINI_STREAM_IDLE_TIMEOUT_MS = 25000; // سقف سکوت وسط پخش پاسخ
 const GEMINI_TOTAL_BUDGET_MS = 30000; // سقف کل زمانی که کاربر تا شروع پاسخ معطل می‌ماند
 const GEMINI_ROUNDS = 2;
