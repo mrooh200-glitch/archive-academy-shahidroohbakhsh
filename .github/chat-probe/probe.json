@@ -1,6 +1,12 @@
 {
   "baseUrl": "https://api.sroohbakhsh.ir",
   "tests": [
-    { "name": "salam", "repeat": 4, "pauseMs": 1000, "body": { "question": "سلام", "mode": "general", "debug": true } }
+    { "name": "default", "repeat": 3, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true } },
+    { "name": "3.7-low", "repeat": 2, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.7-flash", "debugThinking": "low" } },
+    { "name": "3.6-low", "repeat": 3, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.6-flash", "debugThinking": "low" } },
+    { "name": "3.6-minimal", "repeat": 3, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.6-flash", "debugThinking": "minimal" } },
+    { "name": "3.5-minimal", "repeat": 3, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.5-flash", "debugThinking": "minimal" } },
+    { "name": "3.5-lite-minimal", "repeat": 3, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.5-flash-lite", "debugThinking": "minimal" } },
+    { "name": "3.7-medium", "repeat": 2, "pauseMs": 1500, "body": { "question": "سلام", "mode": "general", "debug": true, "debugModel": "gemini-3.7-flash", "debugThinking": "medium" } }
   ]
 }
