@@ -628,15 +628,31 @@ document.addEventListener("DOMContentLoaded", (event) => {
     line-height: 1;
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
+  #back-to-top-link:first-child { margin-inline-start: 0; }
   dialog, dialog[open], dialog::backdrop { display: none !important; }
-</style>
+</style><style id="chrome-lock">html body .brand-topbar,html body .brand-topbar *,html body .ref-source-banner,html body .ref-source-banner *{font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;font-style:normal !important;font-variant:normal !important;letter-spacing:normal !important;word-spacing:0 !important;text-transform:none !important;text-indent:0 !important;text-shadow:none !important;box-sizing:border-box !important}html body .brand-topbar,html body .brand-topbar *{font-weight:400 !important;line-height:normal !important}html body .brand-topbar,html body .brand-topbar > span{font-size:14px !important}html body .brand-topbar .brand-badge{font-size:12.5px !important}html body .brand-topbar .brand-dark-toggle{font-size:15px !important;line-height:1 !important}html body .ref-source-banner,html body .ref-source-banner *{font-size:13px !important;font-weight:400 !important;line-height:1.9 !important}html body .ref-source-banner .ref-banner-text{font-weight:500 !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dots{line-height:normal !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dropdown a,html body .ref-source-banner .ref-menu-label{font-weight:700 !important}html body .ref-source-banner .ref-menu-dots{font-weight:900 !important;letter-spacing:1px !important}html body .ref-source-banner .ref-menu-sub{font-size:10.5px !important;font-weight:400 !important;line-height:1.5 !important}</style>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style><style id="mobile-fluid-fix">@media (max-width:859px){#pb-page-content article{min-width:0 !important;grid-template-columns:minmax(0,1fr) !important}#pb-page-content article>*{min-width:0 !important;max-width:100% !important}html,body{overflow-x:clip !important}}</style>
 <style id="article-indent-style">
   div[role=paragraph]:not(.fa-original-en) { text-indent: 0.4cm !important; }
+  div[role=paragraph]:not(.fa-original-en) { direction: rtl !important; text-align: right !important; }
   div[role=paragraph] .fa-original-en, div[role=paragraph] .fa-original-en * { text-indent: 0 !important; }
+  div[role=paragraph]:not(.fa-original-en) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; }
+  div[role=paragraph]:not(.fa-original-en) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
 </style>
 <style id="cookie-hide">#ot-sdk-btn-floating,.ot-floating-button{display:none !important;}</style>
+<style id="heading-style">
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 24px !important; }
+  h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 20px !important; }
+  h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 18px !important; }
+  h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
+  div[role=paragraph] span, div[role=paragraph] em, div[role=paragraph] i, div[role=paragraph] mark { font-weight: inherit !important; }
+  div[role=paragraph] b, div[role=paragraph] strong { font-weight: 700 !important; }
+</style><style id="wide-layout-fix">@media (min-width:860px){article>aside,article>.core-collateral{display:none !important;}article{display:block !important;}article>div:has(#bodymatter){max-width:760px !important;margin-left:auto !important;margin-right:auto !important;}}div[role="paragraph"]{margin-left:auto !important;margin-right:auto !important;}p,li,h1,h2,h3,h4,h5,h6,blockquote,figcaption,dd,dt{margin-left:auto !important;margin-right:auto !important;}div[role="doc-footnote"],div.citation-content,div.figcaption,div.contributors{margin-left:auto !important;margin-right:auto !important;}</style>
 <style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
-<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style></head>
+</head>
  
  
  
@@ -1279,7 +1295,7 @@ if (links.length==0 && headers.length==0 && (ymSso.length==0 || !ymSso[0].hasChi
     var m = document.querySelector("mark.flash-highlight");
     if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
   }
-  var BOXES = [["متنِ اصلیِ انگلیسی (صفحه‌ی ۱۰ فایل PDF):", "ltr", "The effect size is both large and stable: across models, those with premarital sexual partners have more than twice the odds of divorce as do those without (ORs = 2.50—2.52)."], ["متنِ اصلیِ انگلیسی (صفحه‌های ۱۰ و ۱۴ فایل PDF):", "ltr", "Specifically, in the full model the odds of divorce for those with one to eight partners are 64%% higher than those with no premarital partners (ORs = 1.50—1.64)."], ["متنِ اصلیِ انگلیسی (صفحه‌ی ۱۴ فایل PDF):", "ltr", "They point rather to three tiers of divorce risk, with the lowest risk for those with no premarital, nonspousal partners, a modest increase for those with some, and a sharp increase for those with many."]];
+  var BOXES = [["متنِ اصلیِ انگلیسی (صفحه‌ی ۱۰ فایل PDF):", "ltr", "The effect size is both large and stable: across models, those with premarital sexual partners have more than twice the odds of divorce as do those without (ORs = 2.50—2.52)."], ["متنِ اصلیِ انگلیسی (صفحه‌های ۱۰ و ۱۴ فایل PDF):", "ltr", "Specifically, in the full model the odds of divorce for those with one to eight partners are 64% higher than those with no premarital partners (ORs = 1.50—1.64)."], ["متنِ اصلیِ انگلیسی (صفحه‌ی ۱۴ فایل PDF):", "ltr", "They point rather to three tiers of divorce risk, with the lowest risk for those with no premarital, nonspousal partners, a modest increase for those with some, and a sharp increase for those with many."]];
   function addBox(mark, spec) {
     var blockAncestor = mark.closest("div[role=paragraph], p, div.p, li, td, th");
     if (!blockAncestor) return;
@@ -1444,7 +1460,7 @@ if (links.length==0 && headers.length==0 && (ymSso.length==0 || !ymSso[0].hasChi
 </script>
 <script id="text-bounds-guard-script">
 (function() {
-  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, div[role=paragraph], div[role=doc-footnote], div.citation-content, div.figcaption, div.contributors, td, th";
+  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, td.tafsir, td.tafsir_ayeh";
   function isRtlText(str) {
     var faCount = 0, total = 0;
     for (var i = 0; i < str.length; i++) {
@@ -1518,11 +1534,16 @@ if (links.length==0 && headers.length==0 && (ymSso.length==0 || !ymSso[0].hasChi
     link.textContent = "\u2191";
     var fontSize = parseFloat(getComputedStyle(mark).fontSize) || 17;
     var size = Math.max(24, Math.min(42, Math.round(fontSize * 1.65)));
+    var lh = parseFloat(getComputedStyle(mark).lineHeight);
+    if (lh > 0) size = Math.max(22, Math.min(size, Math.floor(lh) - 2));
     link.style.width = size + "px"; link.style.height = size + "px";
-    link.style.fontSize = Math.round(fontSize * 0.885) + "px";
+    link.style.fontSize = Math.round(size * 0.536) + "px";
+    link.style.setProperty("vertical-align", "middle", "important"); link.style.setProperty("margin-top", "-6px", "important"); link.style.setProperty("margin-bottom", "-6px", "important");
     link.addEventListener("click", function(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    function isLead(n) { return n && ((n.nodeType === 3 && !/\S/.test(n.nodeValue)) || (n.nodeType === 1 && n.tagName === "BR")); }
     if (cut <= 0) {
-      block.insertBefore(link, block.firstChild);
+      var fr = block.firstChild; while (isLead(fr)) fr = fr.nextSibling;
+      block.insertBefore(link, fr || block.firstChild);
     } else {
       var pt = pointAt(block, mark, cut);
       if (!pt) return;
@@ -1535,8 +1556,10 @@ if (links.length==0 && headers.length==0 && (ymSso.length==0 || !ymSso[0].hasChi
       block.parentNode.insertBefore(second, block.nextSibling);
       block.style.setProperty("margin-bottom", "0", "important");
       second.style.setProperty("margin-top", "0", "important");
+      while (isLead(second.firstChild)) second.removeChild(second.firstChild);
       second.insertBefore(link, second.firstChild);
     }
+    if (link.parentNode && link.parentNode.style) link.parentNode.style.setProperty("text-indent", "0", "important");
     made = true;
   }
   window.__ensureBackToTop = ensureBackToTopLink;

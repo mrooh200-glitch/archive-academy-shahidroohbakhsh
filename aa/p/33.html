@@ -12,11 +12,12 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: Tahoma, "Vazirmatn", Arial, sans-serif;
+    font-family: Vazirmatn, Tahoma, Arial, sans-serif;
     background: #f7f3ea;
     color: #222;
-    line-height: 2;
-    font-size: 17px;
+    line-height: 1.9;
+    font-size: 16px;
+    font-weight: 500;
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   .cite-box {
@@ -27,7 +28,7 @@
   .cite-box b { color: #0b4f3c; }
   .pdf-page-label { font-size: 13px; color: #888; margin: 26px 0 10px; }
   .pdf-page-label:first-of-type { margin-top: 0; }
-  p { margin: 0 0 18px; text-align: justify; }
+  p { margin: 0 0 22px; text-align: right; letter-spacing: normal; }
   .wrap p { text-indent: 0.4cm; }
 </style>
 <style id="brand-style">
@@ -247,9 +248,9 @@
   }
   .fa-original-en-text { display: block; }
   .fa-translation {
-    font-size: 15px !important;
+    font-size: 16px !important;
     color: #333 !important;
-    margin: 0 0 18px !important;
+    margin: 0 0 22px !important;
     text-indent: 0 !important;
   }
   .fa-translation b { color: var(--b-forest-dark) !important; }
@@ -280,8 +281,38 @@
     line-height: 1;
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
+  #back-to-top-link:first-child { margin-inline-start: 0; }
+</style><style id="chrome-lock">html body .brand-topbar,html body .brand-topbar *,html body .ref-source-banner,html body .ref-source-banner *{font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;font-style:normal !important;font-variant:normal !important;letter-spacing:normal !important;word-spacing:0 !important;text-transform:none !important;text-indent:0 !important;text-shadow:none !important;box-sizing:border-box !important}html body .brand-topbar,html body .brand-topbar *{font-weight:400 !important;line-height:normal !important}html body .brand-topbar,html body .brand-topbar > span{font-size:14px !important}html body .brand-topbar .brand-badge{font-size:12.5px !important}html body .brand-topbar .brand-dark-toggle{font-size:15px !important;line-height:1 !important}html body .ref-source-banner,html body .ref-source-banner *{font-size:13px !important;font-weight:400 !important;line-height:1.9 !important}html body .ref-source-banner .ref-banner-text{font-weight:500 !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dots{line-height:normal !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dropdown a,html body .ref-source-banner .ref-menu-label{font-weight:700 !important}html body .ref-source-banner .ref-menu-dots{font-weight:900 !important;letter-spacing:1px !important}html body .ref-source-banner .ref-menu-sub{font-size:10.5px !important;font-weight:400 !important;line-height:1.5 !important}</style>
+<script id="kill-dialog-script">
+(function() {
+  function killDialogs() {
+    document.querySelectorAll("dialog").forEach(function(d) {
+      try { d.close(); } catch (e) {}
+      d.removeAttribute("open");
+      d.style.setProperty("display", "none", "important");
+    });
+  }
+  killDialogs();
+  document.addEventListener("DOMContentLoaded", killDialogs);
+  window.addEventListener("load", killDialogs);
+  if (window.MutationObserver) {
+    new MutationObserver(killDialogs).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
+  }
+})();
+</script>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style><style id="heading-style">
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 24px !important; }
+  h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 20px !important; }
+  h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 18px !important; }
+  h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
 </style>
-<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style><style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
+<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
+<style id="article-align-style">
+  .wrap p.fa-translation { text-align: right !important; }
+</style>
 </head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
@@ -298,7 +329,7 @@
 <p class="fa-translation"><b>ترجمه:</b> «این را از باب اغماض می‌گویم، نه از رویِ فرمان. من می‌خواهم همه‌ی مردم مانندِ خودم [مجرد] باشند؛ اما هر کس عطیه‌ی خاصِ خود را از خدا دارد؛ یکی به این‌گونه و دیگری به آن‌گونه.»</p>
 
 <div class="fa-original-en" dir="ltr" lang="grc">
-<span class="fa-original-en-label">متنِ یونانیِ اصلی:</span><span class="fa-original-en-text">
+<span class="fa-original-en-label">متنِ یونانیِ اصلی:</span><span class="fa-original-en-text"><a id="back-to-top-link" href="#" title="رفتن به بالا" aria-label="رفتن به بالا">↑</a>
 τοῦτο δὲ λέγω κατὰ συγγνώμην, οὐ κατ᾽ ἐπιταγήν. θέλω δὲ πάντας ἀνθρώπους εἶναι ὡς καὶ ἐμαυτόν· <span id="ref-target-1">ἀλλὰ ἕκαστος ἴδιον ἔχει χάρισμα ἐκ θεοῦ,</span> ὁ μὲν οὕτως, ὁ δὲ οὕτως.
 </span></div>
 
@@ -308,7 +339,7 @@
 
 <div class="fa-original-en" dir="ltr" lang="grc">
 <span class="fa-original-en-label">متنِ یونانیِ اصلی:</span><span class="fa-original-en-text">
-ὥστε καὶ ὁ γαμίζων τὴν ἑαυτοῦ παρθένον καλῶς ποιεῖ, καὶ <span id="ref-target-2">ὁ μὴ γαμίζων κρεῖσσον ποιήσει.</span> Γυνὴ δέδεται ἐφ᾽ ὅσον χρόνον ζῇ ὁ ἀνὴρ αὐτῆς· ἐὰν δὲ κοιμηθῇ ὁ ἀνήρ, ἐλευθέρα ἐστὶν ᾧ θέλει γαμηθῆναι, μόνον ἐν κυρίῳ· <span id="ref-target-3">μακαριωτέρα δέ ἐστιν ἐὰν οὕτως μείνῃ, κατὰ τὴν ἐμὴν γνώμην, δοκῶ γὰρ κἀγὼ πνεῦμα θεοῦ ἔχειν.</span> <a id="back-to-top-link" href="#" title="رفتن به بالا" aria-label="رفتن به بالا">↑</a>
+ὥστε καὶ ὁ γαμίζων τὴν ἑαυτοῦ παρθένον καλῶς ποιεῖ, καὶ <span id="ref-target-2">ὁ μὴ γαμίζων κρεῖσσον ποιήσει.</span> Γυνὴ δέδεται ἐφ᾽ ὅσον χρόνον ζῇ ὁ ἀνὴρ αὐτῆς· ἐὰν δὲ κοιμηθῇ ὁ ἀνήρ, ἐλευθέρα ἐστὶν ᾧ θέλει γαμηθῆναι, μόνον ἐν κυρίῳ· <span id="ref-target-3">μακαριωτέρα δέ ἐστιν ἐὰν οὕτως μείνῃ, κατὰ τὴν ἐμὴν γνώμην, δοκῶ γὰρ κἀγὼ πνεῦμα θεοῦ ἔχειν.</span>
 </span></div>
 
 </div>
@@ -490,12 +521,8 @@
 </script>
 <script id="back-to-top-script">
 (function() {
-  // Unlike the usual convention (an arrow dropped right next to the
-  // highlight, for a page where auto-scroll hides the header), this file
-  // has two separate reference excerpts and reads best top-to-bottom, so
-  // the arrow is placed once by hand at the end of the very last line of
-  // the page's content -- for after the reader finishes the whole
-  // reference -- rather than auto-inserted near a highlight.
+  // Static arrow: placed by hand as the first child of the box that holds the
+  // first highlight (same start-of-block rule as the auto-inserted arrow).
   var link = document.getElementById("back-to-top-link");
   if (!link) return;
   link.addEventListener("click", function(e) {

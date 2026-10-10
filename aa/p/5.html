@@ -242,9 +242,9 @@
   }
   .fa-original-en-text { display: block; }
   .fa-translation {
-    font-size: 15px !important;
+    font-size: 16px !important;
     color: #333 !important;
-    margin: 0 0 18px !important;
+    margin: 0 0 22px !important;
     text-indent: 0 !important;
   }
   .fa-translation b { color: var(--b-forest-dark) !important; }
@@ -254,6 +254,7 @@
     border-radius: 3px;
     padding: 0 2px;
   }
+  dialog, dialog[open], dialog::backdrop { display: none !important; }
   #back-to-top-link {
     display: inline-flex;
     align-items: center;
@@ -275,14 +276,15 @@
     line-height: 1;
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
-  dialog, dialog[open], dialog::backdrop { display: none !important; }
+  #back-to-top-link:first-child { margin-inline-start: 0; }
+</style><style id="chrome-lock">html body .brand-topbar,html body .brand-topbar *,html body .ref-source-banner,html body .ref-source-banner *{font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;font-style:normal !important;font-variant:normal !important;letter-spacing:normal !important;word-spacing:0 !important;text-transform:none !important;text-indent:0 !important;text-shadow:none !important;box-sizing:border-box !important}html body .brand-topbar,html body .brand-topbar *{font-weight:400 !important;line-height:normal !important}html body .brand-topbar,html body .brand-topbar > span{font-size:14px !important}html body .brand-topbar .brand-badge{font-size:12.5px !important}html body .brand-topbar .brand-dark-toggle{font-size:15px !important;line-height:1 !important}html body .ref-source-banner,html body .ref-source-banner *{font-size:13px !important;font-weight:400 !important;line-height:1.9 !important}html body .ref-source-banner .ref-banner-text{font-weight:500 !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dots{line-height:normal !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dropdown a,html body .ref-source-banner .ref-menu-label{font-weight:700 !important}html body .ref-source-banner .ref-menu-dots{font-weight:900 !important;letter-spacing:1px !important}html body .ref-source-banner .ref-menu-sub{font-size:10.5px !important;font-weight:400 !important;line-height:1.5 !important}</style>
+<style id="article-indent-style">.sqs-html-content p:not(.fa-original-en){text-indent:0.4cm;}
+  .sqs-html-content p:not(.fa-original-en) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; margin-bottom: 22px !important; }
+  .sqs-html-content p:not(.fa-original-en) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
 </style>
-<style id="article-indent-style">.sqs-html-content p:not(.fa-original-en){text-indent:0.4cm;}</style>
 <style id="rtl-fix-style">
   p, li, h1, h2, h3, h4, h5, h6,
   blockquote, figcaption, dd, dt {
-    direction: rtl !important;
-    text-align: right !important;
     unicode-bidi: isolate !important;
     max-width: 760px !important;
     margin-left: auto !important;
@@ -293,13 +295,24 @@
     direction: ltr !important;
     text-align: left !important;
   }
-</style>
+</style><style id="wide-layout-fix">@media (min-width:860px){#pageWrapper{margin-left:0 !important;margin-right:0 !important;}#page .sqs-html-content p{margin-left:auto !important;margin-right:auto !important;}}</style>
 <style id="mobile-fluid-fix">@media (max-width:1200px){#canvas{min-width:0 !important;width:auto !important;max-width:100% !important;box-sizing:border-box !important;}#pageWrapper,#page,.main-content{min-width:0 !important;}#canvasWrapper,body{overflow-x:hidden !important;}}@media (max-width:860px){#canvas{padding-left:12px !important;padding-right:12px !important;}#pageWrapper{margin-left:0 !important;margin-right:0 !important;width:auto !important;}.sqs-block.html-block{padding-left:0 !important;padding-right:0 !important;}.sqs-row{margin-left:0 !important;margin-right:0 !important;}.sqs-col-12{width:auto !important;float:none !important;}}</style>
 <style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style>
+<style id="heading-style">
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 24px !important; }
+  h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 20px !important; }
+  h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 18px !important; }
+  h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
+  .sqs-html-content span, .sqs-html-content em, .sqs-html-content i, .sqs-html-content mark { font-weight: inherit !important; }
+  .sqs-html-content b, .sqs-html-content strong { font-weight: 700 !important; }
+</style>
 <style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
 </head>
 <body class="sidebar-text-alignment-left sidebar-position-left mobile-site-title-style-auto blog-sidebar-right gallery-style-fill enable-gallery-thumbnails initial-gallery-view-slideshow homepage-gallery-view-inherit thumbnail-aspect-ratio-auto gallery-controls-simple social-icon-style-normal hide-social-icons show-category-navigation event-show-past-events event-thumbnails event-thumbnail-size-32-standard event-date-label event-list-show-cats event-list-date event-list-time event-list-address event-icalgcal-links event-excerpts event-item-back-link product-list-titles-under product-list-alignment-center product-item-size-23-standard-vertical product-image-auto-crop product-gallery-size-11-square product-gallery-auto-crop show-product-price show-product-item-nav product-social-sharing tweak-v1-related-products-image-aspect-ratio-11-square tweak-v1-related-products-details-alignment-center newsletter-style-dark hide-opentable-icons opentable-style-dark small-button-style-solid small-button-shape-square medium-button-style-solid medium-button-shape-square large-button-style-solid large-button-shape-square image-block-poster-text-alignment-center image-block-card-dynamic-font-sizing image-block-card-content-position-center image-block-card-text-alignment-left image-block-overlap-dynamic-font-sizing image-block-overlap-content-position-center image-block-overlap-text-alignment-left image-block-collage-dynamic-font-sizing image-block-collage-content-position-top image-block-collage-text-alignment-left image-block-stack-dynamic-font-sizing image-block-stack-text-alignment-left button-style-solid button-corner-style-square tweak-product-quick-view-button-style-floating tweak-product-quick-view-button-position-bottom tweak-product-quick-view-lightbox-excerpt-display-truncate tweak-product-quick-view-lightbox-show-arrows tweak-product-quick-view-lightbox-show-close-button tweak-product-quick-view-lightbox-controls-weight-light native-currency-code-usd collection-type-page collection-layout-default collection-6055301a1f8001702f149088" id=collection-6055301a1f8001702f149088><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
-<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="http://www.fearofnature.com/psychoanalysis-and-religion-fromm#:~:text=Religion:%20any%20system,object%20of%20devotion" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../pdf/5.pdf#page=2" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد</span></a></div></span></div>
+<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="http://www.fearofnature.com/psychoanalysis-and-religion-fromm#:~:text=Religion:%20any%20system,object%20of%20devotion&amp;text=Man%20is%20not%20free,physical%20satisfaction" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../pdf/5.pdf#page=2" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد</span></a></div></span></div>
  <div id=canvasWrapper>
  <div id=canvas>
  <div id=mobileNav><div class=wrapper>
@@ -1750,6 +1763,7 @@
       while (isLead(second.firstChild)) second.removeChild(second.firstChild);
       second.insertBefore(link, second.firstChild);
     }
+    if (link.parentNode && link.parentNode.style) link.parentNode.style.setProperty("text-indent", "0", "important");
     made = true;
   }
   window.__ensureBackToTop = ensureBackToTopLink;

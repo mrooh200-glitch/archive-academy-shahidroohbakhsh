@@ -268,17 +268,32 @@
     line-height: 1;
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
+  #back-to-top-link:first-child { margin-inline-start: 0; }
   dialog, dialog[open], dialog::backdrop { display: none !important; }
-</style>
+</style><style id="chrome-lock">html body .brand-topbar,html body .brand-topbar *,html body .ref-source-banner,html body .ref-source-banner *{font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;font-style:normal !important;font-variant:normal !important;letter-spacing:normal !important;word-spacing:0 !important;text-transform:none !important;text-indent:0 !important;text-shadow:none !important;box-sizing:border-box !important}html body .brand-topbar,html body .brand-topbar *{font-weight:400 !important;line-height:normal !important}html body .brand-topbar,html body .brand-topbar > span{font-size:14px !important}html body .brand-topbar .brand-badge{font-size:12.5px !important}html body .brand-topbar .brand-dark-toggle{font-size:15px !important;line-height:1 !important}html body .ref-source-banner,html body .ref-source-banner *{font-size:13px !important;font-weight:400 !important;line-height:1.9 !important}html body .ref-source-banner .ref-banner-text{font-weight:500 !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dots{line-height:normal !important}html body .ref-source-banner .ref-menu-trigger,html body .ref-source-banner .ref-menu-dropdown a,html body .ref-source-banner .ref-menu-label{font-weight:700 !important}html body .ref-source-banner .ref-menu-dots{font-weight:900 !important;letter-spacing:1px !important}html body .ref-source-banner .ref-menu-sub{font-size:10.5px !important;font-weight:400 !important;line-height:1.5 !important}</style>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style>
 <style id="article-indent-style">
   div.text-justify p:not(.fa-original-en) { text-indent: 0.4cm !important; margin: 0 !important; }
   div.col-lg-6 > p.text-justify:not(.fa-original-en) { text-indent: 0.4cm !important; }
+  div.text-justify p:not(.fa-original-en), div.col-lg-6 > p.text-justify:not(.fa-original-en) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; }
+  div.text-justify p:not(.fa-original-en) font, div.col-lg-6 > p.text-justify:not(.fa-original-en) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
 </style>
 <style id="article-font-style">
-  div.text-justify p:not(.fa-original-en), p.text-justify:not(.fa-original-en) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 15px !important; line-height: 1.9 !important; text-align: right !important; }
+  div.text-justify p:not(.fa-original-en), p.text-justify:not(.fa-original-en) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; text-align: right !important; }
 </style>
+<style id="heading-style">
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 24px !important; }
+  h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 20px !important; }
+  h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 18px !important; }
+  h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-weight: 700 !important; font-size: 16px !important; }
+  h1:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h2:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h3:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h4:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h5:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font, h6:not(nav *, footer *, aside *, [role=navigation] *, .ref-menu-dropdown *, [class~='sidebar'] *, [class~='footer'] *, [class~='related'] *, [class~='newsletter'] *, [class~='comments'] *, [class*='footer' i], [class*='newsletter' i], [class*='comment' i], [class*='megafooter' i]) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
+  div.text-justify span, div.text-justify em, div.text-justify i, div.text-justify mark, div.col-lg-6 span, div.col-lg-6 em, div.col-lg-6 i, div.col-lg-6 mark { font-weight: inherit !important; }
+  div.text-justify b, div.text-justify strong, div.col-lg-6 b, div.col-lg-6 strong { font-weight: 700 !important; }
+</style><style id="wide-layout-fix">@media (min-width:860px){.Bodynews>.col-lg-3{display:none !important;}.Bodynews>.col-lg-9{flex:0 0 100% !important;max-width:100% !important;}.Bodynews .main-section{max-width:816px !important;margin-left:auto !important;margin-right:auto !important;}}@media (max-width:859px){.Bodynews .p-4{padding-left:4px !important;padding-right:4px !important;}}</style>
 <style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
-<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style></head>
+</head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
 <div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://jamejamdaily.ir/Newspaper/item/265535#:~:text=%D9%81%D9%85%DB%8C%D9%86%DB%8C%D8%B3%D9%85%20%D9%87%D9%85%20%D8%B4%D8%A7%D9%87%D8%AF%20%D9%87%D9%85%DB%8C%D9%86,%D8%AA%D8%A8%D9%84%DB%8C%D8%BA%D8%A7%D8%AA%DB%8C%20%D8%AE%D9%88%D8%AF%20%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87%20%D9%85%DB%8C%E2%80%8C%DA%A9%D9%86%D9%86%D8%AF" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../pdf/52.pdf#page=3" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد</span></a></div></span></div>
@@ -664,7 +679,6 @@
         if (n === " ") { if (lastSpace) continue; lastSpace = true; } else { lastSpace = false; }
         norm.push(n); map.push({ node: node, offset: i });
       }
-      if (!lastSpace) { norm.push(" "); map.push({ node: node, offset: t.length }); lastSpace = true; }
     }
     return { text: norm.join(""), map: map };
   }
@@ -695,27 +709,37 @@
     while (mark.firstChild) mark.parentNode.insertBefore(mark.firstChild, mark);
     mark.parentNode.removeChild(mark);
   }
+  var BLK = "p, li, td, th, h1, h2, h3, h4, h5, h6, blockquote, dd, dt, figcaption, div";
+  function wrapRange(range) {
+    var mark = document.createElement("mark");
+    mark.className = "flash-highlight";
+    mark.appendChild(range.extractContents());
+    range.insertNode(mark);
+    normalizeMarkNesting(mark);
+    return mark;
+  }
   function highlightOne(target) {
     var T = normString(target);
     var built = buildMap();
     var idx = built.text.indexOf(T);
     if (idx === -1) return false;
     var s = built.map[idx], e = built.map[idx + T.length - 1];
-    var range = document.createRange();
-    range.setStart(s.node, s.offset);
-    range.setEnd(e.node, e.offset + 1);
-    var mark = document.createElement("mark");
-    mark.className = "flash-highlight";
-    mark.appendChild(range.extractContents());
-    range.insertNode(mark);
-    normalizeMarkNesting(mark);
-    return true;
-  }
-  function highlightAll() {
-    if (window.__hlDone) return;
-    var ok = 0;
-    TARGETS.forEach(function(t) { if (highlightOne(t)) ok++; });
-    if (ok > 0) window.__hlDone = true;
+    // text nodes of the match, grouped by their block, so a match crossing paragraphs never splits a paragraph
+    var groups = [], cur = null, lastBlock = null;
+    for (var k = idx; k < idx + T.length; k++) {
+      var m = built.map[k], blk = m.node.parentNode.closest(BLK);
+      if (blk !== lastBlock) { cur = { first: m, last: m, ok: false }; groups.push(cur); lastBlock = blk; }
+      cur.last = m; if (/\S/.test(built.text.charAt(k))) cur.ok = true;
+    }
+    var lastMark = null;
+    for (var g = groups.length - 1; g >= 0; g--) {
+      if (!groups[g].ok) continue;
+      var r = document.createRange();
+      r.setStart(groups[g].first.node, groups[g].first.offset);
+      var _eo = groups[g].last.offset + 1, _tv = groups[g].last.node.nodeValue; while (_eo < _tv.length) { var _k = _tv.charCodeAt(_eo); if ((_k >= 0x064b && _k <= 0x065f) || _k === 0x0670) _eo++; else break; } r.setEnd(groups[g].last.node, _eo);
+      var mk = wrapRange(r); if (!lastMark) lastMark = mk;
+    }
+    return lastMark || false;
   }
   var userMoved = false;
   ["wheel", "touchstart", "keydown", "mousedown"].forEach(function(ev) {
@@ -725,6 +749,28 @@
     if (userMoved) return;
     var m = document.querySelector("mark.flash-highlight");
     if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
+  }
+  var BOXES = [null];
+  function addBox(mark, spec) {
+    var blockAncestor = mark.closest("p, div.p, li, td, th, div.quoteText");
+    if (!blockAncestor) return;
+    var box = document.createElement("p");
+    box.className = "fa-original-en";
+    box.setAttribute("dir", "ltr");
+    var label = document.createElement("span");
+    label.className = "fa-original-en-label";
+    label.textContent = spec[0];
+    var text = document.createElement("span");
+    text.className = "fa-original-en-text";
+    text.textContent = spec[2];
+    box.appendChild(label); box.appendChild(text);
+    blockAncestor.parentNode.insertBefore(box, blockAncestor.nextSibling);
+  }
+  function highlightAll() {
+    if (window.__hlDone) return;
+    var ok = 0;
+    TARGETS.forEach(function(t, k) { var m = highlightOne(t); if (m) { ok++; if (BOXES[k]) addBox(m, BOXES[k]); } });
+    if (ok > 0) window.__hlDone = true;
   }
   function run() { highlightAll(); center(); if (window.__ensureBackToTop) window.__ensureBackToTop(); }
   run();
@@ -862,7 +908,7 @@
 </script>
 <script id="text-bounds-guard-script">
 (function() {
-  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt";
+  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, td.tafsir, td.tafsir_ayeh";
   function isRtlText(str) {
     var faCount = 0, total = 0;
     for (var i = 0; i < str.length; i++) {
@@ -880,8 +926,8 @@
       el.style.maxWidth = "760px";
       var dir = isRtlText(el.textContent) ? "rtl" : "ltr";
       el.setAttribute("dir", dir);
-      el.style.direction = dir;
-      var rect = el.getBoundingClientRect();
+      el.style.direction = dir; el.style.setProperty("text-align", dir === "rtl" ? "right" : "left", "important");
+      if (el.tagName === "TD" || el.tagName === "TH") return; var rect = el.getBoundingClientRect();
       var margin = 90;
       if (dir === "rtl") {
         var distRight = window.innerWidth - rect.right;
@@ -936,11 +982,16 @@
     link.textContent = "\u2191";
     var fontSize = parseFloat(getComputedStyle(mark).fontSize) || 17;
     var size = Math.max(24, Math.min(42, Math.round(fontSize * 1.65)));
+    var lh = parseFloat(getComputedStyle(mark).lineHeight);
+    if (lh > 0) size = Math.max(22, Math.min(size, Math.floor(lh) - 2));
     link.style.width = size + "px"; link.style.height = size + "px";
-    link.style.fontSize = Math.round(fontSize * 0.885) + "px";
+    link.style.fontSize = Math.round(size * 0.536) + "px";
+    link.style.setProperty("vertical-align", "middle", "important"); link.style.setProperty("margin-top", "-6px", "important"); link.style.setProperty("margin-bottom", "-6px", "important");
     link.addEventListener("click", function(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    function isLead(n) { return n && ((n.nodeType === 3 && !/\S/.test(n.nodeValue)) || (n.nodeType === 1 && n.tagName === "BR")); }
     if (cut <= 0) {
-      block.insertBefore(link, block.firstChild);
+      var fr = block.firstChild; while (isLead(fr)) fr = fr.nextSibling;
+      block.insertBefore(link, fr || block.firstChild);
     } else {
       var pt = pointAt(block, mark, cut);
       if (!pt) return;
@@ -953,8 +1004,10 @@
       block.parentNode.insertBefore(second, block.nextSibling);
       block.style.setProperty("margin-bottom", "0", "important");
       second.style.setProperty("margin-top", "0", "important");
+      while (isLead(second.firstChild)) second.removeChild(second.firstChild);
       second.insertBefore(link, second.firstChild);
     }
+    if (link.parentNode && link.parentNode.style) link.parentNode.style.setProperty("text-indent", "0", "important");
     made = true;
   }
   window.__ensureBackToTop = ensureBackToTopLink;
