@@ -1,0 +1,17 @@
+name: Rate limit test (تست قانون Rate Limiting کلودفلر)
+# فقط دستی اجرا می‌شود. ۳۰ درخواست POST نامعتبر پشت‌سرهم به /chat می‌فرستد
+# (سهمیهٔ Gemini خرج نمی‌شود) و پاسخ‌ها را دسته‌بندی می‌کند.
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node scripts/rl-test.js

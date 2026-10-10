@@ -112,8 +112,22 @@ async function loadEmbeddings() {
     const embeddingsUrl = currentVersion
       ? `embeddings.json?v=${encodeURIComponent(currentVersion)}`
       : "embeddings.json";
-    const res = await fetch(embeddingsUrl, { cache: "no-store" });
-    const raw = await res.json();
+    // فایل حدود ۲۵ مگابایتی روی اینترنت ضعیف گاهی وسط راه قطع می‌شود؛ تا
+    // ۳ بار با وقفه تلاش می‌کنیم و در نهایت به‌جای خطای خام «Failed to
+    // fetch» پیام روشن فارسی می‌دهیم.
+    let raw = null;
+    for (let attempt = 1; attempt <= 3 && !raw; attempt++) {
+      try {
+        const res = await fetch(embeddingsUrl, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        raw = await res.json();
+      } catch (err) {
+        if (attempt === 3) {
+          throw new Error("بارگذاری پایگاه جست‌وجو کامل نشد (اتصال ضعیف یا قطع است). لطفاً دوباره تلاش کنید.");
+        }
+        await new Promise((r) => setTimeout(r, 800 * attempt));
+      }
+    }
     const decoded = raw.map((item) => ({ ...item, vector: base64ToVector(item.vector) }));
 
     EMBEDDINGS = decoded;
@@ -337,6 +351,21 @@ function textFragmentUrl(baseUrl, text, page) {
 // تاریخچه را به پرامپت Gemini اضافه کند) پاسخ بعدی واقعاً با در نظر
 // گرفتن سؤال‌های قبلی همین گفتگو ساخته شود - نه این‌که هر پرسش، بی‌خبر
 // از پرسش‌های قبلی، از صفر پاسخ داده شود.
+// بهبود بازیابی برای سؤال‌های پیگیری: عبارتی مثل «همان را ساده‌تر بگو» یا
+// «چرا؟» به‌تنهایی امبدینگ بی‌معنایی می‌دهد و تکه‌های بی‌ربط می‌آورد. اگر
+// سؤال کوتاه است و نشانهٔ ارجاع به گفتگوی قبلی دارد، سؤال قبلی را هم به
+// متن جست‌وجو اضافه می‌کنیم (فقط برای جست‌وجو؛ متن واقعی سؤال دست‌نخورده
+// به مدل می‌رسد). بدون تماس اضافه با مدل، پس هزینه و تأخیری ندارد.
+const FOLLOW_UP_MARKERS_AI = /(^|\s)(آن|این|همان|همین|اون|اینو|اونو|بیشتر|ادامه|چرا|چطور|چگونه|مثال|ساده‌تر|ساده تر|توضیح|دلیلش|دلیل|یعنی چی|باز کن|مفصل)(\s|$|؟|\?|،)/;
+
+function buildFollowUpSearchQueryAi(question, history) {
+  if (!Array.isArray(history) || history.length === 0) return question;
+  if (question.length > 60 || !FOLLOW_UP_MARKERS_AI.test(question)) return question;
+  const previous = history[history.length - 1].question;
+  if (!previous) return question;
+  return `${previous.slice(0, 300)}\n${question}`;
+}
+
 async function askQuestion(question, history = [], mode = "grounded", image = null, bookFilter = null, onDelta = null) {
   // آمار سایت: این تابع تنها نقطه‌ای‌ست که واقعاً سؤال کاربر رو به
   // Worker می‌فرسته (یک نقطه‌ی فراخوانی، رجوع کنید به renderChatTurns)،
@@ -348,22 +377,33 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   // Item جدید (پاسخ آزاد): تو این حالت، پاسخ قرار نیست به متون آرشیو
   // محدود باشه - پس نیازی به جست‌وجوی معنایی (که یه تماس شبکه‌ی اضافه‌ست)
   // نیست؛ context خالی می‌مونه و مآخذی هم نشون داده نمی‌شه.
-  const relevant = mode === "general" ? [] : await semanticSearch(question, 5, bookFilter);
+  const searchQuery = buildFollowUpSearchQueryAi(question, history);
+  const relevant = mode === "general" ? [] : await semanticSearch(searchQuery, 5, bookFilter);
   const contextTexts = relevant.map((r) => r.text);
 
-  const chatRes = await fetch(`${WORKER_URL}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      question,
-      context: contextTexts,
-      history,
-      mode,
-      image,
-      // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
-      customInstructions: getAiCustomInstructionsAi() || undefined,
-    }),
-  });
+  // قطعیِ اتصال (offline، فیلتر، DNS) با پیام انگلیسیِ خامِ مرورگر نشون داده
+  // نمی‌شه؛ پیام روشن فارسی می‌گیره. سقف انتظارِ کل درخواست هم ۶۰ ثانیه‌ست.
+  let chatRes;
+  try {
+    chatRes = await fetch(`${WORKER_URL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question,
+        context: contextTexts,
+        history,
+        mode,
+        image,
+        // بالاترین شباهتِ تکه‌های بازیابی‌شده؛ Worker زیر آستانه بدون Gemini «یافت نشد» می‌دهد.
+        topScore: mode === "general" || relevant.length === 0 ? undefined : relevant[0].score,
+        // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
+        customInstructions: getAiCustomInstructionsAi() || undefined,
+      }),
+      signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined,
+    });
+  } catch {
+    throw new Error("اتصال به دستیار برقرار نشد. اینترنت‌تون رو بررسی کنید و دوباره بپرسید.");
+  }
 
   if (!chatRes.ok) {
     let message = "خطا در دریافت پاسخ از دستیار";
@@ -389,33 +429,54 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   let answer = "";
   let usedReferences = null;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  let gotDone = false;
 
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      let msg;
-      try {
-        msg = JSON.parse(trimmed);
-      } catch {
-        continue;
-      }
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
 
-      if (msg.type === "delta" && typeof msg.text === "string") {
-        answer += msg.text;
-        if (typeof onDelta === "function") onDelta(msg.text, answer);
-      } else if (msg.type === "done") {
-        usedReferences = msg.references ?? null;
-      } else if (msg.type === "error") {
-        throw new Error(msg.message || "خطا در دریافت پاسخ از دستیار");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        let msg;
+        try {
+          msg = JSON.parse(trimmed);
+        } catch {
+          continue;
+        }
+
+        if (msg.type === "delta" && typeof msg.text === "string") {
+          answer += msg.text;
+          if (typeof onDelta === "function") onDelta(msg.text, answer);
+        } else if (msg.type === "done") {
+          gotDone = true;
+          usedReferences = msg.references ?? null;
+        } else if (msg.type === "error") {
+          throw new Error(msg.message || "خطا در دریافت پاسخ از دستیار");
+        }
       }
     }
+  } catch (err) {
+    // پیام‌های خودِ Worker (type:"error") دست‌نخورده می‌رسن؛ فقط قطعیِ
+    // اتصال حین پخش به پیام فارسی تبدیل می‌شه.
+    if (err instanceof TypeError || (err && err.name === "AbortError")) {
+      throw new Error("اتصال حین دریافت پاسخ قطع شد. لطفاً دوباره بپرسید.");
+    }
+    throw err;
+  }
+
+  // پخش بدون «done» یعنی پاسخ وسط راه قطع شده؛ پاسخ ناقص رو به‌عنوان
+  // پاسخ کامل ذخیره نمی‌کنیم و منبع‌های نامرتبط هم نشون نمی‌دیم.
+  if (!gotDone) {
+    throw new Error("پاسخ کامل دریافت نشد (اتصال قطع شد). لطفاً دوباره بپرسید.");
+  }
+  if (!answer.trim()) {
+    throw new Error("دستیار پاسخی تولید نکرد. لطفاً سؤال را کمی متفاوت بپرسید یا دوباره تلاش کنید.");
   }
 
   // آیتم ۱۰ (فیلتر ارتباط): اگه Worker گفته کدوم بخش‌ها رو واقعاً
@@ -493,8 +554,14 @@ function escapeHtmlAi(text) {
 function linkifyAnswerAi(text) {
   if (!text) return text;
 
+  // امنیت (XSS): پاسخ از مدل می‌آید و می‌تواند تحت‌تأثیر متن‌های آرشیو یا
+  // پیام کاربر باشد. پس اول کلِ متن escape می‌شود - برچسب و نقل‌قولِ
+  // خام هیچ‌وقت به DOM نمی‌رسند - و فقط بعد از آن، لینک‌های http/https به
+  // <a> تبدیل می‌شوند. (" هم escape شده، پس آدرس نمی‌تواند از href بیرون بزند.)
+  const escaped = escapeHtmlAi(text);
+
   // اول لینک‌های به‌سبک مارک‌داون: [متن](آدرس)
-  let result = String(text).replace(
+  let result = escaped.replace(
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     (match, label, url) => `<a href="${url}" target="_blank" rel="noopener">${label}</a>`
   );
@@ -696,6 +763,7 @@ function archiveCurrentChatConversationAi(chatTurns) {
     turns: chatTurns.map((turn) => ({
       question: turn.question,
       answer: turn.answer,
+      mode: turn.mode || "grounded",
       sourcesInfo: turn.sourcesInfo || [],
     })),
     sourcesInfo: collectConversationSourcesAi(chatTurns),
@@ -754,6 +822,7 @@ function renderChatArchivePanelAi() {
                 <div class="ai-chat-turn">
                   <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(normalizeQuestionTextAi(turn.question))}</div>
                   <div class="ai-chat-bubble ai-chat-bubble-assistant">
+                    ${freeAnswerBadgeHtmlAi(turn.mode)}
                     ${linkifyAnswerAi(turn.answer)}
                     ${sourcesLine ? `<div class="ai-chat-sources">پاسخ از کتاب ${sourcesLine}</div>` : ""}
                   </div>
@@ -925,6 +994,13 @@ function answerIndicatesNotFoundAi(answerText) {
     /اطلاعاتی\s*(در|درباره).*(نیست|ندار)/,
   ];
   return patterns.some((pattern) => pattern.test(answerText || ""));
+}
+
+// برچسب روشن برای پاسخ‌های حالت «پاسخ آزاد» که مستند به آرشیو نیستند.
+const FREE_ANSWER_BADGE_TEXT_AI = "این پاسخ مستند به آرشیو نیست";
+function freeAnswerBadgeHtmlAi(mode) {
+  if (mode !== "general") return "";
+  return `<div class="ai-chat-free-badge" role="note" style="display:inline-block;margin:0 0 6px;padding:2px 8px;border-radius:10px;font-size:0.8em;background:rgba(217,119,6,0.15);border:1px solid rgba(217,119,6,0.55);">⚠ ${FREE_ANSWER_BADGE_TEXT_AI}</div>`;
 }
 
 function formatSourcesInfoLineAi(sourcesInfo) {
@@ -1863,8 +1939,9 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="ai-chat-turn-select">
                 <input type="checkbox" class="ai-chat-turn-checkbox" data-chat-index="${originalIndex}" ${chatSelectedIndexes.has(originalIndex) ? "checked" : ""} title="انتخاب این پرسش‌وپاسخ" aria-label="انتخاب این پرسش‌وپاسخ">
               </div>
-              <div class="ai-chat-bubble ai-chat-bubble-user">${turn.question}</div>
+              <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(turn.question)}</div>
               <div class="ai-chat-bubble ai-chat-bubble-assistant">
+                ${freeAnswerBadgeHtmlAi(turn.mode)}
                 <div>${linkifyAnswerAi(turn.answer)}</div>
                 ${turn.sourceLinksHtml ? `<div class="ai-chat-sources">منابع: ${turn.sourceLinksHtml}</div>` : ""}
               </div>
@@ -1891,6 +1968,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatTurns.push({
           question: turn.question,
           answer: turn.answer,
+          mode: turn.mode || "grounded",
           sourceLinksHtml: formatSourcesInfoHtmlAi(turn.sourcesInfo),
           sourcesText: (turn.sourcesInfo || []).map((s) => s.book).join("، "),
           sourcesInfo: turn.sourcesInfo || [],
@@ -1939,7 +2017,7 @@ document.addEventListener("DOMContentLoaded", () => {
       preview.style.display = "flex";
       preview.innerHTML = `
         <img src="${imageSrc}" alt="" title="برای دیدن نمای کامل کلیک کنید" style="cursor:zoom-in;">
-        <span>${pendingAttachment.name}</span>
+        <span>${escapeHtmlAi(pendingAttachment.name)}</span>
         <button type="button" id="aiChatAttachmentRemove">حذف ✕</button>
       `;
 
@@ -1983,8 +2061,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ارسال هم‌زمان: تا پایان پاسخ در حال پخش، ارسال غیرفعال است تا پاسخ اول
+    // با پرسش دوم بی‌صدا گم نشود. متن پرسش دوم در کادر می‌ماند و پاک نمی‌شود.
+    let chatBusy = false;
+    const aiChatSubmitButton = aiChatForm.querySelector('button[type="submit"], button:not([type])');
+    const aiChatIdlePlaceholder = aiChatInput.placeholder;
+    const setChatBusy = (busy) => {
+      chatBusy = busy;
+      if (aiChatSubmitButton) aiChatSubmitButton.disabled = busy;
+      aiChatInput.placeholder = busy ? "تا پایان پاسخ فعلی صبر کنید…" : aiChatIdlePlaceholder;
+    };
+
     aiChatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (chatBusy) return;
       const question = aiChatInput.value.trim();
       if (!question) return;
 
@@ -2000,12 +2090,13 @@ document.addEventListener("DOMContentLoaded", () => {
       aiChatOutput.insertAdjacentHTML(
         "afterbegin",
         `<div class="ai-chat-turn" id="aiChatPending-${myToken}">
-          <div class="ai-chat-bubble ai-chat-bubble-user">${question}</div>
+          <div class="ai-chat-bubble ai-chat-bubble-user">${escapeHtmlAi(question)}</div>
           <div class="ai-chat-bubble ai-chat-bubble-assistant ai-chat-pending">در حال بررسی و تنظیم پاسخ…</div>
         </div>`
       );
       aiChatOutput.scrollTop = 0;
 
+      setChatBusy(true);
       try {
         // Item جدید (گفتگوی ادامه‌دار): تاریخچهٔ تبادل‌های قبلی همین
         // نشست، جدا از پرسش فعلی، به askQuestion فرستاده می‌شه.
@@ -2018,14 +2109,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // شکل‌گیریِ پاسخ جایگزین می‌کنیم - دیگه لازم نیست کاربر صبر کنه
         // تا کل پاسخ یک‌جا آماده بشه.
         let streamedBubbleEl = null;
+        let streamedTextEl = null;
         const onDelta = (_chunk, soFar) => {
           if (myToken !== chatToken) return;
           if (!streamedBubbleEl) {
             const pendingTurnEl = document.getElementById(`aiChatPending-${myToken}`);
             streamedBubbleEl = pendingTurnEl ? pendingTurnEl.querySelector(".ai-chat-pending") : null;
-            if (streamedBubbleEl) streamedBubbleEl.classList.remove("ai-chat-pending");
+            if (streamedBubbleEl) {
+              streamedBubbleEl.classList.remove("ai-chat-pending");
+              // در پاسخ آزاد، برچسب «مستند به آرشیو نیست» از همان ابتدای پخش دیده شود.
+              streamedBubbleEl.innerHTML = `${freeAnswerBadgeHtmlAi(chatMode)}<div class="ai-chat-stream-text"></div>`;
+              streamedTextEl = streamedBubbleEl.querySelector(".ai-chat-stream-text");
+            }
           }
-          if (streamedBubbleEl) streamedBubbleEl.textContent = soFar;
+          if (streamedTextEl) streamedTextEl.textContent = soFar;
         };
 
         const { answer, sources } = await askQuestion(question, history, chatMode, attachmentForThisMessage, aiChatBookScope, onDelta);
@@ -2064,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatTurns.push({
           question,
           answer,
+          mode: chatMode,
           sourceLinksHtml,
           sourcesText: sources.map((s) => s.source).join("، "),
           sourcesInfo,
@@ -2078,9 +2176,11 @@ document.addEventListener("DOMContentLoaded", () => {
           pendingEl.textContent = message;
           pendingEl.classList.add("ai-chat-error");
         } else {
-          aiChatOutput.insertAdjacentHTML("afterbegin", `<div class="ai-chat-error">${message}</div>`);
+          aiChatOutput.insertAdjacentHTML("afterbegin", `<div class="ai-chat-error">${escapeHtmlAi(message)}</div>`);
         }
         console.error(err);
+      } finally {
+        setChatBusy(false);
       }
     });
 
