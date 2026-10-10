@@ -27,6 +27,11 @@ const CACHE_VERSION = "roohbakhsh-cache-5e8ae7a4";
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
+// کش فونت‌های گوگل (وزیرمتن). عمداً پیشوند «roohbakhsh-cache-» ندارد تا
+// در activate با تغییر نسخه پاک نشود و فونت‌ها فقط یک‌بار دانلود شوند.
+const FONT_CACHE = "roohbakhsh-fonts-v1";
+const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
+
 // آدرس‌هایی که همین حالا (در لحظهٔ نصب) کش می‌شوند - پوستهٔ اصلی سایت.
 const SHELL_FILES = [
   "./",
@@ -98,6 +103,28 @@ async function cacheFirst(request) {
   return response;
 }
 
+// فونت‌ها: cache-first (فایل‌های gstatic نسخه‌دار و تغییرناپذیرند) و برای
+// CSS گوگل stale-while-revalidate. پاسخ‌های opaque هم ذخیره می‌شوند چون
+// تگ <link rel="stylesheet"> بدون crossorigin است.
+async function fontStrategy(request, url) {
+  const cache = await caches.open(FONT_CACHE);
+  const cached = await cache.match(request);
+  const isCss = url.hostname === "fonts.googleapis.com";
+
+  const fetchAndStore = fetch(request).then(response => {
+    if (response && (response.ok || response.type === "opaque")) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  });
+
+  if (cached) {
+    if (isCss) fetchAndStore.catch(() => {});
+    return cached;
+  }
+  return fetchAndStore;
+}
+
 self.addEventListener("fetch", event => {
   const request = event.request;
 
@@ -105,6 +132,11 @@ self.addEventListener("fetch", event => {
 
   const url = new URL(request.url);
   const isSameOrigin = url.origin === self.location.origin;
+
+  if (FONT_HOSTS.includes(url.hostname)) {
+    event.respondWith(fontStrategy(request, url));
+    return;
+  }
 
   const isVersionedCdnAsset = !isSameOrigin && /\/\d+\.\d+\.\d+\//.test(url.pathname);
 
