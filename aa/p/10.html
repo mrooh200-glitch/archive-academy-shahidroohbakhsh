@@ -39,15 +39,7 @@
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
   }
-  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
-     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
-     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
   body.dark-mode { background: #0d0d10; }
-  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
-     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
-     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
-     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
-     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
   html.dark-mode body.dark-mode { background: transparent !important; }
   html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
@@ -70,11 +62,8 @@
     flex: 0 0 auto;
   }
   .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
-  /* متنِ اصلیِ صفحه (نقل‌قولِ PDF) پالتِ رنگیِ گرمِ خودش رو داره که با پس‌زمینه‌ی
-     تیره‌ی حالتِ شب سازگار نیست. به‌جایِ فیلترِ رنگی (که موقعیتِ fixed رو می‌شکنه)،
-     رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک ترکیبِ همیشه-خوانا override می‌کنیم. */
   body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
-    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *):not(.flash-highlight):not(.flash-highlight *) {
     background-color: transparent !important;
     background-image: none !important;
     color: #e7e2f2 !important;
@@ -82,15 +71,17 @@
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight {
     background: rgba(227,200,118,.55) !important;
     color: #2a1a05 !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight *,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight * {
     color: #2a1a05 !important;
     background: rgba(227,200,118,.55) !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *):not(.flash-highlight *) {
     color: #cdb6ff !important;
   }
   .side-rail {
@@ -231,8 +222,8 @@
     direction: ltr !important;
     text-align: left !important;
     font-family: Georgia, "Times New Roman", serif !important;
-    font-size: 14px !important;
-    line-height: 1.7 !important;
+    font-size: 15px !important;
+    line-height: 1.8 !important;
     color: #4a4458 !important;
     background: #f4f2fa !important;
     border-right: none !important;
@@ -240,9 +231,9 @@
     border-radius: 6px !important;
     padding: 12px 16px !important;
     padding-left: 0.4cm !important;
-    margin: 10px 0 18px 0 !important;
+    margin: 10px 0 6px 0 !important;
     box-sizing: border-box !important;
-}
+  }
   .fa-original-en .fa-original-en-label {
     display: block !important;
     direction: rtl !important;
@@ -255,19 +246,48 @@
     text-indent: 0 !important;
   }
   .fa-original-en-text { display: block; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45);
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
-    border-radius: 3px;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    color: inherit;
+  .fa-translation {
+    font-size: 15px !important;
+    color: #333 !important;
+    margin: 0 0 18px !important;
+    text-indent: 0 !important;
   }
+  .fa-translation b { color: var(--b-forest-dark) !important; }
+  mark.flash-highlight {
+    background: rgba(227,200,118,.55);
+    color: #2a1a05;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  dialog, dialog[open], dialog::backdrop { display: none !important; }
+  #back-to-top-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -0.35em;
+    width: 22px;
+    height: 22px;
+    margin: 0 .3em;
+    border-radius: 50%;
+    background: var(--b-gold);
+    color: #2a1a05;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 13px;
+    font-family: Arial, "Segoe UI Symbol", sans-serif;
+    text-indent: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    cursor: pointer;
+    line-height: 1;
+  }
+  #back-to-top-link:hover { background: var(--b-gold-light); }
 </style>
-<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style></head>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style>
+<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
+</head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
-<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، ترجمه‌شده‌ی متنِ استخراج‌شده از یک منبع PDF است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://siecus.org/wp-content/uploads/2018/07/4-A-Brief-History-of-AOUM-Funding.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/10.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div>
+<div class="ref-source-banner"><span class="ref-banner-text">این صفحه، ترجمه‌شده‌یِ متنِ استخراج‌شده از یک منبع PDF است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://siecus.org/wp-content/uploads/2018/07/4-A-Brief-History-of-AOUM-Funding.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/10.pdf#page=1" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div>
 
 <div class="wrap">
 
@@ -279,7 +299,7 @@
 
 <h1>تاریخچه‌ی بودجه‌ی فدرال برای برنامه‌های<br>«پرهیز جنسی تا ازدواج»</h1>
 
-<p id="ref-target">تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد.</p>
+<p>تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد.</p>
 
 <p class="fa-original-en" dir="ltr"><span class="fa-original-en-label">متنِ اصلیِ مرتبط:</span><span class="fa-original-en-text">Government funding of abstinence-only-until-marriage programs is not new. In fact, the federal government has poured tax-payer money into such programs for over a quarter century. Beginning in 1981 under the Reagan Administration, the federal government has consistently funded abstinence-only-until-marriage programs despite an overwhelming body of research proving they are ineffective and that this federal expenditure has failed to achieve its stated goals. Funding for these unproven programs grew exponentially from 1996 until 2006, particularly during the years of the George W. Bush Administration. The funding leveled out between 2006 and 2009 and then reduced significantly in 2010. Between 1996 and federal Fiscal Year 2010, Congress funneled a total of over one-and-a-half billion tax-payer dollars into abstinence-only-until-marriage programs and the funding continues today.</span></p>
 
@@ -311,37 +331,130 @@
   }
 })();
 </script>
-<script>
+<script id="kill-dialog-script">
 (function() {
-  var el = document.getElementById("ref-target");
-  if (el) {
+  function killDialogs() {
+    document.querySelectorAll("dialog").forEach(function(d) {
+      try { d.close(); } catch (e) {}
+      d.removeAttribute("open");
+      d.style.setProperty("display", "none", "important");
+    });
+  }
+  killDialogs();
+  document.addEventListener("DOMContentLoaded", killDialogs);
+  window.addEventListener("load", killDialogs);
+  if (window.MutationObserver) {
+    new MutationObserver(killDialogs).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
+  }
+})();
+</script>
+
+<script id="ref-flash-script">
+(function() {
+  var TARGETS = ["تأمین بودجه‌ی دولتی برای برنامه‌های «فقط پرهیز جنسی تا ازدواج» چیز تازه‌ای نیست. در واقع، دولت فدرال برای بیش از یک ربع قرن، پول مالیات‌دهندگان را صرف چنین برنامه‌هایی کرده است. از سال ۱۹۸۱ و در دوران دولت ریگان، دولت فدرال پیوسته از این برنامه‌ها حمایت مالی کرده است؛ با وجود انبوهی از پژوهش‌ها که نشان می‌دهند این برنامه‌ها بی‌اثرند و این هزینه‌ی فدرال نتوانسته به اهداف اعلام‌شده‌اش برسد. بودجه‌ی این برنامه‌های اثبات‌نشده از سال ۱۹۹۶ تا ۲۰۰۶ رشد نمایی داشت، به‌ویژه در سال‌های دولت جورج دبلیو بوش. این بودجه بین سال‌های ۲۰۰۶ تا ۲۰۰۹ ثابت ماند و سپس در سال ۲۰۱۰ به‌طور چشمگیری کاهش یافت. بین سال ۱۹۹۶ و سال مالی فدرال ۲۰۱۰، کنگره در مجموع بیش از یک‌ونیم میلیارد دلار از مالیات مردم را صرف این برنامه‌ها کرد و این بودجه‌دهی هنوز هم ادامه دارد."];
+  window.__hlDone = false;
+  function normChar(c) {
+    var code = c.charCodeAt(0);
+    if (code === 0x200c || code === 0x200d || code === 0x200e || code === 0x200f || code === 0x0640) return "";
+    if ((code >= 0x064b && code <= 0x065f) || code === 0x0670) return "";
+    if (c === "\u064a") return "\u06cc";
+    if (c === "\u0643") return "\u06a9";
+    if (/\s/.test(c) || code === 0xa0) return " ";
+    return c;
+  }
+  function buildMap() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var norm = [], map = [], node, lastSpace = true;
+    while ((node = walker.nextNode())) {
+      var p = node.parentNode;
+      if (!p || p.closest(".brand-topbar, .ref-source-banner, .side-rail, script, style, noscript")) continue;
+      var t = node.nodeValue;
+      for (var i = 0; i < t.length; i++) {
+        var n = normChar(t[i]);
+        if (n === "") continue;
+        if (n === " ") { if (lastSpace) continue; lastSpace = true; } else { lastSpace = false; }
+        norm.push(n); map.push({ node: node, offset: i });
+      }
+      if (!lastSpace) { norm.push(" "); map.push({ node: node, offset: t.length }); lastSpace = true; }
+    }
+    return { text: norm.join(""), map: map };
+  }
+  function normString(str) {
+    var out = [], lastSpace = true;
+    for (var i = 0; i < str.length; i++) {
+      var n = normChar(str[i]);
+      if (n === "") continue;
+      if (n === " ") { if (lastSpace) continue; lastSpace = true; } else { lastSpace = false; }
+      out.push(n);
+    }
+    while (out.length && out[out.length - 1] === " ") out.pop();
+    return out.join("");
+  }
+  var BLOCK_TAGS = ["P", "DIV", "LI", "TD", "TH", "TR", "SECTION", "ARTICLE", "BLOCKQUOTE"];
+  function normalizeMarkNesting(mark) {
+    var kids = Array.prototype.slice.call(mark.children);
+    var hasBlock = kids.some(function(k) { return BLOCK_TAGS.indexOf(k.tagName) !== -1; });
+    if (!hasBlock) return;
+    kids.forEach(function(k) {
+      if (BLOCK_TAGS.indexOf(k.tagName) === -1) return;
+      if (!k.textContent.trim()) { k.parentNode.removeChild(k); return; }
+      var inner = document.createElement("mark");
+      inner.className = "flash-highlight";
+      while (k.firstChild) inner.appendChild(k.firstChild);
+      k.appendChild(inner);
+    });
+    while (mark.firstChild) mark.parentNode.insertBefore(mark.firstChild, mark);
+    mark.parentNode.removeChild(mark);
+  }
+  function highlightOne(target) {
+    var T = normString(target);
+    var built = buildMap();
+    var idx = built.text.indexOf(T);
+    if (idx === -1) return false;
+    var s = built.map[idx], e = built.map[idx + T.length - 1];
+    var range = document.createRange();
+    range.setStart(s.node, s.offset);
+    range.setEnd(e.node, e.offset + 1);
     var mark = document.createElement("mark");
     mark.className = "flash-highlight";
-    while (el.firstChild) mark.appendChild(el.firstChild);
-    el.appendChild(mark);
+    mark.appendChild(range.extractContents());
+    range.insertNode(mark);
+    normalizeMarkNesting(mark);
+    return true;
   }
-  var banner = document.querySelector(".ref-source-banner");
-  if (banner) /* superseded by dynamic-offset-script */
-  requestAnimationFrame(function() {
+  function highlightAll() {
+    if (window.__hlDone) return;
+    var ok = 0;
+    TARGETS.forEach(function(t) { if (highlightOne(t)) ok++; });
+    if (ok > 0) window.__hlDone = true;
+  }
+  var userMoved = false;
+  ["wheel", "touchstart", "keydown", "mousedown"].forEach(function(ev) {
+    window.addEventListener(ev, function() { userMoved = true; }, { once: true, passive: true });
+  });
+  function center() {
+    if (userMoved) return;
     var m = document.querySelector("mark.flash-highlight");
     if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
-  });
+  }
+  function run() { highlightAll(); center(); if (window.__ensureBackToTop) window.__ensureBackToTop(); }
+  run();
+  document.addEventListener("DOMContentLoaded", run);
+  window.addEventListener("load", run);
+  setTimeout(run, 600);
+  setTimeout(run, 2000);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
 })();
 </script>
 
 <script id="dark-mode-script">
 (function() {
-  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var DARK_MODE_KEY = "roohbakhshDarkMode";
   var FORCED_ATTR = "data-dm-forced";
   var CONTENT_COLOR = "rgb(231, 226, 242)";
   var LINK_COLOR = "rgb(205, 182, 255)";
   var MARK_COLOR = "rgb(42, 26, 5)";
 
-  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
-  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
-  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
-  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
-  // هر #id ای هم بالاتره) اصلاح می‌کنه.
   function patchStubbornColors() {
     var all = document.body.querySelectorAll("*");
     for (var i = 0; i < all.length; i++) {
@@ -349,7 +462,7 @@
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
       if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
-      if (el.closest("mark.flash-highlight")) {
+      if (el.closest("mark.flash-highlight, .flash-highlight")) {
         if (cs.color !== MARK_COLOR) {
           el.style.setProperty("color", "#2a1a05", "important");
           el.setAttribute(FORCED_ATTR, "1");
@@ -431,9 +544,6 @@
   });
 })();
 </script>
-</body>
-</html>
-
 <script id="dynamic-offset-script">
 (function() {
   function applyOffset() {
@@ -452,6 +562,13 @@
   }
   window.addEventListener('load', applyOffset);
   window.addEventListener('resize', applyOffset);
+  setTimeout(applyOffset, 50);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(applyOffset);
+    var tb = document.querySelector('.brand-topbar'), rb = document.querySelector('.ref-source-banner');
+    if (tb) ro.observe(tb);
+    if (rb) ro.observe(rb);
+  }
 })();
 </script>
 <style id="rtl-fix-style">
@@ -466,156 +583,163 @@
 </style>
 <script id="text-bounds-guard-script">
 (function() {
-  var SAFE_GAP = 90; // minimum px distance from the viewport edge / side-rail
-  var SELECTOR = 'p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt';
-  var RTL_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g;
-
-  function isRtlText(text) {
-    var letters = text.replace(/[^A-Za-z؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g, '');
-    if (!letters) return null; // no letters at all; leave direction as-is
-    var rtlCount = (text.match(RTL_RE) || []).length;
-    return (rtlCount / letters.length) > 0.35;
+  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt";
+  function isRtlText(str) {
+    var faCount = 0, total = 0;
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c === 32 || c === 10 || c === 9) continue;
+      total++;
+      if ((c >= 0x0600 && c <= 0x06FF) || (c >= 0xFB50 && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)) faCount++;
+    }
+    if (total === 0) return true;
+    return (faCount / total) > 0.35;
   }
-
-  // Auto-scrolling straight to the highlighted passage hides the page's own
-  // top info (title, banner, etc.) from the user. We show a small arrow
-  // ("↑") that jumps back to the top of the page. On wide screens it sits
-  // OUTSIDE the text block, in the white margin beside it (like a margin
-  // note) rather than squeezed inline into the text. On narrow screens,
-  // where there is no side margin, it falls back to sitting just at the
-  // block's own edge.
-  var backToTopLink = null;
-  // Only worth showing if the page's own auto-scroll-to-highlight actually
-  // moved us away from the very top (hiding the source's own title/header).
-  // If the highlight sits right near the top already, there is nothing
-  // hidden to jump back to, so skip the arrow. The highlight script's own
-  // scroll can settle well after 'load' (it searches the whole page text),
-  // so this is re-checked on every call rather than decided once early;
-  // once the link is actually created, it is cached and kept.
-  function isBackToTopNeeded() {
-    var scrollY = window.scrollY || window.pageYOffset;
-    return scrollY > 40;
+  function applyBounds() {
+    document.querySelectorAll(SELECTOR).forEach(function(el) {
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) return;
+      el.style.maxWidth = "760px";
+      var dir = isRtlText(el.textContent) ? "rtl" : "ltr";
+      el.setAttribute("dir", dir);
+      el.style.direction = dir; el.style.setProperty("text-align", dir === "rtl" ? "right" : "left", "important");
+      var rect = el.getBoundingClientRect();
+      var margin = 90;
+      if (dir === "rtl") {
+        var distRight = window.innerWidth - rect.right;
+        if (distRight < margin) el.style.marginRight = (margin - distRight) + "px";
+      } else {
+        if (rect.left < margin) el.style.marginLeft = (margin - rect.left) + "px";
+      }
+    });
+  }
+  applyBounds();
+  document.addEventListener("DOMContentLoaded", applyBounds);
+  window.addEventListener("load", applyBounds);
+  window.addEventListener("resize", applyBounds);
+  if (window.MutationObserver) {
+    new MutationObserver(function() { applyBounds(); }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+<script id="back-to-top-script">
+(function() {
+  var made = false;
+  function isBackToTopNeeded() { return window.scrollY > 40; }
+  function pointAt(block, mark, charIdx) {
+    var w = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, null), n, acc = 0;
+    while ((n = w.nextNode())) {
+      var len = n.nodeValue.length;
+      if (acc + len >= charIdx) return { node: n, offset: charIdx - acc };
+      acc += len;
+    }
+    return null;
   }
   function ensureBackToTopLink() {
-    if (backToTopLink) return backToTopLink;
-    var hl0 = document.querySelector('mark.flash-highlight, .flash-highlight');
-    if (!hl0) return null;
-    if (!isBackToTopNeeded()) return null;
-
-    var link = document.createElement('a');
-    link.id = 'back-to-top-link';
-    link.href = '#';
-    link.textContent = '\u2191';
-    link.title = 'رفتن به بالای صفحه';
-    link.setAttribute('aria-label', 'رفتن به بالای صفحه');
-    link.style.setProperty('position', 'absolute', 'important');
-    link.style.setProperty('z-index', '500', 'important');
-    link.style.setProperty('display', 'flex', 'important');
-    link.style.setProperty('align-items', 'center', 'important');
-    link.style.setProperty('justify-content', 'center', 'important');
-    link.style.setProperty('width', '28px', 'important');
-    link.style.setProperty('height', '28px', 'important');
-    link.style.setProperty('color', '#4c1d95', 'important');
-    link.style.setProperty('background', '#e3c876', 'important');
-    link.style.setProperty('border-radius', '50%', 'important');
-    link.style.setProperty('font-weight', '800', 'important');
-    link.style.setProperty('font-size', '15px', 'important');
-    link.style.setProperty('text-decoration', 'none', 'important');
-    link.style.setProperty('cursor', 'pointer', 'important');
-    link.style.setProperty('line-height', '1', 'important');
-    link.style.setProperty('user-select', 'none', 'important');
-    link.style.setProperty('box-shadow', '0 1px 4px rgba(0,0,0,.25)', 'important');
-
-    link.addEventListener('click', function(e) {
-      if (e) e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    document.body.appendChild(link);
-    backToTopLink = link;
-    return link;
-  }
-
-  function positionBackToTopLink() {
-    var link = ensureBackToTopLink();
-    if (!link) return;
-    var hl = document.querySelector('mark.flash-highlight, .flash-highlight');
-    if (!hl) return;
-    var block = hl.closest('p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, div, td, th') || hl;
-    var blockRect = block.getBoundingClientRect();
-    var hlRect = hl.getBoundingClientRect();
-    var scrollX = window.scrollX || window.pageXOffset;
-    var scrollY = window.scrollY || window.pageYOffset;
-    var vw = window.innerWidth;
-    var SIZE = 28;
-    var GAP = 12;
-
-    var spaceRight = vw - blockRect.right;
-    var spaceLeft = blockRect.left;
-
-    if (spaceRight >= SIZE + GAP) {
-      link.style.setProperty('left', Math.round(scrollX + blockRect.right + GAP) + 'px', 'important');
-    } else if (spaceLeft >= SIZE + GAP) {
-      link.style.setProperty('left', Math.round(scrollX + blockRect.left - SIZE - GAP) + 'px', 'important');
+    if (made || !isBackToTopNeeded()) return;
+    var mark = document.querySelector("mark.flash-highlight");
+    if (!mark) return;
+    var block = mark.closest("p, li, blockquote, dd, dt, td, th, figcaption, div");
+    if (!block) return;
+    var pre = document.createRange();
+    pre.setStart(block, 0);
+    pre.setEndBefore(mark);
+    var before = pre.toString();
+    var lim = Math.max(0, before.length - 70);
+    var cut = -1, i;
+    for (i = before.length - 1; i >= lim; i--) { if (".!\u061f?".indexOf(before[i]) !== -1) { cut = i + 1; break; } }
+    if (cut === -1) { for (i = before.length - 1; i >= lim; i--) { if ("\u060c,".indexOf(before[i]) !== -1) { cut = i + 1; break; } } }
+    if (cut === -1) cut = (before.length <= 70) ? 0 : before.length;
+    var link = document.createElement("a");
+    link.id = "back-to-top-link";
+    link.href = "#";
+    link.title = "رفتن به بالا";
+    link.setAttribute("aria-label", "رفتن به بالا");
+    link.textContent = "\u2191";
+    var fontSize = parseFloat(getComputedStyle(mark).fontSize) || 17;
+    var size = Math.max(24, Math.min(42, Math.round(fontSize * 1.65)));
+    var lh = parseFloat(getComputedStyle(mark).lineHeight);
+    if (lh > 0) size = Math.max(22, Math.min(size, Math.floor(lh) - 2));
+    link.style.width = size + "px"; link.style.height = size + "px";
+    link.style.fontSize = Math.round(size * 0.536) + "px";
+    link.style.setProperty("vertical-align", "middle", "important"); link.style.setProperty("margin-top", "-6px", "important"); link.style.setProperty("margin-bottom", "-6px", "important");
+    link.addEventListener("click", function(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    function isLead(n) { return n && ((n.nodeType === 3 && !/\S/.test(n.nodeValue)) || (n.nodeType === 1 && n.tagName === "BR")); }
+    if (cut <= 0) {
+      var fr = block.firstChild; while (isLead(fr)) fr = fr.nextSibling;
+      block.insertBefore(link, fr || block.firstChild);
     } else {
-      // No side margin available (narrow/mobile) — sit just inside the block's own edge.
-      link.style.setProperty('left', Math.round(scrollX + Math.max(4, blockRect.left)) + 'px', 'important');
+      var pt = pointAt(block, mark, cut);
+      if (!pt) return;
+      var r = document.createRange();
+      r.setStart(pt.node, pt.offset);
+      r.setEndAfter(block.lastChild);
+      var second = block.cloneNode(false);
+      second.removeAttribute("id");
+      second.appendChild(r.extractContents());
+      block.parentNode.insertBefore(second, block.nextSibling);
+      block.style.setProperty("margin-bottom", "0", "important");
+      second.style.setProperty("margin-top", "0", "important");
+      while (isLead(second.firstChild)) second.removeChild(second.firstChild);
+      second.insertBefore(link, second.firstChild);
     }
-    link.style.setProperty('top', Math.round(scrollY + hlRect.top) + 'px', 'important');
+    made = true;
   }
+  window.__ensureBackToTop = ensureBackToTopLink;
+  window.addEventListener("scroll", ensureBackToTopLink, { passive: true });
+  ensureBackToTopLink();
+})();
+</script>
 
-  function fixTextBounds() {
-    var vw = window.innerWidth;
-    var maxW = Math.max(280, Math.min(760, vw - SAFE_GAP * 2));
-    var els = document.querySelectorAll(SELECTOR);
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      if (el.closest('.side-rail') || el.closest('.brand-topbar') || el.id === 'back-to-top-link') continue;
-      el.style.setProperty('max-width', maxW + 'px', 'important');
-      el.style.setProperty('box-sizing', 'border-box', 'important');
-      el.style.setProperty('margin-left', 'auto', 'important');
-      el.style.setProperty('margin-right', 'auto', 'important');
-      el.style.setProperty('float', 'none', 'important');
-
-      var rtl = isRtlText(el.textContent || '');
-      if (rtl === true) {
-        el.style.setProperty('direction', 'rtl', 'important');
-        el.style.setProperty('text-align', 'right', 'important');
-      } else if (rtl === false) {
-        el.style.setProperty('direction', 'ltr', 'important');
-        el.style.setProperty('text-align', 'left', 'important');
-      }
-
-      var rect = el.getBoundingClientRect();
-      if (rect.width === 0) continue;
-      if (rect.left < SAFE_GAP) {
-        var curL = parseFloat(getComputedStyle(el).marginLeft) || 0;
-        el.style.setProperty('margin-left', (curL + (SAFE_GAP - rect.left)) + 'px', 'important');
-      }
-      var rect2 = el.getBoundingClientRect();
-      if (rect2.right > vw - SAFE_GAP) {
-        var curR = parseFloat(getComputedStyle(el).marginRight) || 0;
-        el.style.setProperty('margin-right', (curR + (rect2.right - (vw - SAFE_GAP))) + 'px', 'important');
-      }
+<script id="next-highlight-script">
+(function() {
+  var btn = null, style = null;
+  function marks() { return Array.prototype.slice.call(document.querySelectorAll("mark.flash-highlight")); }
+  function topOf(m) { var r = m.getClientRects()[0] || m.getBoundingClientRect(); return r.top + window.scrollY; }
+  function bottomOf(m) { var rs = m.getClientRects(); var r = rs.length ? rs[rs.length - 1] : m.getBoundingClientRect(); return r.bottom + window.scrollY; }
+  function farApart() {
+    var ms = marks(), i;
+    if (ms.length < 2) return false;
+    for (i = 0; i < ms.length - 1; i++) {
+      if (topOf(ms[i + 1]) - bottomOf(ms[i]) > window.innerHeight * 0.6) return true;
     }
-    positionBackToTopLink();
+    return false;
   }
-
-  var pending = null;
-  function scheduleFix() {
-    if (pending) clearTimeout(pending);
-    pending = setTimeout(fixTextBounds, 150);
+  function nextIndex() {
+    var ms = marks(), ref = window.scrollY + window.innerHeight * 0.75, i;
+    for (i = 0; i < ms.length; i++) { if (topOf(ms[i]) > ref) return i; }
+    return 0;
   }
-
-  fixTextBounds();
-  window.addEventListener('load', fixTextBounds);
-  window.addEventListener('resize', scheduleFix);
-
-  // Google Translate (and similar tools) mutate the DOM asynchronously after load,
-  // so watch for that and re-run the check whenever it happens.
-  if (window.MutationObserver) {
-    var observer = new MutationObserver(scheduleFix);
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] });
+  function labelIt() {
+    if (!btn) return;
+    var ms = marks(), i = nextIndex();
+    btn.textContent = (i === 0 ? "↑ هایلایتِ اول" : "↓ هایلایتِ بعدی");
   }
+  function build() {
+    if (btn) return;
+    style = document.createElement("style");
+    style.id = "next-highlight-style";
+    style.textContent = "#next-highlight-btn{position:fixed;left:16px;bottom:16px;z-index:2147483000;direction:rtl;font:700 13px Vazirmatn,Tahoma,Arial,sans-serif;color:#2a1a05;background:#e3c876;border:1px solid #b8912a;border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);}#next-highlight-btn:hover{background:#edd48c;}html body.dark-mode #next-highlight-btn{background:#b8912a;color:#1a1004;border-color:#e3c876;}";
+    document.head.appendChild(style);
+    btn = document.createElement("button");
+    btn.id = "next-highlight-btn";
+    btn.type = "button";
+    btn.addEventListener("click", function() {
+      var ms = marks(); if (!ms.length) return;
+      var m = ms[nextIndex()];
+      window.scrollTo({ top: Math.max(0, topOf(m) - window.innerHeight * 0.34), behavior: "smooth" });
+    });
+    document.body.appendChild(btn);
+    labelIt();
+  }
+  function refresh() {
+    if (farApart()) { build(); btn.style.display = ""; labelIt(); }
+    else if (btn) btn.style.display = "none";
+  }
+  window.addEventListener("scroll", function() { if (btn) labelIt(); }, { passive: true });
+  window.addEventListener("resize", refresh);
+  window.addEventListener("load", refresh);
+  document.addEventListener("DOMContentLoaded", refresh);
+  setTimeout(refresh, 700); setTimeout(refresh, 2200); setTimeout(refresh, 4500);
+  refresh();
 })();
 </script>

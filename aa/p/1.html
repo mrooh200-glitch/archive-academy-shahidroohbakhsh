@@ -3,7 +3,7 @@
  Page saved with SingleFile 
  url: https://www.nature.com/articles/s41598-025-19051-1 
  saved date: Fri Sep 25 2026 19:45:49 GMT+0330 (وقت عادی ایران)
---><head><meta charset="utf-8"/><meta http-equiv="Content-Security-Policy" id="archive-csp" content="default-src 'none'; script-src 'unsafe-inline' data:; connect-src 'none'; style-src 'unsafe-inline' data: https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; frame-src https: data:; object-src 'none'; form-action 'none'; base-uri 'none';"><style>body{transition:opacity ease-in 0.2s}</style>
+--><head><meta http-equiv="Content-Security-Policy" id="archive-csp" content="default-src 'none'; script-src 'unsafe-inline' data: https://www.aparat.com; connect-src 'none'; style-src 'unsafe-inline' data: https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; frame-src https: data:; object-src 'none'; form-action 'none'; base-uri 'none';"><meta charset="utf-8"/><style>body{transition:opacity ease-in 0.2s}</style>
 <title>تأثیر احتمال و چارچوب‌بندی بر اثر پیش‌فرض در تصمیم‌گیری تحت ریسک | گزارش‌های علمی</title>
 <link href="https://www.nature.com/srep.rss" rel="alternate" type="application/rss+xml"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
@@ -330,15 +330,7 @@
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
   }
-  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
-     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
-     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
   body.dark-mode { background: #0d0d10; }
-  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
-     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
-     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
-     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
-     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
   html.dark-mode body.dark-mode { background: transparent !important; }
   html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
@@ -361,14 +353,8 @@
     flex: 0 0 auto;
   }
   .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
-  /* متنِ اصلیِ صفحه، محتوایِ آرشیوشده از سایتِ منبعه و پالتِ رنگیِ خودش رو داره که
-     با پس‌زمینه‌ی تیره‌ی حالتِ شب سازگار نیست (مثلاً متنِ تیره‌ی روی زمینه‌ی
-     سفیدِ اصلی، وقتی زمینه تیره میشه، ناخوانا میشه). به‌جایِ فیلترِ رنگی (که
-     موقعیتِ fixed رو می‌شکنه)، رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک
-     ترکیبِ همیشه-خوانا override می‌کنیم؛ اختصاصیتِ بالا (تکرارِ کلاس) تضمین
-     می‌کنه این override روی CSSِ خودِ سایتِ منبع (even با !important) اثر کنه. */
   body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
-    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *):not(.flash-highlight):not(.flash-highlight *) {
     background-color: transparent !important;
     background-image: none !important;
     color: #e7e2f2 !important;
@@ -376,15 +362,17 @@
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight {
     background: rgba(227,200,118,.55) !important;
     color: #2a1a05 !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight *,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight * {
     color: #2a1a05 !important;
     background: rgba(227,200,118,.55) !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *):not(.flash-highlight *) {
     color: #cdb6ff !important;
   }
   .side-rail {
@@ -464,19 +452,6 @@
     margin: 0 !important;
   }
   .ref-source-banner a { color: var(--b-forest-dark) !important; font-weight: bold !important; text-decoration: underline !important; }
-  .ref-source-banner .ref-pdf-sep { margin: 0 8px !important; color: var(--b-gold) !important; font-weight: normal !important; }
-  dialog, dialog[open], dialog::backdrop { display: none !important; }
-  .c-article-body p:not(.fa-original-en) { text-indent: 0.4cm !important; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45);
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
-    border-radius: 3px;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    color: inherit;
-  }
-
-  .ref-source-banner { flex-wrap: wrap !important; gap: 4px 0 !important; }
   .ref-menu-wrap { position: relative !important; display: inline-block !important; margin-right: 4px !important; }
   .ref-menu-trigger {
     background: none !important;
@@ -523,14 +498,7 @@
   }
   .ref-menu-dropdown a:hover { background: var(--b-cream-deep) !important; text-decoration: underline !important; }
   .ref-menu-label { display: block !important; }
-  .ref-menu-sub {
-    display: block !important;
-    font-size: 10.5px !important;
-    font-weight: normal !important;
-    color: #9c8a5f !important;
-    margin-top: 2px !important;
-    text-decoration: none !important;
-  }
+  .ref-menu-sub { display: block !important; font-size: 10.5px !important; font-weight: normal !important; color: #9c8a5f !important; margin-top: 2px !important; white-space: normal !important; line-height: 1.5 !important; }
   /* dark mode: undo the banner's invert filter on the dropdown and give it explicit readable colors */
   body.dark-mode .ref-menu-dropdown {
     filter: invert(1) hue-rotate(180deg) !important;
@@ -541,30 +509,22 @@
   body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
   body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
   body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
-  .ref-menu-dropdown a:hover .ref-menu-sub { color: #7a6a48 !important; }
-  .fa-body-fa {
-    direction: rtl !important;
-    text-align: right !important;
-    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
-    font-size: 16px !important;
-    line-height: 1.9 !important;
-  }
   .fa-original-en {
     direction: ltr !important;
     text-align: left !important;
     font-family: Georgia, "Times New Roman", serif !important;
-    font-size: 14px !important;
-    line-height: 1.7 !important;
+    font-size: 15px !important;
+    line-height: 1.8 !important;
     color: #4a4458 !important;
     background: #f4f2fa !important;
+    border-right: none !important;
     border-left: 4px solid var(--b-gold) !important;
     border-radius: 6px !important;
     padding: 12px 16px !important;
     padding-left: 0.4cm !important;
-    margin: 10px auto 18px auto !important;
-    max-width: 760px !important;
+    margin: 10px 0 6px 0 !important;
     box-sizing: border-box !important;
-}
+  }
   .fa-original-en .fa-original-en-label {
     display: block !important;
     direction: rtl !important;
@@ -577,7 +537,44 @@
     text-indent: 0 !important;
   }
   .fa-original-en-text { display: block; }
-</style><style id="rtl-fix-style">
+  .fa-translation {
+    font-size: 15px !important;
+    color: #333 !important;
+    margin: 0 0 18px !important;
+    text-indent: 0 !important;
+  }
+  .fa-translation b { color: var(--b-forest-dark) !important; }
+  mark.flash-highlight {
+    background: rgba(227,200,118,.55);
+    color: #2a1a05;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  #back-to-top-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -0.35em;
+    width: 22px;
+    height: 22px;
+    margin: 0 .3em;
+    border-radius: 50%;
+    background: var(--b-gold);
+    color: #2a1a05;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 13px;
+    font-family: Arial, "Segoe UI Symbol", sans-serif;
+    text-indent: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    cursor: pointer;
+    line-height: 1;
+  }
+  #back-to-top-link:hover { background: var(--b-gold-light); }
+  dialog, dialog[open], dialog::backdrop { display: none !important; }
+</style>
+<style id="article-indent-style">.c-article-body p:not(.fa-original-en){text-indent:0.4cm;}</style>
+<style id="rtl-fix-style">
   p, li, h1, h2, h3, h4, h5, h6,
   blockquote, figcaption, dd, dt {
     unicode-bidi: isolate !important;
@@ -586,29 +583,14 @@
     margin-right: auto !important;
     float: none !important;
   }
-  .fa-translation-box {
-    direction: rtl !important;
-    text-align: right !important;
-    max-width: 760px !important;
-    margin: 14px auto !important;
-    padding: 14px 18px !important;
-    background: #ede9fe !important;
-    border-right: 4px solid #b8912a !important;
-    border-radius: 6px !important;
-    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
-    font-size: 15.5px !important;
-    line-height: 2 !important;
-    color: #201a2b !important;
-    box-sizing: border-box !important;
+  .fa-original-en {
+    direction: ltr !important;
+    text-align: left !important;
   }
-  .fa-translation-box .fa-translation-label {
-    display: block;
-    font-weight: 800;
-    color: #4c1d95;
-    margin-bottom: 6px;
-    font-size: 13px;
-  }
-</style><style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style></head>
+</style>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style>
+<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
+</head>
 <body class="article-page"><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button aria-label="حالت شب" class="brand-dark-toggle" id="darkModeToggle" title="حالت شب" type="button">🌙</button></div></div><div class="ref-source-banner"><span class="ref-banner-text">این صفحه، آرشیوِ ترجمه‌شده‌ی یک منبعِ وب است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://www.nature.com/articles/s41598-025-19051-1#:~:text=Arguably%2C%20although%20in,non%2Dpsychological%20motives." rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="https://www.nature.com/articles/s41598-025-19051-1.pdf#page=3" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/1.pdf#page=3" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div><div style="visibility:hidden;overflow:hidden;position:absolute;top:0px;height:1px;width:auto;padding:0px;border:0px;margin:0px;text-align:left;text-indent:0px;text-transform:none;line-height:normal;letter-spacing:normal;word-spacing:normal"><div id="MathJax_SVG_Hidden"></div><svg><defs id="MathJax_SVG_glyphs"><path d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z" id="MJMATHI-44" stroke-width="1"></path><path d="M492 213Q472 213 472 226Q472 230 477 250T482 285Q482 316 461 323T364 330H312Q311 328 277 192T243 52Q243 48 254 48T334 46Q428 46 458 48T518 61Q567 77 599 117T670 248Q680 270 683 272Q690 274 698 274Q718 274 718 261Q613 7 608 2Q605 0 322 0H133Q31 0 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H757Q764 676 764 669Q764 664 751 557T737 447Q735 440 717 440H705Q698 445 698 453L701 476Q704 500 704 528Q704 558 697 578T678 609T643 625T596 632T532 634H485Q397 633 392 631Q388 629 386 622Q385 619 355 499T324 377Q347 376 372 376H398Q464 376 489 391T534 472Q538 488 540 490T557 493Q562 493 565 493T570 492T572 491T574 487T577 483L544 351Q511 218 508 216Q505 213 492 213Z" id="MJMATHI-45" stroke-width="1"></path><path d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z" id="MJMATHI-69" stroke-width="1"></path><path d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z" id="MJMATHI-74" stroke-width="1"></path><path d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z" id="MJMAIN-3D" stroke-width="1"></path><path d="M29 -194Q23 -188 23 -186Q23 -183 102 134T186 465Q208 533 243 584T309 658Q365 705 429 705H431Q493 705 533 667T573 570Q573 465 469 396L482 383Q533 332 533 252Q533 139 448 65T257 -10Q227 -10 203 -2T165 17T143 40T131 59T126 65L62 -188Q60 -194 42 -194H29ZM353 431Q392 431 427 419L432 422Q436 426 439 429T449 439T461 453T472 471T484 495T493 524T501 560Q503 569 503 593Q503 611 502 616Q487 667 426 667Q384 667 347 643T286 582T247 514T224 455Q219 439 186 308T152 168Q151 163 151 147Q151 99 173 68Q204 26 260 26Q302 26 349 51T425 137Q441 171 449 214T457 279Q457 337 422 372Q380 358 347 358H337Q258 358 258 389Q258 396 261 403Q275 431 353 431Z" id="MJMATHI-3B2" stroke-width="1"></path><path d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" id="MJMAIN-30" stroke-width="1"></path><path d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z" id="MJMAIN-2B" stroke-width="1"></path><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" id="MJMAIN-31" stroke-width="1"></path><path d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z" id="MJMATHI-43" stroke-width="1"></path><path d="M137 683Q138 683 209 688T282 694Q294 694 294 685Q294 674 258 534Q220 386 220 383Q220 381 227 388Q288 442 357 442Q411 442 444 415T478 336Q478 285 440 178T402 50Q403 36 407 31T422 26Q450 26 474 56T513 138Q516 149 519 151T535 153Q555 153 555 145Q555 144 551 130Q535 71 500 33Q466 -10 419 -10H414Q367 -10 346 17T325 74Q325 90 361 192T398 345Q398 404 354 404H349Q266 404 205 306L198 293L164 158Q132 28 127 16Q114 -11 83 -11Q69 -11 59 -2T48 16Q48 30 121 320L195 616Q195 629 188 632T149 637H128Q122 643 122 645T124 664Q129 683 137 683Z" id="MJMATHI-68" stroke-width="1"></path><path d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z" id="MJMATHI-61" stroke-width="1"></path><path d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z" id="MJMATHI-6E" stroke-width="1"></path><path d="M34 159Q34 268 120 355T306 442Q362 442 394 418T427 355Q427 326 408 306T360 285Q341 285 330 295T319 325T330 359T352 380T366 386H367Q367 388 361 392T340 400T306 404Q276 404 249 390Q228 381 206 359Q162 315 142 235T121 119Q121 73 147 50Q169 26 205 26H209Q321 26 394 111Q403 121 406 121Q410 121 419 112T429 98T420 83T391 55T346 25T282 0T202 -11Q127 -11 81 37T34 159Z" id="MJMATHI-63" stroke-width="1"></path><path d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z" id="MJMATHI-65" stroke-width="1"></path><path d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" id="MJMAIN-32" stroke-width="1"></path><path d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z" id="MJMATHI-46" stroke-width="1"></path><path d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z" id="MJMATHI-72" stroke-width="1"></path><path d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z" id="MJMATHI-6D" stroke-width="1"></path><path d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z" id="MJMAIN-33" stroke-width="1"></path><path d="M229 286Q216 420 216 436Q216 454 240 464Q241 464 245 464T251 465Q263 464 273 456T283 436Q283 419 277 356T270 286L328 328Q384 369 389 372T399 375Q412 375 423 365T435 338Q435 325 425 315Q420 312 357 282T289 250L355 219L425 184Q434 175 434 161Q434 146 425 136T401 125Q393 125 383 131T328 171L270 213Q283 79 283 63Q283 53 276 44T250 35Q231 35 224 44T216 63Q216 80 222 143T229 213L171 171Q115 130 110 127Q106 124 100 124Q87 124 76 134T64 161Q64 166 64 169T67 175T72 181T81 188T94 195T113 204T138 215T170 230T210 250L74 315Q65 324 65 338Q65 353 74 363T98 374Q106 374 116 368T171 328L229 286Z" id="MJMAIN-2217" stroke-width="1"></path><path d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z" id="MJMATHI-6B" stroke-width="1"></path><path d="M52 648Q52 670 65 683H76Q118 680 181 680Q299 680 320 683H330Q336 677 336 674T334 656Q329 641 325 637H304Q282 635 274 635Q245 630 242 620Q242 618 271 369T301 118L374 235Q447 352 520 471T595 594Q599 601 599 609Q599 633 555 637Q537 637 537 648Q537 649 539 661Q542 675 545 679T558 683Q560 683 570 683T604 682T668 681Q737 681 755 683H762Q769 676 769 672Q769 655 760 640Q757 637 743 637Q730 636 719 635T698 630T682 623T670 615T660 608T652 599T645 592L452 282Q272 -9 266 -16Q263 -18 259 -21L241 -22H234Q216 -22 216 -15Q213 -9 177 305Q139 623 138 626Q133 637 76 637H59Q52 642 52 648Z" id="MJMATHI-56" stroke-width="1"></path><path d="M227 -11Q149 -11 95 41T40 174Q40 262 87 322Q121 367 173 396T287 430Q289 431 329 431H367Q382 426 382 411Q382 385 341 385H325H312Q191 385 154 277L150 265H327Q340 256 340 246Q340 228 320 219H138V217Q128 187 128 143Q128 77 160 52T231 26Q258 26 284 36T326 57T343 68Q350 68 354 58T358 39Q358 36 357 35Q354 31 337 21T289 0T227 -11Z" id="MJMATHI-3F5" stroke-width="1"></path><path d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z" id="MJMAIN-2212" stroke-width="1"></path><path d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" id="MJMAIN-2E" stroke-width="1"></path><path d="M352 287Q304 211 232 211Q154 211 104 270T44 396Q42 412 42 436V444Q42 537 111 606Q171 666 243 666Q245 666 249 666T257 665H261Q273 665 286 663T323 651T370 619T413 560Q456 472 456 334Q456 194 396 97Q361 41 312 10T208 -22Q147 -22 108 7T68 93T121 149Q143 149 158 135T173 96Q173 78 164 65T148 49T135 44L131 43Q131 41 138 37T164 27T206 22H212Q272 22 313 86Q352 142 352 280V287ZM244 248Q292 248 321 297T351 430Q351 508 343 542Q341 552 337 562T323 588T293 615T246 625Q208 625 181 598Q160 576 154 546T147 441Q147 358 152 329T172 282Q197 248 244 248Z" id="MJMAIN-39" stroke-width="1"></path><path d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z" id="MJMAIN-38" stroke-width="1"></path><path d="M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z" id="MJMAIN-37" stroke-width="1"></path><path d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z" id="MJMAIN-35" stroke-width="1"></path></defs></svg></div><div id="MathJax_Message" style="display:none"></div>
 <div class="position-relative cleared z-index-50 background-white" data-test="top-containers">
 <a class="c-skip-link" href="#content"><font dir="auto" style="vertical-align:inherit"><font dir="auto" style="vertical-align:inherit">پرش به محتوای اصلی</font></font></a>
@@ -1251,154 +1233,157 @@ e/100?0:100),a=[g,e,0],this.set(f,a.join(":"));else return!0;var b=a[1];if(100==
 !1):window.attachEvent&&window.attachEvent("onload",function(){a.go()}):a.go()}};try{(new l(100,"r","QSI_S_ZN_0CcSRG9GrqrxATc","https://zn0ccsrg9grqrxatc-springernature.siteintercept.qualtrics.com/SIE/?Q_ZID\x3dZN_0CcSRG9GrqrxATc")).start()}catch(e){}})();</script><div id="ZN_0CcSRG9GrqrxATc"></div>
 <script>window.dataLayer.push({event:"gtag_initialised"});</script><div id="criteo-tags-div" style="display:none"></div><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><iframe height="0" style="display:none;visibility:hidden" width="0"></iframe><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><iframe id="google_ads_top_frame" name="google_ads_top_frame" style="display:none;position:fixed;left:-999px;top:-999px;width:0px;height:0px"></iframe><div id="batBeacon71063263213" style="width:0px;height:0px;display:none;visibility:hidden"></div><script src="data:application/javascript;base64,KGZ1bmN0aW9uICgpIHsKICAgIGlmICh0eXBlb2Ygd2luZG93LlFTSSA9PT0gJ3VuZGVmaW5lZCcpewogICAgICAgIHdpbmRvdy5RU0kgPSB7fTsKICAgIH0KCiAgICB2YXIgdGVtcFFTSUNvbmZpZyA9IHsiaG9zdGVkSlNMb2NhdGlvbiI6Imh0dHBzOi8vc2l0ZWludGVyY2VwdC5xdWFsdHJpY3MuY29tL2R4anNtb2R1bGUvIiwiYmFzZVVSTCI6Imh0dHBzOi8vc2l0ZWludGVyY2VwdC5xdWFsdHJpY3MuY29tIiwic3VydmV5VGFraW5nQmFzZVVSTCI6Imh0dHBzOi8vcy5xdWFsdHJpY3MuY29tL3Nwb2tlL2FsbC9qYW0iLCJCcmFuZFRpZXIiOiJSUXFjd2hWMkoxIiwiem9uZUlkIjoiWk5fMENjU1JHOUdycXJ4QVRjIn07CgogICAgLy8gSWYgUVNJLmNvbmZpZyBpcyBkZWZpbmVkIGluIHNuaXBwZXQsIG1lcmdlIHdpdGggUVNJQ29uZmlnIGZyb20gb3JjaGVzdHJhdG9yLWhhbmRsZXIuCiAgICBpZiAodHlwZW9mIHdpbmRvdy5RU0kuY29uZmlnICE9PSAndW5kZWZpbmVkJyAmJiB0eXBlb2Ygd2luZG93LlFTSS5jb25maWcgPT09ICdvYmplY3QnKSB7CiAgICAgICAgLy8gVGhpcyBtZXJnZXMgdGhlIHVzZXIgZGVmaW5lZCBRU0kuY29uZmlnIHdpdGggdGhlIGhhbmRsZXIgZGVmaW5lZCBRU0lDb25maWcKICAgICAgICAvLyBJZiBib3RoIG9iamVjdHMgaGF2ZSBhIHByb3BlcnR5IHdpdGggdGhlIHNhbWUgbmFtZSwKICAgICAgICAvLyB0aGVuIHRoZSBzZWNvbmQgb2JqZWN0IHByb3BlcnR5IG92ZXJ3cml0ZXMgdGhlIGZpcnN0LgogICAgICAgIGZvciAodmFyIGF0dHJuYW1lIGluIHRlbXBRU0lDb25maWcpIHsgd2luZG93LlFTSS5jb25maWdbYXR0cm5hbWVdID0gdGVtcFFTSUNvbmZpZ1thdHRybmFtZV07IH0KICAgIH0gZWxzZSB7CiAgICAgICAgd2luZG93LlFTSS5jb25maWcgPSB0ZW1wUVNJQ29uZmlnOwogICAgfQoKICAgIHdpbmRvdy5RU0kuc2hvdWxkU3RyaXBRdWVyeVBhcmFtc0luUUxvYyA9IGZhbHNlOwp9KSgpOwoKLypAcHJlc2VydmUKKioqVmVyc2lvbiAyLjU4LjAqKioKKi8KCi8qQGxpY2Vuc2UKICogICAgICAgICAgICAgICAgICAgICAgIENvcHlyaWdodCAyMDAyIC0gMjAxOCBRdWFsdHJpY3MsIExMQy4KICogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFsbCByaWdodHMgcmVzZXJ2ZWQuCiAqCiAqIE5vdGljZTogQWxsIGNvZGUsIHRleHQsIGNvbmNlcHRzLCBhbmQgb3RoZXIgaW5mb3JtYXRpb24gaGVyZWluIChjb2xsZWN0aXZlbHksIHRoZQogKiAiTWF0ZXJpYWxzIikgYXJlIHRoZSBzb2xlIHByb3BlcnR5IG9mIFF1YWx0cmljcywgTExDLCBleGNlcHQgdG8gdGhlIGV4dGVudAogKiBvdGhlcndpc2UgaW5kaWNhdGVkLiBUaGUgTWF0ZXJpYWxzIGFyZSBwcm9wcmlldGFyeSB0byBRdWFsdHJpY3MgYW5kIGFyZSBwcm90ZWN0ZWQKICogdW5kZXIgYWxsIGFwcGxpY2FibGUgbGF3cywgaW5jbHVkaW5nIGNvcHlyaWdodCwgcGF0ZW50IChhcyBhcHBsaWNhYmxlKSwgdHJhZGUKICogc2VjcmV0LCBhbmQgY29udHJhY3QgbGF3LiBEaXNjbG9zdXJlIG9yIHJlcHJvZHVjdGlvbiBvZiBhbnkgTWF0ZXJpYWxzIGlzIHN0cmljdGx5CiAqIHByb2hpYml0ZWQgd2l0aG91dCB0aGUgZXhwcmVzcyBwcmlvciB3cml0dGVuIGNvbnNlbnQgb2YgYW4gYXV0aG9yaXplZCBzaWduYXRvcnkKICogb2YgUXVhbHRyaWNzLiBGb3IgZGlzY2xvc3VyZSByZXF1ZXN0cywgcGxlYXNlIGNvbnRhY3Qgbm90aWNlQHF1YWx0cmljcy5jb20uCiAqLwoKdHJ5IHsKICAhZnVuY3Rpb24oKXsidXNlIHN0cmljdCI7dmFyIGUsdCxuLG8scj17NDIwMzpmdW5jdGlvbihlLHQsbil7bi5kKHQseyQ6ZnVuY3Rpb24oKXtyZXR1cm4gcn19KTt2YXIgbz1mdW5jdGlvbigpe3JldHVybiBvPU9iamVjdC5hc3NpZ258fGZ1bmN0aW9uKGUpe2Zvcih2YXIgdCxuPTEsbz1hcmd1bWVudHMubGVuZ3RoO248bztuKyspZm9yKHZhciByIGluIHQ9YXJndW1lbnRzW25dKU9iamVjdC5wcm90b3R5cGUuaGFzT3duUHJvcGVydHkuY2FsbCh0LHIpJiYoZVtyXT10W3JdKTtyZXR1cm4gZX0sby5hcHBseSh0aGlzLGFyZ3VtZW50cyl9LHI9ZnVuY3Rpb24oKXt2YXIgZSx0LHI9d2luZG93LlFTSSxpPXdpbmRvdy5RU0k7aWYodm9pZCAwIT09aS5SZXF1ZXN0KXt2YXIgYT1pLmNvbmZpZy5pbnRlcmNlcHRJZHx8aS5jb25maWcuem9uZUlkfHxpLmNvbmZpZy50YXJnZXRpbmdJZHx8aS5nbG9iYWwuSUQsYz1pLmdsb2JhbC5sZWdhY3lJZCxkPXtpc0VkaXRpbmc6aS5jb25maWcuZWRpdGluZyxuZXdJZDphLG9sZElkOmMsc2FtZUlkTG9hZGVkOmE9PT1jLGNsb3NlbHlMb2FkZWQ6ITEsZGVidWc6aS5jb25maWcuZGVidWd9O2kuZGJnJiZpLmRiZy5jP2kuZGJnLmMoIk11bHRpcGxlIHpvbmUgZGV0ZWN0ZWQgd2l0aCBpbmZvICIrSlNPTi5zdHJpbmdpZnkoZCkpOihkLmNsb3NlbHlMb2FkZWQ9ITAsaS5jbG9zZWx5TG9hZGVkTXVsdGlab25lSW5mbz1KU09OLnN0cmluZ2lmeShkKSl9dmFyIHMsbCx1LGY9d2luZG93LlFTST1vKG8oe30scikse3JlZzpyLnJlZ3x8e30sZWQ6ci5lZHx8e30scmVxSUQ6ci5yZXFJRHx8e30sUmVxdWVzdDpyLlJlcXVlc3R8fHt9LG92ZXJyaWRlczpyLm92ZXJyaWRlc3x8e30sc2hvdWxkU3RyaXBRdWVyeVBhcmFtc0luUUxvYzohIXIuc2hvdWxkU3RyaXBRdWVyeVBhcmFtc0luUUxvYyxjb25maWc6byh7em9uZUlkOiIiLGJyYW5kSWQ6IiJ9LHIuY29uZmlnKSxnbG9iYWw6byhvKHtyZXFJRHNEZXRlY3RlZDoobnVsbD09PShlPXIuZ2xvYmFsKXx8dm9pZCAwPT09ZT92b2lkIDA6ZS5yZXFJRHNEZXRlY3RlZCl8fG5ldyBTZXQsc3JNdWx0aVpvbmVFcnJvcnM6KG51bGw9PT0odD1yLmdsb2JhbCl8fHZvaWQgMD09PXQ/dm9pZCAwOnQuc3JNdWx0aVpvbmVFcnJvcnMpfHwwLGN1cnJlbnRaSW5kZXg6MmU5LGludGVyY2VwdHM6e30sZXZlbnRUcmFja2VyczpbXSxmZWF0dXJlRmxhZ3M6e30sZW5hYmxlSlNTYW5pdGl6YXRpb246ITEsbGF0ZW5jeVNhbXBsZVBlcmNlbnRhZ2U6LjAyLGFscmVhZHlGZXRjaGVkSlNNb2R1bGVzOltdLG1heENvb2tpZVNpemU6bnVsbH0sci5nbG9iYWwpLHtpc0hvc3RlZEpTOmZ1bmN0aW9uKCl7cmV0dXJuImhvc3RlZGpzIj09PSIiLmNvbmNhdCgid2ViIil9LGNsaWVudFR5cGU6IiIuY29uY2F0KCJ3ZWIiKSxjbGllbnRWZXJzaW9uOiIiLmNvbmNhdCgiMi41OC4wIiksaG9zdGVkSlNMb2NhdGlvbjpyLmNvbmZpZy5ob3N0ZWRKU0xvY2F0aW9ufHxyLmNvbmZpZy5jbGllbnRCYXNlVVJMLGxlZ2FjeUlkOnIuY29uZmlnLmludGVyY2VwdElkfHxyLmNvbmZpZy56b25lSWR8fHIuY29uZmlnLnRhcmdldGluZ0lkfHxyLmdsb2JhbC5JRH0pLGlzRnVsbERiZ0luaXRpYWxpemVkOiExLGJhc2VVUkw6IiIsTG9hZGluZ1N0YXRlOnIuTG9hZGluZ1N0YXRlfHxbXSxQZW5kaW5nUXVldWU6ci5QZW5kaW5nUXVldWV8fFtdLGdldEJhc2VVUkxGcm9tQ29uZmlnQW5kT3ZlcnJpZGVzOmZ1bmN0aW9uKCl7dmFyIGU9IiI7aWYoZi5vdmVycmlkZXMuYmFzZVVSTCllPWYub3ZlcnJpZGVzLmJhc2VVUkw7ZWxzZSBpZihmLmNvbmZpZy5iYXNlVVJMKWU9Zi5jb25maWcuYmFzZVVSTDtlbHNlIGlmKGU9InNpdGVpbnRlcmNlcHQucXVhbHRyaWNzLmNvbSIsZi5jb25maWcuYnJhbmRJZCl7aWYoIWYuY29uZmlnLnpvbmVJZCl0aHJvdyJZb3UgbXVzdCBzcGVjaWZ5IGEgem9uZUlkIjt2YXIgdD1mLmNvbmZpZy56b25lSWQucmVwbGFjZSgiXyIsIiIpLnRvTG93ZXJDYXNlKCkrIi0iK2YuY29uZmlnLmJyYW5kSWQudG9Mb3dlckNhc2UoKTtlPSIiLmNvbmNhdCh0LCIuIikuY29uY2F0KGUpfXJldHVybiAwPT09ZS5pbmRleE9mKCJodHRwczovLyIpP2U9ZS5zdWJzdHJpbmcoOCk6MD09PWUuaW5kZXhPZigiaHR0cDovLyIpP2U9ZS5zdWJzdHJpbmcoNyk6MD09PWUuaW5kZXhPZigiLy8iKSYmKGU9ZS5zdWJzdHJpbmcoMikpLCJodHRwczovLyIuY29uY2F0KGUpfSxnZXRTUkJhc2VVUkxGcm9tQ29uZmlnQW5kT3ZlcnJpZGVzOmZ1bmN0aW9uKGUpe3ZhciB0PWYuZ2xvYmFsLmJhc2VVUkw7aWYoZi5vdmVycmlkZXMuc3JCYXNlVVJMKXQ9Zi5vdmVycmlkZXMuc3JCYXNlVVJMO2Vsc2UgaWYoKG51bGw9PWU/dm9pZCAwOmUuaW5jbHVkZXMoImdvdjEiKSl8fHQuaW5jbHVkZXMoImdvdjEiKSl0PSJnb3YxLnNyLnF1YWx0cmljcy5jb20iO2Vsc2Ugc3dpdGNoKHQpe2Nhc2UiaHR0cHM6Ly9zMS5iMS1wcnYucXVhbHRyaWNzLmNvbSI6dD0iaHR0cHM6Ly9zci5iMS1wcnYucXVhbHRyaWNzLmNvbSI7YnJlYWs7Y2FzZSJodHRwczovL3MxLnN0My5xdWFsdHJpY3MuY29tIjpjYXNlImh0dHBzOi8vczEuZzEtaWFkLnF1YWx0cmljcy5jb20iOmNhc2UiaHR0cHM6Ly9zMS5nMS1jbWgucXVhbHRyaWNzLmNvbSI6dD0iaHR0cHM6Ly9zci5zdDMucXVhbHRyaWNzLmNvbSI7YnJlYWs7ZGVmYXVsdDp0PSJodHRwczovL3NyLnF1YWx0cmljcy5jb20ifXJldHVybiAwPT09dC5pbmRleE9mKCJodHRwczovLyIpP3Q9dC5zdWJzdHJpbmcoOCk6MD09PXQuaW5kZXhPZigiaHR0cDovLyIpP3Q9dC5zdWJzdHJpbmcoNyk6MD09PXQuaW5kZXhPZigiLy8iKSYmKHQ9dC5zdWJzdHJpbmcoMikpLCJodHRwczovLyIuY29uY2F0KHQpfSxpbml0RnVsbERiZzpmdW5jdGlvbigpe2YuaXNGdWxsRGJnSW5pdGlhbGl6ZWQ9ITB9LGdldENsaWVudFZlcnNpb25RdWVyeVN0cmluZzpmdW5jdGlvbigpe3ZhciBlPXtRX0NMSUVOVFZFUlNJT046Zi5nbG9iYWwuY2xpZW50VmVyc2lvbnx8InVua25vd24iLFFfQ0xJRU5UVFlQRTpmLmdsb2JhbC5jbGllbnRUeXBlfHwidW5rbm93biJ9O3JldHVybiB2b2lkIDAhPT1mLmNsaWVudFR5cGVWYXJpYW50JiYoZS5RX0NMSUVOVFRZUEUrPWYuY2xpZW50VHlwZVZhcmlhbnQpLGYuZ2VuZXJhdGVRdWVyeVN0cmluZyhlKX0sZ2VuZXJhdGVRdWVyeVN0cmluZzpmdW5jdGlvbihlKXt2YXIgdD1bXTtmb3IodmFyIG4gaW4gZSlpZihPYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LmNhbGwoZSxuKSl7dmFyIG89bjtlW25dJiYobys9Ij0iK2VuY29kZVVSSUNvbXBvbmVudChlW25dKSksdC5wdXNoKG8pfXJldHVybiB0LmpvaW4oIiYiKX19KTtpZighZi5nbG9iYWwubGVnYWN5SWQpdGhyb3ciWW91IG11c3Qgc3BlY2lmeSBhIHpvbmVJZCBvciB6b25lSWQgYW5kIGludGVyY2VwdElkIjtyZXR1cm4gZi5nbG9iYWwucmVxSURzRGV0ZWN0ZWQuYWRkKGYuZ2xvYmFsLmxlZ2FjeUlkKSxmLmdsb2JhbC5iYXNlVVJMPWYuZ2V0QmFzZVVSTEZyb21Db25maWdBbmRPdmVycmlkZXMoKSxmLmdsb2JhbC5zckJhc2VVcmw9Zi5nZXRTUkJhc2VVUkxGcm9tQ29uZmlnQW5kT3ZlcnJpZGVzKCksZi5nbG9iYWwuaXNIb3N0ZWRKUygpJiYoZi5nbG9iYWwuZW5hYmxlSlNTYW5pdGl6YXRpb249dm9pZCAwPT09Zi5jb25maWcuZW5hYmxlSlNTYW5pdGl6YXRpb258fCEhZi5jb25maWcuZW5hYmxlSlNTYW5pdGl6YXRpb24pLGYuYmFzZVVSTD1mLmJhc2VVUkx8fGYub3ZlcnJpZGVzLnNpQmFzZVVSTHx8IiIuY29uY2F0KGYuZ2xvYmFsLmJhc2VVUkwsIi9XUlNpdGVJbnRlcmNlcHRFbmdpbmUvIiksZi5nbG9iYWwuaG9zdGVkSlNMb2NhdGlvbj1mLm92ZXJyaWRlcy5ob3N0ZWRKU0xvY2F0aW9ufHxmLmdsb2JhbC5ob3N0ZWRKU0xvY2F0aW9uLHM9Zi5nbG9iYWwuaG9zdGVkSlNMb2NhdGlvbix3aW5kb3cuUVNJLl9fd2VicGFja19wdWJsaWNfcGF0aF9fPXMsbi5wPXMsbD1mLmNvbmZpZy5ub25jZSx3aW5kb3cuUVNJLl9fd2VicGFja19ub25jZV9fPWwsbi5uYz1sLHU9bi51LG4udT1mdW5jdGlvbihlKXt2YXIgdD11KGUpLG49d2luZG93LlFTSS5jb25maWcuYnJhbmRJZHx8d2luZG93LlFTSS5nbG9iYWwuYnJhbmRJRHx8d2luZG93LmxvY2F0aW9uLmhvc3Qsbz0tMT09PXQuaW5kZXhPZigiPyIpPyI/IjoiJiI7cmV0dXJuIiIuY29uY2F0KHQpLmNvbmNhdChvLCJRX0JSQU5ESUQ9IikuY29uY2F0KGVuY29kZVVSSUNvbXBvbmVudChuKSl9LGZ9KCl9fSxpPXt9O2Z1bmN0aW9uIGEoZSl7dmFyIHQ9aVtlXTtpZih2b2lkIDAhPT10KXJldHVybiB0LmV4cG9ydHM7dmFyIG49aVtlXT17aWQ6ZSxleHBvcnRzOnt9fTtyZXR1cm4gcltlXS5jYWxsKG4uZXhwb3J0cyxuLG4uZXhwb3J0cyxhKSxuLmV4cG9ydHN9YS5tPXIsYS5uPWZ1bmN0aW9uKGUpe3ZhciB0PWUmJmUuX19lc01vZHVsZT9mdW5jdGlvbigpe3JldHVybiBlLmRlZmF1bHR9OmZ1bmN0aW9uKCl7cmV0dXJuIGV9O3JldHVybiBhLmQodCx7YTp0fSksdH0sdD1PYmplY3QuZ2V0UHJvdG90eXBlT2Y/ZnVuY3Rpb24oZSl7cmV0dXJuIE9iamVjdC5nZXRQcm90b3R5cGVPZihlKX06ZnVuY3Rpb24oZSl7cmV0dXJuIGUuX19wcm90b19ffSxhLnQ9ZnVuY3Rpb24obixvKXtpZigxJm8mJihuPXRoaXMobikpLDgmbylyZXR1cm4gbjtpZigib2JqZWN0Ij09dHlwZW9mIG4mJm4pe2lmKDQmbyYmbi5fX2VzTW9kdWxlKXJldHVybiBuO2lmKDE2Jm8mJiJmdW5jdGlvbiI9PXR5cGVvZiBuLnRoZW4pcmV0dXJuIG59dmFyIHI9T2JqZWN0LmNyZWF0ZShudWxsKTthLnIocik7dmFyIGk9e307ZT1lfHxbbnVsbCx0KHt9KSx0KFtdKSx0KHQpXTtmb3IodmFyIGM9MiZvJiZuOygib2JqZWN0Ij09dHlwZW9mIGN8fCJmdW5jdGlvbiI9PXR5cGVvZiBjKSYmIX5lLmluZGV4T2YoYyk7Yz10KGMpKU9iamVjdC5nZXRPd25Qcm9wZXJ0eU5hbWVzKGMpLmZvckVhY2goZnVuY3Rpb24oZSl7aVtlXT1mdW5jdGlvbigpe3JldHVybiBuW2VdfX0pO3JldHVybiBpLmRlZmF1bHQ9ZnVuY3Rpb24oKXtyZXR1cm4gbn0sYS5kKHIsaSkscn0sYS5kPWZ1bmN0aW9uKGUsdCl7Zm9yKHZhciBuIGluIHQpYS5vKHQsbikmJiFhLm8oZSxuKSYmT2JqZWN0LmRlZmluZVByb3BlcnR5KGUsbix7ZW51bWVyYWJsZTohMCxnZXQ6dFtuXX0pfSxhLmY9e30sYS5lPWZ1bmN0aW9uKGUpe3JldHVybiBQcm9taXNlLmFsbChPYmplY3Qua2V5cyhhLmYpLnJlZHVjZShmdW5jdGlvbih0LG4pe3JldHVybiBhLmZbbl0oZSx0KSx0fSxbXSkpfSxhLnU9ZnVuY3Rpb24oZSl7cmV0dXJuKHs0Nzoic2NyZWVuLWNhcHR1cmUtYW5ub3RhdGlvbnMiLDMxODoic2NyZWVuLWNhcHR1cmUtcmVjdGFuZ2xlIn1bZV18fGUpKyIuIit7MTc6IjNiYzIxZGM5Y2Y5NDFjMGRhMGJiIiwxODoiZTdiNTIxZTY1NGZiMmNiMzA3ZTIiLDIxOiJiNzAxNDM0MDhlOTVjNmM1YmQ0ZSIsNDc6IjMwZGNkNTZhMmRmN2ZiNjFjMzcxIiw2MToiMDA5OGUzMjYzMmUzMGE3MWQ4MzgiLDgyOiIxZTkyZTJmYmIyZDRjNzM5Zjg0YSIsOTI6ImNhZTk0OTNlMTkzMWI4M2Q2MGQzIiwxMDU6IjkwOGFkOTM5Njg4N2QzZjg1YjY5IiwxMjk6ImQxNjYyNWY4YzMzZDM0ZThhNjE0IiwxNDc6ImZkMTY0NGNjYTg5ZTdiNGMyZmJhIiwxNzk6IjM2YTcwYjI2YmQ0MWJiNjNmNjFjIiwyMjI6ImE4YWQ5MzJjZDE5YWY2ODUyMTZkIiwyODA6ImFjZDYxZmZlYTQ2M2YzMDhkMDgxIiwzMDU6Ijg2OGQyN2U0ZmJjNDgwMGZmY2RlIiwzMTg6IjAyMjBhZjYzMjczOWI4OWNlMDlkIiwzMTk6IjZmMGQzOWM5OTU4MzgyNTEwZTA3IiwzNTI6IjE5ZWFmYjMwYjhkY2ViYTY2MzE3IiwzNTQ6Ijk1NzlkM2Y1OThmY2JmMGQxZWQ1Iiw0MDY6Ijc4MzJjNjdjNzc2YmEzODlhODBkIiw0NjM6ImJlN2ViYTcwNmQ5NTA4NmI4NDRhIiw1MTQ6Ijc2NGQ3ODUzYjNkZjY1ZTVkOWM1Iiw1NTY6IjE5MTc2MzlmNDZiOGI3OWJhOWZiIiw2MjY6ImYxMzQxNjQxZTFhZWU2NGJjMDI3Iiw2NjM6IjY1OTRjNWJhYjlmMDA4MDRlMTQ3Iiw3Njc6IjQ5ZmI2ODU0ZjkyYzFmYWRkNDQxIiw4Mzg6IjRmOGJkZmFhNjgwMmExNjI4NGFiIiw4NDk6ImFkN2E5NjUxYWQ4OGFkNGM1NTc3Iiw4ODE6Ijc3ZDczM2MwMzM1MzNlMmI0YWI3Iiw4ODI6IjgwOTk2NzAyMjA2MzhjNDE0NDQ2Iiw5NDg6ImY4OWJiMGI3ZmQ0MGI3YTViNWZkIiw5OTQ6IjU4NzY1Njc0OGRkMGE0NTVmNTM3In1bZV0rIi5jaHVuay5qcz9RX0NMSUVOVFZFUlNJT049Mi41OC4wJlFfQ0xJRU5UVFlQRT13ZWIifSxhLmc9ZnVuY3Rpb24oKXtpZigib2JqZWN0Ij09dHlwZW9mIGdsb2JhbFRoaXMpcmV0dXJuIGdsb2JhbFRoaXM7dHJ5e3JldHVybiB0aGlzfHxuZXcgRnVuY3Rpb24oInJldHVybiB0aGlzIikoKX1jYXRjaChlKXtpZigib2JqZWN0Ij09dHlwZW9mIHdpbmRvdylyZXR1cm4gd2luZG93fX0oKSxhLm89ZnVuY3Rpb24oZSx0KXtyZXR1cm4gT2JqZWN0LnByb3RvdHlwZS5oYXNPd25Qcm9wZXJ0eS5jYWxsKGUsdCl9LG49e30sbz0ic2ktYXNzZXRzOiIsYS5sPWZ1bmN0aW9uKGUsdCxyLGkpe2lmKG5bZV0pbltlXS5wdXNoKHQpO2Vsc2V7dmFyIGMsZDtpZih2b2lkIDAhPT1yKWZvcih2YXIgcz1kb2N1bWVudC5nZXRFbGVtZW50c0J5VGFnTmFtZSgic2NyaXB0IiksbD0wO2w8cy5sZW5ndGg7bCsrKXt2YXIgdT1zW2xdO2lmKHUuZ2V0QXR0cmlidXRlKCJzcmMiKT09ZXx8dS5nZXRBdHRyaWJ1dGUoImRhdGEtd2VicGFjayIpPT1vK3Ipe2M9dTticmVha319Y3x8KGQ9ITAsKGM9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic2NyaXB0IikpLmNoYXJzZXQ9InV0Zi04IixhLm5jJiZjLnNldEF0dHJpYnV0ZSgibm9uY2UiLGEubmMpLGMuc2V0QXR0cmlidXRlKCJkYXRhLXdlYnBhY2siLG8rciksYy5zcmM9ZSksbltlXT1bdF07dmFyIGY9ZnVuY3Rpb24odCxvKXtjLm9uZXJyb3I9Yy5vbmxvYWQ9bnVsbCxjbGVhclRpbWVvdXQoYik7dmFyIHI9bltlXTtpZihkZWxldGUgbltlXSxjLnBhcmVudE5vZGUmJmMucGFyZW50Tm9kZS5yZW1vdmVDaGlsZChjKSxyJiZyLmZvckVhY2goZnVuY3Rpb24oZSl7cmV0dXJuIGUobyl9KSx0KXJldHVybiB0KG8pfSxiPXNldFRpbWVvdXQoZi5iaW5kKG51bGwsdm9pZCAwLHt0eXBlOiJ0aW1lb3V0Iix0YXJnZXQ6Y30pLDEyZTQpO2Mub25lcnJvcj1mLmJpbmQobnVsbCxjLm9uZXJyb3IpLGMub25sb2FkPWYuYmluZChudWxsLGMub25sb2FkKSxkJiZkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKGMpfX0sYS5yPWZ1bmN0aW9uKGUpeyJ1bmRlZmluZWQiIT10eXBlb2YgU3ltYm9sJiZTeW1ib2wudG9TdHJpbmdUYWcmJk9iamVjdC5kZWZpbmVQcm9wZXJ0eShlLFN5bWJvbC50b1N0cmluZ1RhZyx7dmFsdWU6Ik1vZHVsZSJ9KSxPYmplY3QuZGVmaW5lUHJvcGVydHkoZSwiX19lc01vZHVsZSIse3ZhbHVlOiEwfSl9LGZ1bmN0aW9uKCl7dmFyIGU7YS5nLmltcG9ydFNjcmlwdHMmJihlPWEuZy5sb2NhdGlvbisiIik7dmFyIHQ9YS5nLmRvY3VtZW50O2lmKCFlJiZ0JiYodC5jdXJyZW50U2NyaXB0JiYiU0NSSVBUIj09PXQuY3VycmVudFNjcmlwdC50YWdOYW1lLnRvVXBwZXJDYXNlKCkmJihlPXQuY3VycmVudFNjcmlwdC5zcmMpLCFlKSl7dmFyIG49dC5nZXRFbGVtZW50c0J5VGFnTmFtZSgic2NyaXB0Iik7aWYobi5sZW5ndGgpZm9yKHZhciBvPW4ubGVuZ3RoLTE7bz4tMSYmKCFlfHwhL15odHRwKHM/KTovLnRlc3QoZSkpOyllPW5bby0tXS5zcmN9aWYoIWUpdGhyb3cgbmV3IEVycm9yKCJBdXRvbWF0aWMgcHVibGljUGF0aCBpcyBub3Qgc3VwcG9ydGVkIGluIHRoaXMgYnJvd3NlciIpO2U9ZS5yZXBsYWNlKC9eYmxvYjovLCIiKS5yZXBsYWNlKC8jLiokLywiIikucmVwbGFjZSgvXD8uKiQvLCIiKS5yZXBsYWNlKC9cL1teXC9dKyQvLCIvIiksYS5wPWV9KCksZnVuY3Rpb24oKXt2YXIgZT17NzkyOjB9O2EuZi5qPWZ1bmN0aW9uKHQsbil7dmFyIG89YS5vKGUsdCk/ZVt0XTp2b2lkIDA7aWYoMCE9PW8paWYobyluLnB1c2gob1syXSk7ZWxzZXt2YXIgcj1uZXcgUHJvbWlzZShmdW5jdGlvbihuLHIpe289ZVt0XT1bbixyXX0pO24ucHVzaChvWzJdPXIpO3ZhciBpPWEucCthLnUodCksYz1uZXcgRXJyb3I7YS5sKGksZnVuY3Rpb24obil7aWYoYS5vKGUsdCkmJigwIT09KG89ZVt0XSkmJihlW3RdPXZvaWQgMCksbykpe3ZhciByPW4mJigibG9hZCI9PT1uLnR5cGU/Im1pc3NpbmciOm4udHlwZSksaT1uJiZuLnRhcmdldCYmbi50YXJnZXQuc3JjO2MubWVzc2FnZT0iTG9hZGluZyBjaHVuayAiK3QrIiBmYWlsZWQuXG4oIityKyI6ICIraSsiKSIsYy5uYW1lPSJDaHVua0xvYWRFcnJvciIsYy50eXBlPXIsYy5yZXF1ZXN0PWksb1sxXShjKX19LCJjaHVuay0iK3QsdCl9fTt2YXIgdD1mdW5jdGlvbih0LG4pe3ZhciBvLHIsaT1uWzBdLGM9blsxXSxkPW5bMl0scz0wO2lmKGkuc29tZShmdW5jdGlvbih0KXtyZXR1cm4gMCE9PWVbdF19KSl7Zm9yKG8gaW4gYylhLm8oYyxvKSYmKGEubVtvXT1jW29dKTtkJiZkKGEpfWZvcih0JiZ0KG4pO3M8aS5sZW5ndGg7cysrKXI9aVtzXSxhLm8oZSxyKSYmZVtyXSYmZVtyXVswXSgpLGVbcl09MH0sbj1zZWxmWyJXQUZRdWFsdHJpY3NXZWJwYWNrSnNvblAtY2xvdWQtMi41OC4wLTAiXT1zZWxmWyJXQUZRdWFsdHJpY3NXZWJwYWNrSnNvblAtY2xvdWQtMi41OC4wLTAiXXx8W107bi5mb3JFYWNoKHQuYmluZChudWxsLDApKSxuLnB1c2g9dC5iaW5kKG51bGwsbi5wdXNoLmJpbmQobikpfSgpLGEubmM9dm9pZCAwO3ZhciBjLGQ9YSg0MjAzKTt3aW5kb3cuUVNJX1RFU1RJTkdfTU9ERXx8KGRvY3VtZW50LmN1cnJlbnRTY3JpcHQmJihjPWRvY3VtZW50LmN1cnJlbnRTY3JpcHQuc3JjKSxkLiQmJlByb21pc2UuYWxsKFthLmUoODgxKSxhLmUoNjI2KV0pLnRoZW4oYS5iaW5kKGEsMjYyNikpLnRoZW4oZnVuY3Rpb24oZSl7KDAsZS5pbml0aWFsaXplKShjKX0pKX0oKTsKfSBjYXRjaChlKSB7CiAgaWYgKHR5cGVvZiBRU0kgIT09ICd1bmRlZmluZWQnICYmIFFTSS5kYmcgJiYgUVNJLmRiZy5lKSB7CiAgICBRU0kuZGJnLmUoZSk7CiAgfQp9"></script><iframe aria-hidden="true" class="sf-hidden" height="0" hidden="" tabindex="-1" title="Criteo DIS iframe" width="0"></iframe><iframe height="0" style="display:none" width="0"></iframe><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><div class="VIpgJd-yAWNEb-L7lbkb skiptranslate" data-id="" id="goog-gt-tt" style='display:none;border-radius:12px;margin:0 0 0-23px;padding:0;font-family:"Google Sans",Arial,sans-serif'></div><img fetchpriority="high" height="1" src="data:," style="display:none" width="1"/><iframe id="goog_plcm_frame" style="display:none"></iframe><script id="kill-dialog-script">
 (function() {
-  "use strict";
   function killDialogs() {
-    var dialogs = document.querySelectorAll("dialog");
-    for (var i = 0; i < dialogs.length; i++) {
-      var d = dialogs[i];
+    document.querySelectorAll("dialog").forEach(function(d) {
       try { d.close(); } catch (e) {}
       d.removeAttribute("open");
       d.style.setProperty("display", "none", "important");
-    }
+    });
   }
   killDialogs();
   document.addEventListener("DOMContentLoaded", killDialogs);
   window.addEventListener("load", killDialogs);
   if (window.MutationObserver) {
-    new MutationObserver(killDialogs).observe(document.documentElement, {
-      childList: true, subtree: true, attributes: true, attributeFilter: ["open"]
-    });
+    new MutationObserver(killDialogs).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
   }
 })();
-</script><script id="ref-flash-script">
+</script>
+<script id="ref-flash-script">
 (function() {
-  "use strict";
-  var TARGET = 'مسلماً، اگرچه در ادبیات موضوع، یک گزینه پیش‌فرض معمولاً به عنوان یک گزینه از پیش انتخاب شده اجرا می‌شود، اما مسئله تصمیم‌گیری با گزینه‌های پیش‌فرض اساساً مسئله تصمیم‌گیری فعال در مقابل تصمیم‌گیری غیرفعال است 33 ، 34. یک دیدگاه رایج این است که پیش‌فرض‌ها مهم هستند زیرا فرصتی را برای افراد (یا مغز آنها) فراهم می‌کنند تا از مزایای تصمیم‌گیری غیرفعال نسبت به تصمیم‌گیری فعال قدردانی کنند (مثلاً، 2 ، 35 ، 36 ، 37 ، 38 ). این مزایا شامل سهولت شناختی 8 ، تأیید ضمنی 6 ، اجتناب از مسئولیت 20 ، 21 و غیره است. به عبارت دیگر، این وضعیت داشتن فرصت برای تصمیم‌گیری غیرفعال است که احساس (و اثربخشی) «پیش‌فرض» را ایجاد می‌کند. بنابراین، هر نشانه ای که به اندازه کافی برجسته باشد تا یک نقطه کانونی روی یکی از گزینه‌ها ایجاد کند، به عنوان یک گزینه پیش‌فرض (شناختی) عمل می‌کند، زیرا افراد می‌توانند با دنبال کردن این نشانه، یک تصمیم (شناختی) غیرفعال بگیرند. در واقع، بسیاری از مطالعات اثرات پیش‌فرض را بدون پیش‌انتخاب گزینه‌ها ایجاد می‌کنند. برای مثال، تصور داشتن یک گزینه یا صرفاً برچسب‌گذاری یک گزینه به عنوان «وضعیت موجود» بدون انتخاب آن، 39 به طور قابل توجهی انتخاب این گزینه را افزایش داد و اثرات پیش‌فرض کلاسیک را تکرار کرد. اثربخشی گزینه‌های برجسته همچنین در محیط‌های مراقبت‌های بهداشتی که در آن‌ها پیش‌انتخاب دارای مشکلات اخلاقی است، تأیید شده است ، 40. بنابراین، ما تصمیم گرفتیم گزینه‌های پیش‌فرض را به عنوان گزینه‌های برجسته یا از پیش تعیین‌شده پیاده‌سازی کنیم و فرصت تصمیم‌گیری‌های غیرفعال را تسهیل کنیم و در عین حال نویز ناشی از انگیزه‌های غیرروانشناختی را از بین ببریم.';
-
-  function normalizeWithMap(s) {
-    var out = "";
-    var map = [];
-    var inWs = false;
-    for (var i = 0; i < s.length; i++) {
-      var ch = s[i];
-      if (/[\s\u200c]/.test(ch)) {
-        if (!inWs && out.length > 0) {
-          out += " ";
-          map.push(i);
-          inWs = true;
-        }
-      } else {
-        out += ch;
-        map.push(i);
-        inWs = false;
-      }
-    }
-    if (out.charAt(out.length - 1) === " ") {
-      out = out.slice(0, -1);
-      map.pop();
-    }
-    return { text: out, map: map };
+  var TARGETS = ["مسلماً، اگرچه در ادبیات موضوع، یک گزینه پیش‌فرض معمولاً به عنوان یک گزینه از پیش انتخاب شده اجرا می‌شود، اما مسئله تصمیم‌گیری با گزینه‌های پیش‌فرض اساساً مسئله تصمیم‌گیری فعال در مقابل تصمیم‌گیری غیرفعال است 33 ، 34. یک دیدگاه رایج این است که پیش‌فرض‌ها مهم هستند زیرا فرصتی را برای افراد (یا مغز آنها) فراهم می‌کنند تا از مزایای تصمیم‌گیری غیرفعال نسبت به تصمیم‌گیری فعال قدردانی کنند (مثلاً، 2 ، 35 ، 36 ، 37 ، 38 ). این مزایا شامل سهولت شناختی 8 ، تأیید ضمنی 6 ، اجتناب از مسئولیت 20 ، 21 و غیره است. به عبارت دیگر، این وضعیت داشتن فرصت برای تصمیم‌گیری غیرفعال است که احساس (و اثربخشی) «پیش‌فرض» را ایجاد می‌کند. بنابراین، هر نشانه ای که به اندازه کافی برجسته باشد تا یک نقطه کانونی روی یکی از گزینه‌ها ایجاد کند، به عنوان یک گزینه پیش‌فرض (شناختی) عمل می‌کند، زیرا افراد می‌توانند با دنبال کردن این نشانه، یک تصمیم (شناختی) غیرفعال بگیرند. در واقع، بسیاری از مطالعات اثرات پیش‌فرض را بدون پیش‌انتخاب گزینه‌ها ایجاد می‌کنند. برای مثال، تصور داشتن یک گزینه یا صرفاً برچسب‌گذاری یک گزینه به عنوان «وضعیت موجود» بدون انتخاب آن، 39 به طور قابل توجهی انتخاب این گزینه را افزایش داد و اثرات پیش‌فرض کلاسیک را تکرار کرد. اثربخشی گزینه‌های برجسته همچنین در محیط‌های مراقبت‌های بهداشتی که در آن‌ها پیش‌انتخاب دارای مشکلات اخلاقی است، تأیید شده است ، 40. بنابراین، ما تصمیم گرفتیم گزینه‌های پیش‌فرض را به عنوان گزینه‌های برجسته یا از پیش تعیین‌شده پیاده‌سازی کنیم و فرصت تصمیم‌گیری‌های غیرفعال را تسهیل کنیم و در عین حال نویز ناشی از انگیزه‌های غیرروانشناختی را از بین ببریم."];
+  window.__hlDone = false;
+  function normChar(c) {
+    var code = c.charCodeAt(0);
+    if (code === 0x200c || code === 0x200d || code === 0x200e || code === 0x200f || code === 0x0640) return "";
+    if ((code >= 0x064b && code <= 0x065f) || code === 0x0670) return "";
+    if (c === "\u064a") return "\u06cc";
+    if (c === "\u0643") return "\u06a9";
+    if (/\s/.test(c) || code === 0xa0) return " ";
+    return c;
   }
-
-  function run() {
-    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-      acceptNode: function(node) {
-        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        var p = node.parentNode;
-        if (p && (p.nodeName === "SCRIPT" || p.nodeName === "STYLE")) return NodeFilter.FILTER_REJECT;
-        if (p && p.closest && p.closest(".ref-source-banner")) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
+  function buildMap() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var norm = [], map = [], node, lastSpace = true;
+    while ((node = walker.nextNode())) {
+      var p = node.parentNode;
+      if (!p || p.closest(".brand-topbar, .ref-source-banner, .side-rail, script, style, noscript")) continue;
+      var t = node.nodeValue;
+      for (var i = 0; i < t.length; i++) {
+        var n = normChar(t[i]);
+        if (n === "") continue;
+        if (n === " ") { if (lastSpace) continue; lastSpace = true; } else { lastSpace = false; }
+        norm.push(n); map.push({ node: node, offset: i });
       }
+    }
+    return { text: norm.join(""), map: map };
+  }
+  function normString(str) {
+    var out = [], lastSpace = true;
+    for (var i = 0; i < str.length; i++) {
+      var n = normChar(str[i]);
+      if (n === "") continue;
+      if (n === " ") { if (lastSpace) continue; lastSpace = true; } else { lastSpace = false; }
+      out.push(n);
+    }
+    while (out.length && out[out.length - 1] === " ") out.pop();
+    return out.join("");
+  }
+  var BLOCK_TAGS = ["P", "DIV", "LI", "TD", "TH", "TR", "SECTION", "ARTICLE", "BLOCKQUOTE"];
+  function normalizeMarkNesting(mark) {
+    var kids = Array.prototype.slice.call(mark.children);
+    var hasBlock = kids.some(function(k) { return BLOCK_TAGS.indexOf(k.tagName) !== -1; });
+    if (!hasBlock) return;
+    kids.forEach(function(k) {
+      if (BLOCK_TAGS.indexOf(k.tagName) === -1) return;
+      if (!k.textContent.trim()) { k.parentNode.removeChild(k); return; }
+      var inner = document.createElement("mark");
+      inner.className = "flash-highlight";
+      while (k.firstChild) inner.appendChild(k.firstChild);
+      k.appendChild(inner);
     });
-
-    var nodes = [];
-    var combined = "";
-    var n;
-    while ((n = walker.nextNode())) {
-      nodes.push({ node: n, start: combined.length, text: n.nodeValue });
-      combined += n.nodeValue;
-    }
-
-    var normC = normalizeWithMap(combined);
-    var normT = normalizeWithMap(TARGET).text;
-    var idx = normC.text.indexOf(normT);
-    if (idx === -1) {
-      console.warn("ref-flash: target text not found on page");
-      return;
-    }
-
-    var rawStart = normC.map[idx];
-    var rawEndInclusive = normC.map[idx + normT.length - 1];
-
-    function locate(pos, useEnd) {
-      for (var i = 0; i < nodes.length; i++) {
-        var item = nodes[i];
-        var upper = item.start + item.text.length;
-        if (pos < upper || (useEnd && pos <= upper)) {
-          var offset = pos - item.start;
-          if (offset < 0) offset = 0;
-          if (offset > item.text.length) offset = item.text.length;
-          return { node: item.node, offset: offset };
-        }
-      }
-      var last = nodes[nodes.length - 1];
-      return { node: last.node, offset: last.text.length };
-    }
-
-    var startLoc = locate(rawStart, false);
-    var endLoc = locate(rawEndInclusive + 1, true);
-
-    var range = document.createRange();
-    range.setStart(startLoc.node, startLoc.offset);
-    range.setEnd(endLoc.node, endLoc.offset);
-
+    while (mark.firstChild) mark.parentNode.insertBefore(mark.firstChild, mark);
+    mark.parentNode.removeChild(mark);
+  }
+  var BLK = "p, li, td, th, h1, h2, h3, h4, h5, h6, blockquote, dd, dt, figcaption, div";
+  function wrapRange(range) {
     var mark = document.createElement("mark");
     mark.className = "flash-highlight";
-    var frag = range.extractContents();
-    mark.appendChild(frag);
+    mark.appendChild(range.extractContents());
     range.insertNode(mark);
-
-    var ENGLISH_ORIGINAL = 'Arguably, although in the literature a default option is typically implemented as a pre-selected option, the issue of making decisions with default options is fundamentally an issue of active vs. passive decision-making33,34. A widely shared perspective is that defaults matter as they provide an opportunity for people (or their brains) to appreciate the benefits of passive decision-making relative to active decision-making (e.g.,2,35,36,37,38). These benefits include cognitive ease8, implicit endorsement6, responsibility avoidance20,21, etc. In other words, it is the status of having the opportunity to make passive decisions that creates the feeling (and effectiveness) of the “default”. Therefore, any cue that is salient enough to generate a focal point on one of the alternatives works as a (cognitively) default option, because people can make a (cognitively) passive decision by simply following this cue. In fact, many studies produce default effects without pre-selection of options. For instance, imagining owning an option or simply labeling an option as “status quo” without selecting it39 significantly increased choice of this option, replicating classic default effects. The effectiveness of highlighted options has also been confirmed in healthcare settings where pre-selection has ethical problems40. Therefore, we decided to implement default options as highlighted or preset options, facilitating the opportunity to make passive decisions while eliminating noise due to non-psychological motives.';
-    var blockAncestor = mark.closest("p, div.p, li, td, th");
-    if (blockAncestor) {
-      var enBox = document.createElement("p");
-      enBox.className = "fa-original-en";
-      enBox.setAttribute("dir", "ltr");
-      var enLabel = document.createElement("span");
-      enLabel.className = "fa-original-en-label";
-      enLabel.textContent = "متنِ اصلیِ مرتبط:";
-      enBox.appendChild(enLabel);
-      var enText = document.createElement("span");
-      enText.className = "fa-original-en-text";
-      enText.textContent = ENGLISH_ORIGINAL;
-      enBox.appendChild(enText);
-      blockAncestor.parentNode.insertBefore(enBox, blockAncestor.nextSibling);
+    normalizeMarkNesting(mark);
+    return mark;
+  }
+  function highlightOne(target) {
+    var T = normString(target);
+    var built = buildMap();
+    var idx = built.text.indexOf(T);
+    if (idx === -1) return false;
+    var s = built.map[idx], e = built.map[idx + T.length - 1];
+    // text nodes of the match, grouped by their block, so a match crossing paragraphs never splits a paragraph
+    var groups = [], cur = null, lastBlock = null;
+    for (var k = idx; k < idx + T.length; k++) {
+      var m = built.map[k], blk = m.node.parentNode.closest(BLK);
+      if (blk !== lastBlock) { cur = { first: m, last: m, ok: false }; groups.push(cur); lastBlock = blk; }
+      cur.last = m; if (/\S/.test(built.text.charAt(k))) cur.ok = true;
     }
-
-    requestAnimationFrame(function() {
-      mark.scrollIntoView({ block: "center", behavior: "instant" });
-    });
+    var lastMark = null;
+    for (var g = groups.length - 1; g >= 0; g--) {
+      if (!groups[g].ok) continue;
+      var r = document.createRange();
+      r.setStart(groups[g].first.node, groups[g].first.offset);
+      var _eo = groups[g].last.offset + 1, _tv = groups[g].last.node.nodeValue; while (_eo < _tv.length) { var _k = _tv.charCodeAt(_eo); if ((_k >= 0x064b && _k <= 0x065f) || _k === 0x0670) _eo++; else break; } r.setEnd(groups[g].last.node, _eo);
+      var mk = wrapRange(r); if (!lastMark) lastMark = mk;
+    }
+    return lastMark || false;
   }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", run);
-  } else {
-    run();
+  var userMoved = false;
+  ["wheel", "touchstart", "keydown", "mousedown"].forEach(function(ev) {
+    window.addEventListener(ev, function() { userMoved = true; }, { once: true, passive: true });
+  });
+  function center() {
+    if (userMoved) return;
+    var m = document.querySelector("mark.flash-highlight");
+    if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
   }
+  var BOXES = [["متنِ اصلیِ انگلیسی (صفحه‌هایِ ۳ و ۵ فایل PDF):", "ltr", "Arguably, although in the literature a default option is typically implemented as a pre-selected option, the issue of making decisions with default options is fundamentally an issue of active vs. passive decision-making33,34. A widely shared perspective is that defaults matter as they provide an opportunity for people (or their brains) to appreciate the benefits of passive decision-making relative to active decision-making (e.g.,2,35–38). These benefits include cognitive ease8, implicit endorsement6, responsibility avoidance20,21, etc. In other words, it is the status of having the opportunity to make passive decisions that creates the feeling (and effectiveness) of the “default”. Therefore, any cue that is salient enough to generate a focal point on one of the alternatives works as a (cognitively) default option, because people can make a (cognitively) passive decision by simply following this cue. In fact, many studies produce default effects without pre-selection of options. For instance, imagining owning an option or simply labeling an option as “status quo” without selecting it39 significantly increased choice of this option, replicating classic default effects. The effectiveness of highlighted options has also been confirmed in healthcare settings where pre-selection has ethical problems40. Therefore, we decided to implement default options as highlighted or preset options, facilitating the opportunity to make passive decisions while eliminating noise due to non-psychological motives."]];
+  function addBox(mark, spec) {
+    var blockAncestor = mark.closest("p, div.p, li, td, th, div.quoteText");
+    if (!blockAncestor) return;
+    var box = document.createElement("p");
+    box.className = "fa-original-en";
+    box.setAttribute("dir", "ltr");
+    var label = document.createElement("span");
+    label.className = "fa-original-en-label";
+    label.textContent = spec[0];
+    var text = document.createElement("span");
+    text.className = "fa-original-en-text";
+    text.textContent = spec[2];
+    box.appendChild(label); box.appendChild(text);
+    blockAncestor.parentNode.insertBefore(box, blockAncestor.nextSibling);
+  }
+  function highlightAll() {
+    if (window.__hlDone) return;
+    var ok = 0;
+    TARGETS.forEach(function(t, k) { var m = highlightOne(t); if (m) { ok++; if (BOXES[k]) addBox(m, BOXES[k]); } });
+    if (ok > 0) window.__hlDone = true;
+  }
+  function run() { highlightAll(); center(); if (window.__ensureBackToTop) window.__ensureBackToTop(); }
+  run();
+  document.addEventListener("DOMContentLoaded", run);
+  window.addEventListener("load", run);
+  setTimeout(run, 600);
+  setTimeout(run, 2000);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
 })();
-</script><script id="dark-mode-script">
+</script>
+<script id="dark-mode-script">
 (function() {
-  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var DARK_MODE_KEY = "roohbakhshDarkMode";
   var FORCED_ATTR = "data-dm-forced";
   var CONTENT_COLOR = "rgb(231, 226, 242)";
   var LINK_COLOR = "rgb(205, 182, 255)";
   var MARK_COLOR = "rgb(42, 26, 5)";
 
-  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
-  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
-  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
-  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
-  // هر #id ای هم بالاتره) اصلاح می‌کنه.
   function patchStubbornColors() {
     var all = document.body.querySelectorAll("*");
     for (var i = 0; i < all.length; i++) {
@@ -1406,7 +1391,7 @@ e/100?0:100),a=[g,e,0],this.set(f,a.join(":"));else return!0;var b=a[1];if(100==
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
       if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
-      if (el.closest("mark.flash-highlight")) {
+      if (el.closest("mark.flash-highlight, .flash-highlight")) {
         if (cs.color !== MARK_COLOR) {
           el.style.setProperty("color", "#2a1a05", "important");
           el.setAttribute(FORCED_ATTR, "1");
@@ -1461,33 +1446,8 @@ e/100?0:100),a=[g,e,0],this.set(f,a.join(":"));else return!0;var b=a[1];if(100==
     });
   }
 })();
-</script><script id="dynamic-offset-script">
-(function() {
-  function applyOffset() {
-    var tb = document.querySelector('.brand-topbar');
-    var rb = document.querySelector('.ref-source-banner');
-    var tbH = tb ? tb.offsetHeight : 0;
-    if (rb) rb.style.setProperty('top', tbH + 'px', 'important');
-    var rbH = rb ? rb.offsetHeight : 0;
-    document.body.style.marginTop = (tbH + rbH) + 'px';
-  }
-  applyOffset();
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyOffset);
-  } else {
-    applyOffset();
-  }
-  window.addEventListener('load', applyOffset);
-  window.addEventListener('resize', applyOffset);
-  if (window.ResizeObserver) {
-    var ro = new ResizeObserver(applyOffset);
-    var tbEl = document.querySelector('.brand-topbar');
-    var rbEl = document.querySelector('.ref-source-banner');
-    if (tbEl) ro.observe(tbEl);
-    if (rbEl) ro.observe(rbEl);
-  }
-})();
-</script><script id="ref-menu-script">
+</script>
+<script id="ref-menu-script">
 (function() {
   "use strict";
   function closeAll() {
@@ -1512,158 +1472,193 @@ e/100?0:100),a=[g,e,0],this.set(f,a.join(":"));else return!0;var b=a[1];if(100==
     if (e.key === "Escape") closeAll();
   });
 })();
-</script><script id="text-bounds-guard-script">
+</script>
+<script id="dynamic-offset-script">
 (function() {
-  var SAFE_GAP = 90; // minimum px distance from the viewport edge / side-rail
-  var SELECTOR = 'p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt';
-  var RTL_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g;
-
-  function isRtlText(text) {
-    var letters = text.replace(/[^A-Za-z؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g, '');
-    if (!letters) return null; // no letters at all; leave direction as-is
-    var rtlCount = (text.match(RTL_RE) || []).length;
-    return (rtlCount / letters.length) > 0.35;
+  function applyOffset() {
+    var tb = document.querySelector('.brand-topbar');
+    var rb = document.querySelector('.ref-source-banner');
+    var tbH = tb ? tb.offsetHeight : 0;
+    if (rb) rb.style.setProperty('top', tbH + 'px', 'important');
+    var rbH = rb ? rb.offsetHeight : 0;
+    document.body.style.marginTop = (tbH + rbH) + 'px';
   }
-
-  // Auto-scrolling straight to the highlighted passage hides the page's own
-  // top info (title, banner, etc.) from the user. We show a small arrow
-  // ("↑") that jumps back to the top of the page. On wide screens it sits
-  // OUTSIDE the text block, in the white margin beside it (like a margin
-  // note) rather than squeezed inline into the text. On narrow screens,
-  // where there is no side margin, it falls back to sitting just at the
-  // block's own edge.
-  var backToTopLink = null;
-  // Only worth showing if the page's own auto-scroll-to-highlight actually
-  // moved us away from the very top (hiding the source's own title/header).
-  // If the highlight sits right near the top already, there is nothing
-  // hidden to jump back to, so skip the arrow. The highlight script's own
-  // scroll can settle well after 'load' (it searches the whole page text),
-  // so this is re-checked on every call rather than decided once early;
-  // once the link is actually created, it is cached and kept.
-  function isBackToTopNeeded() {
-    var scrollY = window.scrollY || window.pageYOffset;
-    return scrollY > 40;
+  applyOffset();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOffset);
+  } else {
+    applyOffset();
   }
-  function ensureBackToTopLink() {
-    if (backToTopLink) return backToTopLink;
-    var hl0 = document.querySelector('mark.flash-highlight, .flash-highlight');
-    if (!hl0) return null;
-    if (!isBackToTopNeeded()) return null;
-
-    var link = document.createElement('a');
-    link.id = 'back-to-top-link';
-    link.href = '#';
-    link.textContent = '\u2191';
-    link.title = 'رفتن به بالای صفحه';
-    link.setAttribute('aria-label', 'رفتن به بالای صفحه');
-    link.style.setProperty('position', 'absolute', 'important');
-    link.style.setProperty('z-index', '500', 'important');
-    link.style.setProperty('display', 'flex', 'important');
-    link.style.setProperty('align-items', 'center', 'important');
-    link.style.setProperty('justify-content', 'center', 'important');
-    link.style.setProperty('width', '28px', 'important');
-    link.style.setProperty('height', '28px', 'important');
-    link.style.setProperty('color', '#4c1d95', 'important');
-    link.style.setProperty('background', '#e3c876', 'important');
-    link.style.setProperty('border-radius', '50%', 'important');
-    link.style.setProperty('font-weight', '800', 'important');
-    link.style.setProperty('font-size', '15px', 'important');
-    link.style.setProperty('text-decoration', 'none', 'important');
-    link.style.setProperty('cursor', 'pointer', 'important');
-    link.style.setProperty('line-height', '1', 'important');
-    link.style.setProperty('user-select', 'none', 'important');
-    link.style.setProperty('box-shadow', '0 1px 4px rgba(0,0,0,.25)', 'important');
-
-    link.addEventListener('click', function(e) {
-      if (e) e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    document.body.appendChild(link);
-    backToTopLink = link;
-    return link;
-  }
-
-  function positionBackToTopLink() {
-    var link = ensureBackToTopLink();
-    if (!link) return;
-    var hl = document.querySelector('mark.flash-highlight, .flash-highlight');
-    if (!hl) return;
-    var block = hl.closest('p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, div, td, th') || hl;
-    var blockRect = block.getBoundingClientRect();
-    var hlRect = hl.getBoundingClientRect();
-    var scrollX = window.scrollX || window.pageXOffset;
-    var scrollY = window.scrollY || window.pageYOffset;
-    var vw = window.innerWidth;
-    var SIZE = 28;
-    var GAP = 12;
-
-    var spaceRight = vw - blockRect.right;
-    var spaceLeft = blockRect.left;
-
-    if (spaceRight >= SIZE + GAP) {
-      link.style.setProperty('left', Math.round(scrollX + blockRect.right + GAP) + 'px', 'important');
-    } else if (spaceLeft >= SIZE + GAP) {
-      link.style.setProperty('left', Math.round(scrollX + blockRect.left - SIZE - GAP) + 'px', 'important');
-    } else {
-      // No side margin available (narrow/mobile) — sit just inside the block's own edge.
-      link.style.setProperty('left', Math.round(scrollX + Math.max(4, blockRect.left)) + 'px', 'important');
-    }
-    link.style.setProperty('top', Math.round(scrollY + hlRect.top) + 'px', 'important');
-  }
-
-  function fixTextBounds() {
-    var vw = window.innerWidth;
-    var maxW = Math.max(280, Math.min(760, vw - SAFE_GAP * 2));
-    var els = document.querySelectorAll(SELECTOR);
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      if (el.closest('.side-rail') || el.closest('.brand-topbar') || el.id === 'back-to-top-link') continue;
-      el.style.setProperty('max-width', maxW + 'px', 'important');
-      el.style.setProperty('box-sizing', 'border-box', 'important');
-      el.style.setProperty('margin-left', 'auto', 'important');
-      el.style.setProperty('margin-right', 'auto', 'important');
-      el.style.setProperty('float', 'none', 'important');
-
-      var rtl = isRtlText(el.textContent || '');
-      if (rtl === true) {
-        el.style.setProperty('direction', 'rtl', 'important');
-        el.style.setProperty('text-align', 'right', 'important');
-      } else if (rtl === false) {
-        el.style.setProperty('direction', 'ltr', 'important');
-        el.style.setProperty('text-align', 'left', 'important');
-      }
-
-      var rect = el.getBoundingClientRect();
-      if (rect.width === 0) continue;
-      if (rect.left < SAFE_GAP) {
-        var curL = parseFloat(getComputedStyle(el).marginLeft) || 0;
-        el.style.setProperty('margin-left', (curL + (SAFE_GAP - rect.left)) + 'px', 'important');
-      }
-      var rect2 = el.getBoundingClientRect();
-      if (rect2.right > vw - SAFE_GAP) {
-        var curR = parseFloat(getComputedStyle(el).marginRight) || 0;
-        el.style.setProperty('margin-right', (curR + (rect2.right - (vw - SAFE_GAP))) + 'px', 'important');
-      }
-    }
-    positionBackToTopLink();
-  }
-
-  var pending = null;
-  function scheduleFix() {
-    if (pending) clearTimeout(pending);
-    pending = setTimeout(fixTextBounds, 150);
-  }
-
-  fixTextBounds();
-  window.addEventListener('load', fixTextBounds);
-  window.addEventListener('resize', scheduleFix);
-
-  // Google Translate (and similar tools) mutate the DOM asynchronously after load,
-  // so watch for that and re-run the check whenever it happens.
-  if (window.MutationObserver) {
-    var observer = new MutationObserver(scheduleFix);
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('load', applyOffset);
+  window.addEventListener('resize', applyOffset);
+  setTimeout(applyOffset, 50);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(applyOffset);
+    var tb = document.querySelector('.brand-topbar'), rb = document.querySelector('.ref-source-banner');
+    if (tb) ro.observe(tb);
+    if (rb) ro.observe(rb);
   }
 })();
-</script></body></html>
+</script>
+<script id="text-bounds-guard-script">
+(function() {
+  var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt, td.tafsir, td.tafsir_ayeh";
+  function isRtlText(str) {
+    var faCount = 0, total = 0;
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c === 32 || c === 10 || c === 9) continue;
+      total++;
+      if ((c >= 0x0600 && c <= 0x06FF) || (c >= 0xFB50 && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)) faCount++;
+    }
+    if (total === 0) return true;
+    return (faCount / total) > 0.35;
+  }
+  function applyBounds() {
+    document.querySelectorAll(SELECTOR).forEach(function(el) {
+      if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) return;
+      el.style.maxWidth = "760px";
+      var dir = isRtlText(el.textContent) ? "rtl" : "ltr";
+      el.setAttribute("dir", dir);
+      el.style.direction = dir; el.style.setProperty("text-align", dir === "rtl" ? "right" : "left", "important");
+      if (el.tagName === "TD" || el.tagName === "TH") return; var rect = el.getBoundingClientRect();
+      var margin = 90;
+      if (dir === "rtl") {
+        var distRight = window.innerWidth - rect.right;
+        if (distRight < margin) el.style.marginRight = (margin - distRight) + "px";
+      } else {
+        if (rect.left < margin) el.style.marginLeft = (margin - rect.left) + "px";
+      }
+    });
+  }
+  applyBounds();
+  document.addEventListener("DOMContentLoaded", applyBounds);
+  window.addEventListener("load", applyBounds);
+  window.addEventListener("resize", applyBounds);
+  if (window.MutationObserver) {
+    new MutationObserver(function() { applyBounds(); }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+<script id="back-to-top-script">
+(function() {
+  var made = false;
+  function isBackToTopNeeded() { return window.scrollY > 40; }
+  function pointAt(block, mark, charIdx) {
+    var w = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, null), n, acc = 0;
+    while ((n = w.nextNode())) {
+      var len = n.nodeValue.length;
+      if (acc + len >= charIdx) return { node: n, offset: charIdx - acc };
+      acc += len;
+    }
+    return null;
+  }
+  function ensureBackToTopLink() {
+    if (made || !isBackToTopNeeded()) return;
+    var mark = document.querySelector("mark.flash-highlight");
+    if (!mark) return;
+    var block = mark.closest("p, li, blockquote, dd, dt, td, th, figcaption, div");
+    if (!block) return;
+    var pre = document.createRange();
+    pre.setStart(block, 0);
+    pre.setEndBefore(mark);
+    var before = pre.toString();
+    var lim = Math.max(0, before.length - 70);
+    var cut = -1, i;
+    for (i = before.length - 1; i >= lim; i--) { if (".!\u061f?".indexOf(before[i]) !== -1) { cut = i + 1; break; } }
+    if (cut === -1) { for (i = before.length - 1; i >= lim; i--) { if ("\u060c,".indexOf(before[i]) !== -1) { cut = i + 1; break; } } }
+    if (cut === -1) cut = (before.length <= 70) ? 0 : before.length;
+    var link = document.createElement("a");
+    link.id = "back-to-top-link";
+    link.href = "#";
+    link.title = "رفتن به بالا";
+    link.setAttribute("aria-label", "رفتن به بالا");
+    link.textContent = "\u2191";
+    var fontSize = parseFloat(getComputedStyle(mark).fontSize) || 17;
+    var size = Math.max(24, Math.min(42, Math.round(fontSize * 1.65)));
+    var lh = parseFloat(getComputedStyle(mark).lineHeight);
+    if (lh > 0) size = Math.max(22, Math.min(size, Math.floor(lh) - 2));
+    link.style.width = size + "px"; link.style.height = size + "px";
+    link.style.fontSize = Math.round(size * 0.536) + "px";
+    link.style.setProperty("vertical-align", "middle", "important"); link.style.setProperty("margin-top", "-6px", "important"); link.style.setProperty("margin-bottom", "-6px", "important");
+    link.addEventListener("click", function(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    function isLead(n) { return n && ((n.nodeType === 3 && !/\S/.test(n.nodeValue)) || (n.nodeType === 1 && n.tagName === "BR")); }
+    if (cut <= 0) {
+      var fr = block.firstChild; while (isLead(fr)) fr = fr.nextSibling;
+      block.insertBefore(link, fr || block.firstChild);
+    } else {
+      var pt = pointAt(block, mark, cut);
+      if (!pt) return;
+      var r = document.createRange();
+      r.setStart(pt.node, pt.offset);
+      r.setEndAfter(block.lastChild);
+      var second = block.cloneNode(false);
+      second.removeAttribute("id");
+      second.appendChild(r.extractContents());
+      block.parentNode.insertBefore(second, block.nextSibling);
+      block.style.setProperty("margin-bottom", "0", "important");
+      second.style.setProperty("margin-top", "0", "important");
+      while (isLead(second.firstChild)) second.removeChild(second.firstChild);
+      second.insertBefore(link, second.firstChild);
+    }
+    made = true;
+  }
+  window.__ensureBackToTop = ensureBackToTopLink;
+  window.addEventListener("scroll", ensureBackToTopLink, { passive: true });
+  ensureBackToTopLink();
+})();
+</script>
+<script id="next-highlight-script">
+(function() {
+  var btn = null, style = null;
+  function marks() { return Array.prototype.slice.call(document.querySelectorAll("mark.flash-highlight")); }
+  function topOf(m) { var r = m.getClientRects()[0] || m.getBoundingClientRect(); return r.top + window.scrollY; }
+  function bottomOf(m) { var rs = m.getClientRects(); var r = rs.length ? rs[rs.length - 1] : m.getBoundingClientRect(); return r.bottom + window.scrollY; }
+  function farApart() {
+    var ms = marks(), i;
+    if (ms.length < 2) return false;
+    for (i = 0; i < ms.length - 1; i++) {
+      if (topOf(ms[i + 1]) - bottomOf(ms[i]) > window.innerHeight * 0.6) return true;
+    }
+    return false;
+  }
+  function nextIndex() {
+    var ms = marks(), ref = window.scrollY + window.innerHeight * 0.75, i;
+    for (i = 0; i < ms.length; i++) { if (topOf(ms[i]) > ref) return i; }
+    return 0;
+  }
+  function labelIt() {
+    if (!btn) return;
+    var ms = marks(), i = nextIndex();
+    btn.textContent = (i === 0 ? "↑ هایلایتِ اول" : "↓ هایلایتِ بعدی");
+  }
+  function build() {
+    if (btn) return;
+    style = document.createElement("style");
+    style.id = "next-highlight-style";
+    style.textContent = "#next-highlight-btn{position:fixed;left:16px;bottom:16px;z-index:2147483000;direction:rtl;font:700 13px Vazirmatn,Tahoma,Arial,sans-serif;color:#2a1a05;background:#e3c876;border:1px solid #b8912a;border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);}#next-highlight-btn:hover{background:#edd48c;}html body.dark-mode #next-highlight-btn{background:#b8912a;color:#1a1004;border-color:#e3c876;}";
+    document.head.appendChild(style);
+    btn = document.createElement("button");
+    btn.id = "next-highlight-btn";
+    btn.type = "button";
+    btn.addEventListener("click", function() {
+      var ms = marks(); if (!ms.length) return;
+      var m = ms[nextIndex()];
+      window.scrollTo({ top: Math.max(0, topOf(m) - window.innerHeight * 0.34), behavior: "smooth" });
+    });
+    document.body.appendChild(btn);
+    labelIt();
+  }
+  function refresh() {
+    if (farApart()) { build(); btn.style.display = ""; labelIt(); }
+    else if (btn) btn.style.display = "none";
+  }
+  window.addEventListener("scroll", function() { if (btn) labelIt(); }, { passive: true });
+  window.addEventListener("resize", refresh);
+  window.addEventListener("load", refresh);
+  document.addEventListener("DOMContentLoaded", refresh);
+  setTimeout(refresh, 700); setTimeout(refresh, 2200); setTimeout(refresh, 4500);
+  refresh();
+})();
+</script>
+</body></html>

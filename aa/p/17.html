@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head>
-<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" id="archive-csp" content="default-src 'none'; script-src 'unsafe-inline' data:; connect-src 'none'; style-src 'unsafe-inline' data: https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; frame-src https: data:; object-src 'none'; form-action 'none'; base-uri 'none';">
+<head><meta http-equiv="Content-Security-Policy" id="archive-csp" content="default-src 'none'; script-src 'unsafe-inline' data: https://www.aparat.com; connect-src 'none'; style-src 'unsafe-inline' data: https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; frame-src https: data:; object-src 'none'; form-action 'none'; base-uri 'none';">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مرگ‌اندیشی از منظر اروین یالوم و تأثیر آن بر معنابخشی به زندگی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مرگ‌اندیشی از منظر اروین یالوم و تأثیر آن بر معنابخشی به زندگی</title>
 <style>
-  :root { color-scheme: light; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -19,26 +17,18 @@
     line-height: 2;
     font-size: 17px;
   }
-  .wrap {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 24px 20px 60px;
-  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
   .cite-box {
-    background: #fff;
-    border-right: 4px solid #0b4f3c;
-    padding: 14px 18px;
-    margin-bottom: 28px;
-    font-size: 15px;
-    color: #444;
+    background: #fff; border-right: 4px solid #4c1d95; border-left: none;
+    padding: 14px 18px; margin-bottom: 28px; font-size: 14px; color: #444;
+    direction: rtl; text-align: right;
   }
-  .cite-box b { color: #0b4f3c; }
-  .pdf-page-label {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 6px;
-  }
+  .cite-box b { color: #4c1d95; }
+  .cite-box .cite-ltr { direction: ltr; text-align: left; margin-bottom: 6px; }
+  .pdf-page-label { font-size: 13px; color: #888; margin: 26px 0 10px; }
+  .pdf-page-label:first-of-type { margin-top: 0; }
   p { margin: 0 0 18px; text-align: justify; }
+  .wrap p:not(.fa-original-en) { text-indent: 0.4cm; }
 </style>
 <style id="brand-style">
   :root {
@@ -49,15 +39,7 @@
     --b-gold: #b8912a;
     --b-gold-light: #e3c876;
   }
-  /* حالتِ شب: فیلتر مستقیم رو body نمیاد چون position:fixed (topbar/banner/side-rail)
-     containing block تازه می‌سازه و "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو
-     خودِ هر بلاکِ سطحِ‌بالا جدا اعمال می‌شه. */
   body.dark-mode { background: #0d0d10; }
-  /* بعضی سایت‌های منبع رو خودِ html هم background/height:100% ست می‌کنن (مثلاً
-     "html,body{background:#f0f0f0;height:100%}")؛ چون body در اون حالت فقط به
-     اندازه‌ی خودِ viewport بلنده نه کلِ محتوا، پس‌زمینه‌ی روشنِ html از پایینِ
-     صفحه به پایین (فراتر از یک صفحه‌نمایش) دیده می‌مونه. برای همینه که رنگِ
-     تیره باید صریحاً رو خودِ html هم (نه فقط body) ست بشه. */
   html.dark-mode { background: #0d0d10 !important; }
   html.dark-mode body.dark-mode { background: transparent !important; }
   html body.dark-mode #back-to-top-link { background: var(--b-gold) !important; color: #2a1a05 !important; }
@@ -80,14 +62,8 @@
     flex: 0 0 auto;
   }
   .brand-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
-  /* متنِ اصلیِ صفحه، محتوایِ آرشیوشده از سایتِ منبعه و پالتِ رنگیِ خودش رو داره که
-     با پس‌زمینه‌ی تیره‌ی حالتِ شب سازگار نیست (مثلاً متنِ تیره‌ی روی زمینه‌ی
-     سفیدِ اصلی، وقتی زمینه تیره میشه، ناخوانا میشه). به‌جایِ فیلترِ رنگی (که
-     موقعیتِ fixed رو می‌شکنه)، رنگِ متن/پس‌زمینه‌ی هر عنصر رو صریحاً به یک
-     ترکیبِ همیشه-خوانا override می‌کنیم؛ اختصاصیتِ بالا (تکرارِ کلاس) تضمین
-     می‌کنه این override روی CSSِ خودِ سایتِ منبع (even با !important) اثر کنه. */
   body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode
-    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *) {
+    *:not(.brand-topbar):not(.brand-topbar *):not(.ref-source-banner):not(.ref-source-banner *):not(.side-rail):not(.side-rail *):not(mark.flash-highlight):not(mark.flash-highlight *):not(.flash-highlight):not(.flash-highlight *) {
     background-color: transparent !important;
     background-image: none !important;
     color: #e7e2f2 !important;
@@ -95,15 +71,17 @@
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight {
     background: rgba(227,200,118,.55) !important;
     color: #2a1a05 !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight * {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode mark.flash-highlight *,
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode .flash-highlight * {
     color: #2a1a05 !important;
     background: rgba(227,200,118,.55) !important;
   }
-  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *) {
+  body.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode.dark-mode a:not(.brand-badge):not(.brand-dark-toggle):not(mark.flash-highlight *):not(.flash-highlight *) {
     color: #cdb6ff !important;
   }
   .side-rail {
@@ -240,14 +218,48 @@
   body.dark-mode .ref-menu-dropdown a { color: #e7e2f2 !important; }
   body.dark-mode .ref-menu-dropdown a:hover { background: #2d2640 !important; }
   body.dark-mode .ref-menu-sub { color: #c9b98a !important; }
-  mark.flash-highlight {
-    background: rgba(227,200,118,.45);
-    box-shadow: 0 0 0 2px rgba(227,200,118,.45);
-    border-radius: 3px;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    color: inherit;
+  .fa-original-en {
+    direction: ltr !important;
+    text-align: left !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 15px !important;
+    line-height: 1.8 !important;
+    color: #4a4458 !important;
+    background: #f4f2fa !important;
+    border-right: none !important;
+    border-left: 4px solid var(--b-gold) !important;
+    border-radius: 6px !important;
+    padding: 12px 16px !important;
+    padding-left: 0.4cm !important;
+    margin: 10px 0 6px 0 !important;
+    box-sizing: border-box !important;
   }
+  .fa-original-en .fa-original-en-label {
+    display: block !important;
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: bold !important;
+    color: var(--b-forest-dark) !important;
+    margin-bottom: 6px !important;
+    text-indent: 0 !important;
+  }
+  .fa-original-en-text { display: block; }
+  .fa-translation {
+    font-size: 15px !important;
+    color: #333 !important;
+    margin: 0 0 18px !important;
+    text-indent: 0 !important;
+  }
+  .fa-translation b { color: var(--b-forest-dark) !important; }
+  mark.flash-highlight {
+    background: rgba(227,200,118,.55);
+    color: #2a1a05;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  dialog, dialog[open], dialog::backdrop { display: none !important; }
   #back-to-top-link {
     display: inline-flex;
     align-items: center;
@@ -270,7 +282,17 @@
   }
   #back-to-top-link:hover { background: var(--b-gold-light); }
 </style>
-<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style></head>
+
+<style id="article-align-style">
+  .wrap p.fa-translation { text-align: right !important; }
+</style>
+<style id="pdf-text-fa-style">
+  .wrap p.pdf-text-fa { font-size: 15px !important; color: #333 !important; margin: 0 0 18px !important; text-indent: 0 !important; text-align: right !important; line-height: 2 !important; }
+  body.dark-mode .wrap p.pdf-text-fa { color: #e7e2f2 !important; }
+</style>
+<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>
+<style id="dark-toggle-lock">html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}#darkModeToggle.brand-dark-toggle{box-sizing:border-box !important;width:32px !important;height:32px !important;min-width:32px !important;max-width:32px !important;min-height:32px !important;max-height:32px !important;padding:0 !important;margin:0 !important;font-size:15px !important;line-height:1 !important;zoom:1 !important;transform:none !important;flex:0 0 32px !important;overflow:hidden !important;}#darkModeToggle *,#darkModeToggle img{font-size:15px !important;line-height:1 !important;width:auto !important;height:15px !important;max-width:15px !important;max-height:15px !important;margin:0 !important;padding:0 !important;vertical-align:middle !important;}</style>
+</head>
 <body><div class="side-rail right"></div><div class="side-rail left"></div><div class="brand-topbar"><span>آرشیو منابع — اصول اعتقادی</span><div class="brand-topbar-actions"><a class="brand-badge" target="_blank" rel="noopener" href="https://mrooh200-glitch.github.io/archive-academy-shahidroohbakhsh/">پایگاه علمی‌پژوهشی شهید روحبخش</a><button id="darkModeToggle" type="button" class="brand-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button></div></div>
 
 <div class="ref-source-banner"><span class="ref-banner-text">این صفحه، متنِ استخراج‌شده از یک منبع PDF است.</span><span class="ref-menu-wrap"><button aria-expanded="false" aria-haspopup="true" class="ref-menu-trigger" type="button">دسترسی<span class="ref-menu-dots">⋮</span></button><div class="ref-menu-dropdown" role="menu"><a href="https://ensani.ir/fa/article/390595/%D9%85%D8%B1%DA%AF-%D8%A7%D9%86%D8%AF%DB%8C%D8%B4%DB%8C-%D8%A7%D8%B2-%D9%85%D9%86%D8%B8%D8%B1-%D8%A7%D8%B1%D9%88%DB%8C%D9%86-%DB%8C%D8%A7%D9%84%D9%88%D9%85-%D9%88-%D8%AA%D8%A3%D8%AB%DB%8C%D8%B1-%D8%A2%D9%86-%D8%A8%D8%B1-%D9%85%D8%B9%D9%86%D8%A7%D8%A8%D8%AE%D8%B4%DB%8C-%D8%A8%D9%87-%D8%B2%D9%86%D8%AF%DA%AF%DB%8C" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="https://ensani.ir/file/download/article/1555219252-9555-97-16.pdf#page=23" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="../pdf/17.pdf#page=23" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی آرشیوِ PDF</span><span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span></a></div></span></div>
@@ -281,45 +303,64 @@
 <b>هاشمی، زهرا سادات؛ علی‌زمانی، امیرعباس؛ زمانی، مهدی؛ خوش‌طینت، ولی‌الله. (۱۳۹۶).</b> «مرگ‌اندیشی از منظر اروین یالوم و تأثیر آن بر معنابخشی به زندگی». <i>پژوهش‌نامه اسلامی زنان و خانواده / پژوهش‌های فلسفی‌کلامی</i>، صص. ۱۲۱–۱۵۰.
 </div>
 
-<div class="pdf-page-label">متن صفحه ۱۴۳ مجله (صفحه ۲۳ فایل PDF):</div>
-
-<p>ما می‌توانیم با برخی از پیش‌فرض‌های این دیدگاه همدلی نشان دهیم و بگوییم غرق‌شدن در زندگی هرروزی ما را از ساحت معنا دور می‌سازد و برای رهایی از این غرق‌شدن و تهی‌شدن، ما به شوک و عامل نجات‌بخش نیاز داریم؛ ولی صرف اندیشه‌ی مرگ نمی‌تواند ما را به ساحل نجات و آرامش برساند. <span id="ref-target">ما برای رسیدن به ساحت معنا نیاز به یک تکیه‌گاه مستحکم و امیدبخش داریم که در پرتو آن حتی حادثه‌ی مرگ نیز معنادار و تحمل‌پذیر می‌شود.</span> این تکیه‌گاه و بن‌بنیاد در تفسیر دینی و ریشه در مبنای معنوی از هستی بر مبنای وجود خدای مهربان و عادل و... قرار دارد. <a id="back-to-top-link" href="#" title="رفتن به بالا" aria-label="رفتن به بالا">↑</a></p>
+<div class="pdf-page-label">صفحه‌ی ۱۴۳ مجله (صفحه‌ی ۲۳ فایل PDF):</div>
+<p class="pdf-text-fa">ما می‌توانیم با برخی از پیش‌فرض‌های این دیدگاه همدلی نشان دهیم و بگوییم غرق‌شدن در زندگی هرروزی ما را از ساحت معنا دور می‌سازد و برای رهایی از این غرق‌شدن و تهی‌شدن، ما به شوک و عامل نجات‌بخش نیاز داریم؛ ولی صرف اندیشه‌ی مرگ نمی‌تواند ما را به ساحل نجات و آرامش برساند. <span id="ref-target-1">ما برای رسیدن به ساحت معنا نیاز به یک تکیه‌گاه مستحکم و امیدبخش داریم که در پرتو آن حتی حادثه‌ی مرگ نیز معنادار و تحمل‌پذیر می‌شود.</span> این تکیه‌گاه و بن‌بنیاد در تفسیر دینی و ریشه در مبنای معنوی از هستی بر مبنای وجود خدای مهربان و عادل و... قرار دارد. <a id="back-to-top-link" href="#" title="رفتن به بالا" aria-label="رفتن به بالا">↑</a></p>
 
 </div>
 
-<script>
+<script id="kill-dialog-script">
 (function() {
-  var el = document.getElementById("ref-target");
-  if (!el) return;
-  var mark = document.createElement("mark");
-  mark.className = "flash-highlight";
-  while (el.firstChild) mark.appendChild(el.firstChild);
-  el.appendChild(mark);
-
-  var banner = document.querySelector(".ref-source-banner");
-  if (banner) {
-    /* superseded by dynamic-offset-script */
+  function killDialogs() {
+    document.querySelectorAll("dialog").forEach(function(d) {
+      try { d.close(); } catch (e) {}
+      d.removeAttribute("open");
+      d.style.setProperty("display", "none", "important");
+    });
   }
+  killDialogs();
+  document.addEventListener("DOMContentLoaded", killDialogs);
+  window.addEventListener("load", killDialogs);
+  if (window.MutationObserver) {
+    new MutationObserver(killDialogs).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
+  }
+})();
+</script>
 
-  requestAnimationFrame(function() {
-    mark.scrollIntoView({ block: "center", behavior: "instant" });
+<script id="ref-flash-script">
+(function() {
+  var TARGET_IDS = ["ref-target-1"];
+  TARGET_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var mark = document.createElement("mark");
+    mark.className = "flash-highlight";
+    while (el.firstChild) mark.appendChild(el.firstChild);
+    el.appendChild(mark);
   });
+  var userMoved = false;
+  ["wheel", "touchstart", "keydown", "mousedown"].forEach(function(ev) {
+    window.addEventListener(ev, function() { userMoved = true; }, { once: true, passive: true });
+  });
+  function center() {
+    if (userMoved) return;
+    var m = document.querySelector("mark.flash-highlight");
+    if (m) m.scrollIntoView({ block: "center", behavior: "instant" });
+  }
+  requestAnimationFrame(center);
+  window.addEventListener("load", center);
+  setTimeout(center, 600);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(center);
 })();
 </script>
 
 <script id="dark-mode-script">
 (function() {
-  var DARK_MODE_KEY = "roohbakhshDarkMode"; // همون کلیدِ صفحه‌ی اصلی — چون هر دو رو یک origin هستن، این حافظه بینِ صفحه‌ی اصلی و این فایل مشترکه
+  var DARK_MODE_KEY = "roohbakhshDarkMode";
   var FORCED_ATTR = "data-dm-forced";
   var CONTENT_COLOR = "rgb(231, 226, 242)";
   var LINK_COLOR = "rgb(205, 182, 255)";
   var MARK_COLOR = "rgb(42, 26, 5)";
 
-  // بعضی سایت‌های منبع قاعده‌ای با سلکتورِ #id دارن (مثلاً "#news h2{color:#00f!important}")؛
-  // چون یک #id، از هر تعداد تکرارِ کلاس هم بالاتره، override CSS ای ما (که فقط از کلاس
-  // ساخته شده) نمی‌تونه اون رو ببره. این تابع بعد از اعمالِ override CSS، هر عنصری که
-  // رنگش هنوز مطابقِ انتظار نیست رو پیدا می‌کنه و مستقیماً با inline style (که همیشه از
-  // هر #id ای هم بالاتره) اصلاح می‌کنه.
   function patchStubbornColors() {
     var all = document.body.querySelectorAll("*");
     for (var i = 0; i < all.length; i++) {
@@ -327,7 +368,7 @@
       if (el.closest(".brand-topbar") || el.closest(".ref-source-banner") || el.closest(".side-rail")) continue;
       if (el.id === "back-to-top-link") continue;
       var cs = getComputedStyle(el);
-      if (el.closest("mark.flash-highlight")) {
+      if (el.closest("mark.flash-highlight, .flash-highlight")) {
         if (cs.color !== MARK_COLOR) {
           el.style.setProperty("color", "#2a1a05", "important");
           el.setAttribute(FORCED_ATTR, "1");
@@ -409,19 +450,6 @@
   });
 })();
 </script>
-<script id="back-to-top-script">
-(function() {
-  var link = document.getElementById("back-to-top-link");
-  if (!link) return;
-  link.addEventListener("click", function(e) {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-})();
-</script>
-</body>
-</html>
-
 <script id="dynamic-offset-script">
 (function() {
   function applyOffset() {
@@ -440,18 +468,15 @@
   }
   window.addEventListener('load', applyOffset);
   window.addEventListener('resize', applyOffset);
+  setTimeout(applyOffset, 50);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(applyOffset);
+    var tb = document.querySelector('.brand-topbar'), rb = document.querySelector('.ref-source-banner');
+    if (tb) ro.observe(tb);
+    if (rb) ro.observe(rb);
+  }
 })();
 </script>
-<style id="rtl-fix-style">
-  p, li, h1, h2, h3, h4, h5, h6,
-  blockquote, figcaption, dd, dt {
-    unicode-bidi: isolate !important;
-    max-width: 760px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    float: none !important;
-  }
-</style>
 <script id="text-bounds-guard-script">
 (function() {
   var SELECTOR = "p, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, dd, dt";
@@ -492,3 +517,17 @@
   }
 })();
 </script>
+<script id="back-to-top-script">
+(function() {
+  var link = document.getElementById("back-to-top-link");
+  if (!link) return;
+  link.addEventListener("click", function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+
+
+</body>
+</html>
