@@ -1031,12 +1031,16 @@ error code: 523
       var r = document.createRange();
       r.setStart(pt.node, pt.offset);
       r.setEndAfter(block.lastChild);
-      var second = block.cloneNode(false);
+      var inCell = (block.tagName === "TD" || block.tagName === "TH");
+      var second = inCell ? document.createElement("div") : block.cloneNode(false);
       second.removeAttribute("id");
       second.appendChild(r.extractContents());
-      block.parentNode.insertBefore(second, block.nextSibling);
-      block.style.setProperty("margin-bottom", "0", "important");
-      second.style.setProperty("margin-top", "0", "important");
+      if (inCell) { block.appendChild(second); }
+      else {
+        block.parentNode.insertBefore(second, block.nextSibling);
+        block.style.setProperty("margin-bottom", "0", "important");
+        second.style.setProperty("margin-top", "0", "important");
+      }
       while (isLead(second.firstChild)) second.removeChild(second.firstChild);
       second.insertBefore(link, second.firstChild);
     }
