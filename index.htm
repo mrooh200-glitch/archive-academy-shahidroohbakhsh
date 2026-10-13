@@ -6913,6 +6913,12 @@
 
       positionSearchScopePopover();
 
+      // اگر کادر جست‌وجو پایین صفحه است، صفحه را پایین می‌بریم تا کل جعبه
+      // دیده شود (هم‌رفتار با حالت بعد از جست‌وجو که بنرها بالا می‌روند).
+      if (popover && typeof revealPanelInViewport === "function") {
+        revealPanelInViewport(popover);
+      }
+
       if (!searchScopeReflowHandler) {
         searchScopeReflowHandler = () => positionSearchScopePopover();
         window.addEventListener("resize", searchScopeReflowHandler);
@@ -6933,6 +6939,8 @@
       }
 
       if (toggle) toggle.setAttribute("aria-expanded", "false");
+
+      if (typeof removeRevealSpacer === "function") removeRevealSpacer();
 
       if (searchScopeReflowHandler) {
         window.removeEventListener("resize", searchScopeReflowHandler);
