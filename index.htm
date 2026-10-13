@@ -1543,6 +1543,40 @@
       border-right: 1px solid #e2e8f0;
     }
 
+    /* فیلتر کتاب‌ها بر اساس عنوان/نویسنده/موضوع - مشترک بین سه پنل 📚 */
+    .book-filter-row {
+      display: flex;
+      gap: 6px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .book-filter-row select,
+    .book-filter-row input {
+      font: inherit;
+      font-size: 0.78rem;
+      padding: 3px 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .book-filter-row input {
+      flex: 1;
+    }
+
+    .ai-scope-list label[hidden] {
+      display: none;
+    }
+
+    .book-filter-empty {
+      margin: 0;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      color: #9a3412;
+    }
+
     /* آیتم ب: پنل محدودهٔ جست‌وجو/گفتگو - فهرست تیک‌خور کتاب‌ها */
     .ai-scope-panel {
       position: absolute;
@@ -2611,6 +2645,8 @@
               <li
                 class="searchable-item"
                 data-title="چشم چرانی | ۰ تا ۱۰۰؛ از علت تا راه نجات!"
+                data-author="سید کاظم روح‌بخش"
+                data-subject="اخلاق، چشم‌چرانی، عفاف"
                 data-url="Seyed_Kazem_Roohbakhsh/Cheshm_Cherani_va_Rahe_Nejat.htm">
                 <a
                   class="html-link"
@@ -2624,6 +2660,8 @@
               <li
                 class="searchable-item"
                 data-title="نهج البلاغه"
+                data-author="امام علی (ع)؛ گردآوری سید رضی"
+                data-subject="خطبه، نامه، حکمت، نهج‌البلاغه"
                 data-url="nahjol-balaghih.htm">
                 <a
                   class="html-link"
@@ -2736,14 +2774,14 @@
                 id="bookScopeSelectAll"
                 type="button"
                 class="book-scope-action-button">
-                انتخاب همه
+                همه
               </button>
 
               <button
                 id="bookScopeDeselectAll"
                 type="button"
                 class="book-scope-action-button">
-                لغو انتخاب
+                هیچ‌کدام
               </button>
             </div>
 
@@ -6847,8 +6885,8 @@
 
       const toggleRect = toggle.getBoundingClientRect();
       const spaceBelow = window.innerHeight - toggleRect.bottom - GAP - EDGE_MARGIN;
-      const spaceAbove = toggleRect.top - GAP - EDGE_MARGIN;
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+            // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       let left = toggleRect.right - popover.offsetWidth;
       left = Math.max(EDGE_MARGIN, Math.min(left, window.innerWidth - popover.offsetWidth - EDGE_MARGIN));
@@ -6862,7 +6900,7 @@
         popover.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       popover.style.maxHeight = Math.min(360, available) + "px";
     }
 
@@ -6945,7 +6983,8 @@
       const spaceBelow = window.innerHeight - gearRect.bottom - GAP - EDGE_MARGIN;
       const spaceAbove = gearRect.top - GAP - EDGE_MARGIN;
 
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+      // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       // چون منو position:fixed است، مختصاتش نسبت به viewport است نه
       // نسبت به offset parent خودش در جریان عادی صفحه - پس باید همین‌جا
@@ -6962,7 +7001,7 @@
         menu.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       menu.style.maxHeight = available + "px";
     }
 
@@ -7107,7 +7146,8 @@
       const rowRect = row.getBoundingClientRect();
       const spaceBelow = window.innerHeight - toggleRect.bottom - GAP - EDGE_MARGIN;
       const spaceAbove = toggleRect.top - GAP - EDGE_MARGIN;
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+      // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       // آیتم جدید: شروع این پنل باید با شروع خودِ ردیف (کادر جستجو) یکی
       // باشه - نه فقط زیر خودِ دکمهٔ ⋮ - و عرضش هم به‌اندازهٔ کل ردیفه،
@@ -7125,7 +7165,7 @@
         menu.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       menu.style.maxHeight = Math.min(available, window.innerHeight * 0.7) + "px";
     }
 
@@ -8624,7 +8664,9 @@
       .map(item => ({
         key: item.dataset.url,
         title: item.dataset.title ||
-          (item.querySelector("a") ? item.querySelector("a").textContent.trim() : "")
+          (item.querySelector("a") ? item.querySelector("a").textContent.trim() : ""),
+        author: item.dataset.author || "",
+        subject: item.dataset.subject || ""
       }))
       .filter(entry => entry.key);
 
@@ -8641,6 +8683,10 @@
     }
 
     let selectedBookKeys = loadSelectedBookKeys();
+
+    // کلیدهای کتاب‌هایی که در فهرست نمایش داده می‌شوند (با فیلتر
+    // عنوان/نویسنده/موضوع کم می‌شود؛ بدون فیلتر = همه).
+    let visibleBookScopeKeys = new Set(allBookScopeKeys);
 
     // Item جدید: دیگر چیزی در localStorage ذخیره نمی‌شود (رجوع کنید به
     // توضیح بالا) - این تابع فقط برای سازگاری با فراخوانی‌های موجود
@@ -8668,7 +8714,7 @@
         return;
       }
 
-      container.innerHTML = bookScopeEntries.map(entry => {
+      container.innerHTML = bookScopeEntries.filter(entry => visibleBookScopeKeys.has(entry.key)).map(entry => {
         const checkedAttr = selectedBookKeys.has(entry.key) ? "checked" : "";
 
         return (
@@ -8703,7 +8749,7 @@
 
     if (bookScopeSelectAllButton) {
       bookScopeSelectAllButton.addEventListener("click", () => {
-        selectedBookKeys = new Set(allBookScopeKeys);
+        visibleBookScopeKeys.forEach(key => selectedBookKeys.add(key));
         saveSelectedBookKeys();
         renderBookScopeList();
         rerenderResultsIfSearching();
@@ -8712,12 +8758,32 @@
 
     if (bookScopeDeselectAllButton) {
       bookScopeDeselectAllButton.addEventListener("click", () => {
-        selectedBookKeys = new Set();
+        visibleBookScopeKeys.forEach(key => selectedBookKeys.delete(key));
         saveSelectedBookKeys();
         renderBookScopeList();
         rerenderResultsIfSearching();
       });
     }
+
+    // فیلتر کتاب‌ها بر اساس عنوان/نویسنده/موضوع (منطق مشترک در search-widget.js)
+    // search-widget.js بعد از این اسکریپت بارگذاری می‌شود؛ پس تا DOMContentLoaded صبر می‌کنیم.
+    document.addEventListener("DOMContentLoaded", () => attachBookFilter(
+      document.getElementById("bookScopeList"),
+      (field, query) => {
+        if (!query) {
+          visibleBookScopeKeys = new Set(allBookScopeKeys);
+          selectedBookKeys = new Set(allBookScopeKeys);
+        } else {
+          const matches = bookScopeEntries.filter(entry => bookMatchesFilter(entry, field, query));
+          if (matches.length === 0) return false;
+          visibleBookScopeKeys = new Set(matches.map(entry => entry.key));
+          selectedBookKeys = new Set(visibleBookScopeKeys);
+        }
+        renderBookScopeList();
+        rerenderResultsIfSearching();
+        return true;
+      }
+    ));
 
     function filterTitles(query) {
       const cleanQuery = normalize(query);

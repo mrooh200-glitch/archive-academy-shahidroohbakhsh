@@ -204,6 +204,68 @@ async function semanticSearch(query, topK = 5, bookFilter = null) {
 // ---------- ساخت لینک به همان قطعهٔ متنی داخل صفحه (Text Fragment مرورگر) ----------
 // این یه ویژگی استاندارد مرورگرهاست: با اضافه‌کردن #:~:text=... به انتهای لینک،
 
+// ---------- فیلتر کتاب‌ها بر اساس عنوان / نویسنده / موضوع (مشترک بین سه پنل 📚) ----------
+// متادیتای هر کتاب از data-author و data-subject روی <li class="searchable-item">
+// در index.htm می‌آید. field یکی از all|title|author|subject است.
+function bookFilterNormalize(text) {
+  return String(text || "")
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function bookMatchesFilter(meta, field, query) {
+  const q = bookFilterNormalize(query);
+  if (!q) return true;
+  const fields = field === "all" || !field ? ["title", "author", "subject"] : [field];
+  return fields.some((f) => bookFilterNormalize(meta[f]).includes(q));
+}
+
+// متادیتای کتاب‌ها بر اساس عنوان (کلید گروه‌بندی در embeddings.json = عنوان کتاب)
+function getBookMetaByTitle() {
+  const map = new Map();
+  document.querySelectorAll(".searchable-item").forEach((li) => {
+    const title = li.dataset.title || (li.querySelector("a") ? li.querySelector("a").textContent.trim() : "");
+    if (title) map.set(title, { title, author: li.dataset.author || "", subject: li.dataset.subject || "" });
+  });
+  return map;
+}
+
+// یک ردیف «بر اساس [عنوان/نویسنده/موضوع] + کادر عبارت» قبل از فهرست کتاب‌ها می‌گذارد.
+// applyFilter(field, query) باید true برگرداند اگر اعمال شد، false اگر هیچ کتابی منطبق نبود.
+function attachBookFilter(listEl, applyFilter) {
+  if (!listEl || listEl.parentNode.querySelector(":scope > .book-filter-row")) return;
+  const row = document.createElement("div");
+  row.className = "book-filter-row";
+  row.innerHTML = `
+    <select aria-label="فیلتر بر اساس">
+      <option value="all">همه</option>
+      <option value="title">عنوان</option>
+      <option value="author">نویسنده</option>
+      <option value="subject">موضوع</option>
+    </select>
+    <input type="search" placeholder="فیلتر کتاب‌ها…" aria-label="عبارت فیلتر کتاب‌ها">`;
+  const empty = document.createElement("p");
+  empty.className = "book-filter-empty";
+  empty.textContent = "کتابی با این مشخصات یافت نشد.";
+  empty.hidden = true;
+  listEl.parentNode.insertBefore(row, listEl);
+  listEl.parentNode.insertBefore(empty, listEl);
+
+  const select = row.querySelector("select");
+  const input = row.querySelector("input");
+  const run = () => {
+    const query = input.value.trim();
+    empty.hidden = applyFilter(select.value, query) !== false;
+  };
+  input.addEventListener("input", run);
+  select.addEventListener("change", run);
+}
+
 // آیتم ب: راه‌اندازی مشترک پنل «محدودهٔ جست‌وجو/گفتگو» - فهرست تیک‌خور
 // کتاب‌ها رو از embeddings.json (بعد از بارگذاری، فقط یک‌بار) می‌سازه و
 // یه Set از اسم کتاب‌های تیک‌خورده رو برمی‌گردونه؛ این Set همیشه به‌روزه
@@ -252,6 +314,24 @@ function setupScopeSelector(toggleId, panelId, listId, onToggle) {
           }
         });
       });
+
+      // فیلتر عنوان/نویسنده/موضوع: فقط کتاب‌های منطبق در فهرست و در دامنه می‌مانند.
+      const metaByTitle = getBookMetaByTitle();
+      attachBookFilter(list, (field, query) => {
+        const boxes = [...list.querySelectorAll(".ai-scope-checkbox")];
+        const matched = boxes.filter((cb) =>
+          !query || bookMatchesFilter(metaByTitle.get(cb.value) || { title: cb.value }, field, query)
+        );
+        if (matched.length === 0) return false;
+        boxes.forEach((cb) => {
+          const isMatch = matched.includes(cb);
+          cb.closest("label").hidden = !isMatch;
+          cb.checked = isMatch;
+          if (isMatch) selectedBooks.add(cb.value);
+          else selectedBooks.delete(cb.value);
+        });
+        return true;
+      });
     } catch {
       list.innerHTML = `<p style="color:#b91c1c;">خطا در بارگذاری فهرست کتاب‌ها</p>`;
     }
@@ -283,6 +363,7 @@ function setupScopeSelector(toggleId, panelId, listId, onToggle) {
     button.addEventListener("click", () => {
       const checkAll = button.dataset.scopeAction === "all";
       list.querySelectorAll(".ai-scope-checkbox").forEach((checkbox) => {
+        if (checkbox.closest("label").hidden) return; // کتاب‌های فیلترشده دست نمی‌خورند
         checkbox.checked = checkAll;
         if (checkAll) {
           selectedBooks.add(checkbox.value);
