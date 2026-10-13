@@ -2736,14 +2736,14 @@
                 id="bookScopeSelectAll"
                 type="button"
                 class="book-scope-action-button">
-                انتخاب همه
+                همه
               </button>
 
               <button
                 id="bookScopeDeselectAll"
                 type="button"
                 class="book-scope-action-button">
-                لغو انتخاب
+                هیچ‌کدام
               </button>
             </div>
 
@@ -6847,8 +6847,8 @@
 
       const toggleRect = toggle.getBoundingClientRect();
       const spaceBelow = window.innerHeight - toggleRect.bottom - GAP - EDGE_MARGIN;
-      const spaceAbove = toggleRect.top - GAP - EDGE_MARGIN;
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+            // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       let left = toggleRect.right - popover.offsetWidth;
       left = Math.max(EDGE_MARGIN, Math.min(left, window.innerWidth - popover.offsetWidth - EDGE_MARGIN));
@@ -6862,7 +6862,7 @@
         popover.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       popover.style.maxHeight = Math.min(360, available) + "px";
     }
 
@@ -6945,7 +6945,8 @@
       const spaceBelow = window.innerHeight - gearRect.bottom - GAP - EDGE_MARGIN;
       const spaceAbove = gearRect.top - GAP - EDGE_MARGIN;
 
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+      // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       // چون منو position:fixed است، مختصاتش نسبت به viewport است نه
       // نسبت به offset parent خودش در جریان عادی صفحه - پس باید همین‌جا
@@ -6962,7 +6963,7 @@
         menu.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       menu.style.maxHeight = available + "px";
     }
 
@@ -7107,7 +7108,8 @@
       const rowRect = row.getBoundingClientRect();
       const spaceBelow = window.innerHeight - toggleRect.bottom - GAP - EDGE_MARGIN;
       const spaceAbove = toggleRect.top - GAP - EDGE_MARGIN;
-      const openUpward = spaceBelow < MIN_USABLE && spaceAbove > spaceBelow;
+      // همیشه به پایین باز می‌شود (هم‌رفتار با پنل جست‌وجوی مفهومی و گفتگو)
+      const openUpward = false;
 
       // آیتم جدید: شروع این پنل باید با شروع خودِ ردیف (کادر جستجو) یکی
       // باشه - نه فقط زیر خودِ دکمهٔ ⋮ - و عرضش هم به‌اندازهٔ کل ردیفه،
@@ -7125,7 +7127,7 @@
         menu.style.bottom = "auto";
       }
 
-      const available = Math.max(openUpward ? spaceAbove : spaceBelow, MIN_USABLE);
+      const available = Math.max(spaceBelow, MIN_USABLE);
       menu.style.maxHeight = Math.min(available, window.innerHeight * 0.7) + "px";
     }
 
