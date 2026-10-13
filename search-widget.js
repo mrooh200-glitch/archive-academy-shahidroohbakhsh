@@ -266,6 +266,52 @@ function attachBookFilter(listEl, applyFilter) {
   select.addEventListener("change", run);
 }
 
+// ---------- دیده‌شدن کامل جعبهٔ انتخاب کتاب هنگام باز شدن ----------
+// وقتی کادر جست‌وجو پایین صفحه است (مثلاً قبل از اولین جست‌وجو)، جعبه‌ای که
+// زیرش باز می‌شود از پایین نمایشگر بریده می‌شود. این تابع صفحه را به‌اندازهٔ
+// لازم پایین می‌برد (مثل وقتی که بنرهای بالای صفحه بعد از جست‌وجو بالا می‌روند)
+// تا کل جعبه دیده شود. اگر خودِ صفحه آن‌قدر بلند نیست که اسکرول شود، یک فاصلهٔ
+// موقت زیر صفحه اضافه می‌کند که با بسته‌شدن جعبه برداشته می‌شود.
+function revealPanelInViewport(panelEl) {
+  removeRevealSpacer();
+  if (!panelEl) return;
+  const MARGIN = 12;
+
+  const pass = (behavior) => {
+    if (!panelEl.isConnected) return;
+    const over = panelEl.getBoundingClientRect().bottom - (window.innerHeight - MARGIN);
+    if (over <= 1) return;
+
+    // پایانِ قابل‌اسکرولِ صفحه = بزرگ‌تر از پایان body و پایان خودِ جعبه (چون
+    // جعبه گاهی absolute است و از body بیرون می‌زند). برای این‌که اسکرول به
+    // اندازهٔ لازم ممکن شود، پایان body را با یک فاصلهٔ موقت بالا می‌بریم.
+    const needEnd = window.scrollY + window.innerHeight + over;
+    const bodyEnd = document.body.getBoundingClientRect().bottom + window.scrollY;
+    if (bodyEnd < needEnd) {
+      let spacer = document.getElementById("scopeRevealSpacer");
+      if (!spacer) {
+        spacer = document.createElement("div");
+        spacer.id = "scopeRevealSpacer";
+        spacer.setAttribute("aria-hidden", "true");
+        spacer.style.cssText = "pointer-events:none;height:0px;";
+        document.body.appendChild(spacer);
+      }
+      spacer.style.height = `${(parseFloat(spacer.style.height) || 0) + Math.ceil(needEnd - bodyEnd)}px`;
+    }
+    window.scrollBy({ top: over, behavior });
+  };
+
+  pass("smooth");
+  // بعد از پایان اسکرول نرم، یک بار دیگر (بدون انیمیشن) بررسی می‌کنیم تا
+  // حاشیهٔ پایین جعبه هم تأمین شود.
+  setTimeout(() => pass("auto"), 900);
+}
+
+function removeRevealSpacer() {
+  const spacer = document.getElementById("scopeRevealSpacer");
+  if (spacer) spacer.remove();
+}
+
 // آیتم ب: راه‌اندازی مشترک پنل «محدودهٔ جست‌وجو/گفتگو» - فهرست تیک‌خور
 // کتاب‌ها رو از embeddings.json (بعد از بارگذاری، فقط یک‌بار) می‌سازه و
 // یه Set از اسم کتاب‌های تیک‌خورده رو برمی‌گردونه؛ این Set همیشه به‌روزه
@@ -342,12 +388,14 @@ function setupScopeSelector(toggleId, panelId, listId, onToggle) {
     if (isOpen) {
       panel.style.display = "none";
       toggle.setAttribute("aria-expanded", "false");
+      removeRevealSpacer();
       if (onToggle) onToggle(false);
       return;
     }
     await populateList();
     panel.style.display = "flex";
     toggle.setAttribute("aria-expanded", "true");
+    revealPanelInViewport(panel);
     if (onToggle) onToggle(true);
   });
 
@@ -355,6 +403,7 @@ function setupScopeSelector(toggleId, panelId, listId, onToggle) {
     if (panel.style.display !== "none" && !panel.contains(event.target) && event.target !== toggle) {
       panel.style.display = "none";
       toggle.setAttribute("aria-expanded", "false");
+      removeRevealSpacer();
       if (onToggle) onToggle(false);
     }
   });
