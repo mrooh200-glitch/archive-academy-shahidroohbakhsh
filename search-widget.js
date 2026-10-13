@@ -282,22 +282,24 @@ function revealPanelInViewport(panelEl) {
     const over = panelEl.getBoundingClientRect().bottom - (window.innerHeight - MARGIN);
     if (over <= 1) return;
 
-    // پایانِ قابل‌اسکرولِ صفحه = بزرگ‌تر از پایان body و پایان خودِ جعبه (چون
-    // جعبه گاهی absolute است و از body بیرون می‌زند). برای این‌که اسکرول به
-    // اندازهٔ لازم ممکن شود، پایان body را با یک فاصلهٔ موقت بالا می‌بریم.
+    // برای این‌که اسکرول به اندازهٔ لازم ممکن شود، باید «پایان محتوای واقعی
+    // صفحه» (نه پایان body که ممکن است به‌خاطر min-height بزرگ‌تر از محتوا
+    // باشد) به‌اندازهٔ کافی پایین‌تر برود. یک فاصلهٔ موقت در انتهای body
+    // می‌گذاریم و ارتفاعش را از روی جای خودش (= پایان واقعی محتوا) حساب
+    // می‌کنیم.
     const needEnd = window.scrollY + window.innerHeight + over;
-    const bodyEnd = document.body.getBoundingClientRect().bottom + window.scrollY;
-    if (bodyEnd < needEnd) {
-      let spacer = document.getElementById("scopeRevealSpacer");
-      if (!spacer) {
-        spacer = document.createElement("div");
-        spacer.id = "scopeRevealSpacer";
-        spacer.setAttribute("aria-hidden", "true");
-        spacer.style.cssText = "pointer-events:none;height:0px;";
-        document.body.appendChild(spacer);
-      }
-      spacer.style.height = `${(parseFloat(spacer.style.height) || 0) + Math.ceil(needEnd - bodyEnd)}px`;
+    let spacer = document.getElementById("scopeRevealSpacer");
+    if (!spacer) {
+      spacer = document.createElement("div");
+      spacer.id = "scopeRevealSpacer";
+      spacer.setAttribute("aria-hidden", "true");
+      spacer.style.cssText = "pointer-events:none;height:0px;";
+      document.body.appendChild(spacer);
     }
+    const contentEnd = spacer.getBoundingClientRect().top + window.scrollY;
+    const curH = parseFloat(spacer.style.height) || 0;
+    const neededH = Math.ceil(needEnd - contentEnd);
+    if (neededH > curH) spacer.style.height = `${neededH}px`;
     window.scrollBy({ top: over, behavior });
   };
 
