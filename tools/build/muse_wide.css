@@ -1,0 +1,7 @@
+#sticky_foot{display:none !important;}
+#cookies_msg{display:none !important;}
+.aux{display:none !important;}
+.summary_wrap{float:none !important;width:100% !important;max-width:100% !important;margin-left:0 !important;margin-right:0 !important;padding-left:16px !important;padding-right:16px !important;box-sizing:border-box !important;}
+@media (min-width:860px){.summary_wrap{max-width:760px !important;margin-left:auto !important;margin-right:auto !important;padding-left:0 !important;padding-right:0 !important;}}
+.abstract{padding-left:0 !important;padding-right:0 !important;margin-left:0 !important;margin-right:0 !important;}
+.abstract p{margin-left:0 !important;margin-right:0 !important;}
