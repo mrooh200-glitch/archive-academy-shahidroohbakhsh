@@ -1,8 +1,9 @@
 /**
  * Cloudflare Worker
  *
- * دو endpoint داره:
+ * چند endpoint داره (مسیرهای اصلی جست‌وجوی هوشمند):
  *  - POST /embed  → عبارت جست‌وجوی کاربر رو می‌گیره، بردارش رو با BGE-M3 برمی‌گردونه
+ *  - POST /rerank → ترتیب دقیق‌تر نامزدهای جست‌وجو با مدل reranker (اختیاری؛ در خطا {ok:false})
  *  - POST /chat   → سؤال کاربر + متن‌های مرتبط رو می‌گیره، از Gemini پاسخ می‌گیره و برمی‌گردونه
  *
  * متغیر محیطی لازم (در wrangler.toml یا Cloudflare Dashboard تنظیم می‌شه):
@@ -80,6 +81,7 @@ function withCors(response, origin) {
 const RATE_LIMITS = {
   "/chat": { limit: 20, windowMs: 60_000 },
   "/embed": { limit: 60, windowMs: 60_000 },
+  "/rerank": { limit: 30, windowMs: 60_000 },
   "/contact": { limit: 5, windowMs: 600_000 },
   // /track با هر رویداد در KV می‌نویسد و سقف نوشتن روزانهٔ KV کم است؛ پس
   // سقفی سخاوتمندانه (بالاتر از استفادهٔ عادی یک بازدیدکننده) می‌گذاریم.
@@ -165,6 +167,10 @@ async function routeRequest(request, env) {
       return await handleEmbed(request, env);
     }
 
+    if (url.pathname === "/rerank" && request.method === "POST") {
+      return await handleRerank(request, env);
+    }
+
     if (url.pathname === "/chat" && request.method === "POST") {
       return await handleChat(request, env);
     }
@@ -238,6 +244,69 @@ async function handleEmbed(request, env) {
   }
 
   return jsonResponse({ vector });
+}
+
+// ---------- /rerank : مرتب‌سازی دقیق‌تر نامزدهای جست‌وجو (reranker) ----------
+// کلاینت ~۴۰ تکهٔ نزدیک (به‌ترتیب cosine) را می‌فرستد؛ مدل reranker سؤال و هر
+// تکه را «با هم» می‌خواند و امتیاز مرتبط‌بودن می‌دهد. خروجی فقط ترتیب است
+// (اندیس نامزدها از مرتبط‌ترین)، نه خودِ متن‌ها. این مرحله «اختیاری و امن‌بر-
+// شکست» است: هر خطایی (مدل در دسترس نبود، سهمیه تمام شد، تایم‌اوت) باعث
+// پاسخ {ok:false} با کد ۲۰۰ می‌شود تا کلاینت بی‌صدا به ترتیب cosine برگردد و
+// گفتگو هیچ‌وقت به‌خاطر reranker قطع نشود.
+const RERANK_MODEL = "@cf/baai/bge-reranker-base";
+const MAX_RERANK_CANDIDATES = 50;
+const MAX_RERANK_TEXT_CHARS = 1500;
+const RERANK_TIMEOUT_MS = 8000;
+
+async function handleRerank(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ error: "درخواست نامعتبر است (بدنهٔ JSON خوانده نشد)." }, 400);
+  }
+  const query = typeof body?.query === "string" ? body.query.trim() : "";
+  const texts = Array.isArray(body?.candidates)
+    ? body.candidates.filter((t) => typeof t === "string" && t.trim()).slice(0, MAX_RERANK_CANDIDATES)
+    : [];
+  if (!query || query.length > MAX_QUESTION_CHARS) {
+    return jsonResponse({ error: "پارامتر query نامعتبر است." }, 400);
+  }
+  if (texts.length === 0) {
+    return jsonResponse({ error: "پارامتر candidates (آرایه‌ای از متن‌ها) لازمه" }, 400);
+  }
+  // اندیس‌ها نسبت به آرایهٔ اصلیِ کلاینت باید معتبر بمانند؛ پس اگر بعضی
+  // عنصرها فیلتر شدند کار نمی‌کنیم و ترتیب cosine را نگه می‌داریم.
+  if (texts.length !== body.candidates.length) {
+    return jsonResponse({ ok: false, reason: "invalid_candidates" });
+  }
+  if (!env.AI) return jsonResponse({ ok: false, reason: "no_ai_binding" });
+
+  try {
+    const result = await Promise.race([
+      env.AI.run(RERANK_MODEL, {
+        query,
+        contexts: texts.map((t) => ({ text: t.slice(0, MAX_RERANK_TEXT_CHARS) })),
+        top_k: texts.length,
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("rerank timeout")), RERANK_TIMEOUT_MS)),
+    ]);
+    const rows = Array.isArray(result?.response) ? result.response : [];
+    const seen = new Set();
+    const order = [];
+    for (const row of rows) {
+      const id = row?.id;
+      if (Number.isInteger(id) && id >= 0 && id < texts.length && !seen.has(id)) {
+        seen.add(id);
+        order.push({ id, score: typeof row.score === "number" ? row.score : null });
+      }
+    }
+    if (order.length === 0) return jsonResponse({ ok: false, reason: "empty_result" });
+    return jsonResponse({ ok: true, order });
+  } catch (err) {
+    console.error("rerank failed", err);
+    return jsonResponse({ ok: false, reason: "rerank_failed" });
+  }
 }
 
 // ---------- تلاش دوباره برای خطاهای موقتی Gemini (کد 503 / status UNAVAILABLE، و کد 429 / سهمیهٔ لحظه‌ای) ----------
