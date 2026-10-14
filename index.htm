@@ -2035,11 +2035,74 @@
       border-color: #e6e1f0;
     }
 
+    /* جعبهٔ جست‌وجو در مقاله‌ها: دکمه + جعبهٔ بازشو، هم‌شکل جعبهٔ انتخاب کتاب */
+    .title-filter-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .title-filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+      color: #1f2937;
+      font: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .title-filter-toggle[aria-expanded="true"] {
+      border-color: #6d28d9;
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.15);
+    }
+
+    .title-filter-badge {
+      color: #6d28d9;
+      font-size: 0.7rem;
+    }
+
+    .title-filter-panel {
+      right: 0;
+      left: auto;
+      width: 300px;
+      max-width: calc(100vw - 32px);
+      z-index: 30;
+    }
+
+    .title-filter-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .title-filter-fields label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .title-filter-panel .book-filter-row {
+      border-bottom: 0;
+    }
+
+    .title-filter-panel .book-filter-row input {
+      width: 100%;
+    }
+
     .title-search-tree {
       position: sticky;
       top: 0;
       z-index: 2;
       margin-bottom: 20px;
+      /* جعبهٔ بازشوی جست‌وجو باید از قاب بیرون بزند */
+      overflow: visible;
     }
 
     .title-search-content {
@@ -2267,9 +2330,9 @@
        بین‌شان و تیتر مشخص بالای هر ستون. */
     .book-columns {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 32px;
-      max-width: 480px;
+      align-items: start;
     }
 
     .book-column-title {
@@ -2617,18 +2680,48 @@
       <div class="browse-floating-panel">
       <div id="readingHistoryRow" class="reading-history-row" style="display:none;"></div>
 
-      <section class="tree title-search-tree" aria-label="جست‌وجو در عنوان کتاب‌ها">
+      <section class="tree title-search-tree" aria-label="جست‌وجو در مقاله‌ها">
         <div class="branch-content title-search-content">
-          <input
-            id="titleSearch"
-            class="search-box title-search-input"
-            type="search"
-            placeholder="جست‌وجو در عنوان کتاب‌ها…"
-            aria-label="جست‌وجو در عنوان کتاب‌ها">
+          <div class="title-filter-wrap">
+            <button
+              id="titleSearchToggle"
+              type="button"
+              class="title-filter-toggle"
+              title="جست‌وجو در مقاله‌ها (بر اساس عنوان، نویسنده و موضوع)"
+              aria-haspopup="true"
+              aria-expanded="false">
+              <span aria-hidden="true">🔎</span>
+              <span>جست‌وجو در مقاله‌ها</span>
+              <span id="titleFilterBadge" class="title-filter-badge" hidden>●</span>
+            </button>
 
-          <p id="titleNoResults" style="display:none; margin: 10px 0 0; color:#9a3412;">
-            عنوانی پیدا نشد.
-          </p>
+            <div id="titleSearchPanel" class="ai-scope-panel title-filter-panel" style="display:none;">
+              <div class="ai-scope-panel-header">
+                <span>جست‌وجو بر اساس</span>
+                <div>
+                  <button type="button" id="titleFilterClear">پاک‌کردن</button>
+                </div>
+              </div>
+
+              <div class="title-filter-fields" role="group" aria-label="آیتم‌های جست‌وجو">
+                <label><input type="checkbox" class="title-filter-field" value="title" checked> عنوان</label>
+                <label><input type="checkbox" class="title-filter-field" value="author" checked> نویسنده</label>
+                <label><input type="checkbox" class="title-filter-field" value="subject" checked> موضوع</label>
+              </div>
+
+              <div class="book-filter-row">
+                <input
+                  id="titleSearch"
+                  type="search"
+                  placeholder="کلمه یا عبارت…"
+                  aria-label="عبارت جست‌وجو در مقاله‌ها">
+              </div>
+
+              <p id="titleNoResults" class="book-filter-empty" style="display:none;">
+                مقاله‌ای با این مشخصات پیدا نشد.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2637,7 +2730,7 @@
       <div class="book-columns">
 
         <div class="main-branch book-column">
-          <div class="book-column-title">مقاله‌ها</div>
+          <div class="book-column-title">HTM</div>
 
           <div class="branch-content">
             <ul class="book-list">
@@ -2662,13 +2755,113 @@
                 data-title="نهج البلاغه"
                 data-author="امام علی (ع)؛ گردآوری سید رضی"
                 data-subject="خطبه، نامه، حکمت، نهج‌البلاغه"
-                data-url="nahjol-balaghih.htm">
+                data-url="nahjol_balaghih.htm">
                 <a
                   class="html-link"
-                  href="nahjol-balaghih.htm"
+                  href="nahjol_balaghih.htm"
                   target="_blank"
                   rel="noopener">
                   نهج البلاغه
+                </a>
+              </li>
+
+              <li
+                class="searchable-item"
+                data-title="هوش هیجانی، پیشینه و رویکردها از نگاه دین و روانشناسی"
+                data-author="رحیم میردریکوندی"
+                data-subject="هوش هیجانی، دین، روان‌شناسی"
+                data-url="Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.html">
+                <a
+                  class="html-link"
+                  href="Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.html"
+                  target="_blank"
+                  rel="noopener">
+                  هوش هیجانی، پیشینه و رویکردها از نگاه دین و روانشناسی
+                </a>
+              </li>
+
+              <li
+                class="searchable-item"
+                data-title="تدوین مداخلهٔ آموزشی مبتنی بر الگوی تنظیم رفتار جنسی با رویکرد اسلامی"
+                data-author="مهدی عباسی، محمدحسین حق‌شناس"
+                data-subject="تنظیم رفتار جنسی، خویشتن‌داری جنسی، رویکرد اسلامی"
+                data-url="Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.html">
+                <a
+                  class="html-link"
+                  href="Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.html"
+                  target="_blank"
+                  rel="noopener">
+                  تدوین مداخلهٔ آموزشی مبتنی بر الگوی تنظیم رفتار جنسی با رویکرد اسلامی
+                </a>
+              </li>
+
+              <li
+                class="searchable-item"
+                data-title="راهبردهای تنظیم هیجان در قرآن کریم"
+                data-author="علی اقبالی"
+                data-subject="تنظیم هیجان، قرآن کریم، روان‌شناسی"
+                data-url="Tanzim_Hayajan_Dar_Quran.html">
+                <a
+                  class="html-link"
+                  href="Tanzim_Hayajan_Dar_Quran.html"
+                  target="_blank"
+                  rel="noopener">
+                  راهبردهای تنظیم هیجان در قرآن کریم
+                </a>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+        <div class="main-branch book-column">
+          <div class="book-column-title">PDF</div>
+
+          <div class="branch-content">
+            <ul class="book-list">
+
+              <li
+                class="searchable-item"
+                data-title="هوش هیجانی، پیشینه و رویکردها از نگاه دین و روانشناسی"
+                data-author="رحیم میردریکوندی"
+                data-subject="هوش هیجانی، دین، روان‌شناسی" data-pdf="true"
+                data-url="Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.pdf">
+                <a
+                  class="pdf-link"
+                  href="Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.pdf"
+                  target="_blank"
+                  rel="noopener">
+                  هوش هیجانی، پیشینه و رویکردها از نگاه دین و روانشناسی
+                </a>
+              </li>
+
+              <li
+                class="searchable-item"
+                data-title="تدوین مداخلهٔ آموزشی مبتنی بر الگوی تنظیم رفتار جنسی با رویکرد اسلامی"
+                data-author="مهدی عباسی، محمدحسین حق‌شناس"
+                data-subject="تنظیم رفتار جنسی، خویشتن‌داری جنسی، رویکرد اسلامی" data-pdf="true"
+                data-url="Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.pdf">
+                <a
+                  class="pdf-link"
+                  href="Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.pdf"
+                  target="_blank"
+                  rel="noopener">
+                  تدوین مداخلهٔ آموزشی مبتنی بر الگوی تنظیم رفتار جنسی با رویکرد اسلامی
+                </a>
+              </li>
+
+              <li
+                class="searchable-item"
+                data-title="راهبردهای تنظیم هیجان در قرآن کریم"
+                data-author="علی اقبالی"
+                data-subject="تنظیم هیجان، قرآن کریم، روان‌شناسی" data-pdf="true"
+                data-url="Tanzim_Hayajan_Dar_Quran.pdf">
+                <a
+                  class="pdf-link"
+                  href="Tanzim_Hayajan_Dar_Quran.pdf"
+                  target="_blank"
+                  rel="noopener">
+                  راهبردهای تنظیم هیجان در قرآن کریم
                 </a>
               </li>
 
@@ -8793,17 +8986,30 @@
       }
     ));
 
-    function filterTitles(query) {
-      const cleanQuery = normalize(query);
+    // جست‌وجو در مقاله‌ها: فقط روی آیتم‌های فعال (عنوان/نویسنده/موضوع).
+    // منطق تطبیق از search-widget.js می‌آید (bookFilterNormalize).
+    const titleSearchToggle = document.getElementById("titleSearchToggle");
+    const titleSearchPanel = document.getElementById("titleSearchPanel");
+    const titleFilterBadge = document.getElementById("titleFilterBadge");
+    const titleFilterClear = document.getElementById("titleFilterClear");
+    const titleFilterFields = [...document.querySelectorAll(".title-filter-field")];
+
+    function activeTitleFilterFields() {
+      return titleFilterFields.filter(box => box.checked).map(box => box.value);
+    }
+
+    function filterTitles() {
+      const fields = activeTitleFilterFields();
+      const query = bookFilterNormalize(titleSearchInput.value);
       let visibleCount = 0;
 
       allBookListItems.forEach(item => {
-        const titleText = item.dataset.title ||
-          item.querySelector("a")?.textContent ||
-          "";
-
-        const matchesQuery = !cleanQuery ||
-          normalize(titleText).includes(cleanQuery);
+        const matchesQuery = !query || fields.some(field => {
+          const value = field === "title"
+            ? (item.dataset.title || item.querySelector("a")?.textContent || "")
+            : (item.dataset[field] || "");
+          return bookFilterNormalize(value).includes(query);
+        });
 
         item.style.display = matchesQuery ? "" : "none";
 
@@ -8816,7 +9022,7 @@
         const hasVisibleItem = [...branch.querySelectorAll("li")]
           .some(item => item.style.display !== "none");
 
-        if (cleanQuery) {
+        if (query) {
           branch.open = hasVisibleItem;
           branch.style.display = hasVisibleItem ? "" : "none";
         } else {
@@ -8825,11 +9031,67 @@
       });
 
       titleNoResults.style.display =
-        cleanQuery && visibleCount === 0 ? "block" : "none";
+        query && visibleCount === 0 ? "block" : "none";
+      titleFilterBadge.hidden = !query;
     }
 
-    titleSearchInput.addEventListener("input", function () {
-      filterTitles(this.value);
+    function openTitleSearchPanel() {
+      titleSearchPanel.style.display = "flex";
+      titleSearchToggle.setAttribute("aria-expanded", "true");
+      titleSearchInput.focus({ preventScroll: true });
+      if (typeof revealPanelInViewport === "function") {
+        revealPanelInViewport(titleSearchPanel);
+      }
+    }
+
+    function closeTitleSearchPanel() {
+      titleSearchPanel.style.display = "none";
+      titleSearchToggle.setAttribute("aria-expanded", "false");
+      if (typeof removeRevealSpacer === "function") removeRevealSpacer();
+    }
+
+    titleSearchToggle.addEventListener("click", event => {
+      event.stopPropagation();
+      if (titleSearchPanel.style.display === "none") {
+        openTitleSearchPanel();
+      } else {
+        closeTitleSearchPanel();
+      }
+    });
+
+    document.addEventListener("click", event => {
+      if (
+        titleSearchPanel.style.display !== "none" &&
+        !titleSearchPanel.contains(event.target) &&
+        !titleSearchToggle.contains(event.target)
+      ) {
+        closeTitleSearchPanel();
+      }
+    });
+
+    titleSearchPanel.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeTitleSearchPanel();
+        titleSearchToggle.focus();
+      }
+    });
+
+    titleSearchInput.addEventListener("input", filterTitles);
+
+    titleFilterFields.forEach(box => {
+      box.addEventListener("change", () => {
+        // دست‌کم یک آیتم باید فعال بماند.
+        if (activeTitleFilterFields().length === 0) {
+          box.checked = true;
+        }
+        filterTitles();
+      });
+    });
+
+    titleFilterClear.addEventListener("click", () => {
+      titleSearchInput.value = "";
+      filterTitles();
+      titleSearchInput.focus({ preventScroll: true });
     });
 
     loadTextDocuments();

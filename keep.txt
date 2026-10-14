@@ -13,9 +13,14 @@ icon-*.png
 roohbakhsh-hero.jpg
 in-page-search.js
 search-widget.js
-nahjol-balaghih.htm
+nahjol_balaghih.htm
 embeddings.json
 embeddings-version.json
+
+# articles (html + pdf)
+Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.*
+Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.*
+Tanzim_Hayajan_Dar_Quran.*
 
 # content folders
 aa/
