@@ -21,6 +21,12 @@ embeddings-version.json
 Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.*
 Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.*
 Tanzim_Hayajan_Dar_Quran.*
+Daramadi_Moalefehaye_Modiriyat_Darman_Hayajani_Eslam.*
+Khashm_Negah_Eslam_Ravanshenasi.*
+Khodkontroli_Sazokarhaye_Royesh_Avamel_Zedayesh_Quran.*
+Mabani_Kontrol_Hayajan_Dar_Quran.*
+Modakhele_Khodkontroli_Hayajan_Eslami_Khodarzayi_Nojavanan.*
+Rahkarha_Kontrol_Zehn_Khavater_Nafsani_Eslam.*
 
 # content folders
 aa/
