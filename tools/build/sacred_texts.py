@@ -53,13 +53,21 @@ def sl(a,b):
     return re.sub(r'\s+',' ',body[mp[s]:mp[e-1]+1]).strip()
 T=[sl(a,b) for a,b,_,_ in SPEC]
 for t in T: print('TARGET:',t)
-BOXES=[["متنِ اصلیِ انگلیسی (صفحه‌ی ۲۱ فایل PDF):","ltr",en] for _,_,en,pg in SPEC]
+PLAIN=['مانو می‌گه: «پوت» اسمِ یه جهنمه و پسر، پدرش رو از اون جهنم نجات می‌ده؛ برای همین «قائم به ذات» به پسر گفته «پوت‌ترا»، یعنی «رهایی‌دهنده از پوت».']
+BOXES=[["متنِ اصلیِ انگلیسی (صفحه‌ی ۲۱ فایل PDF):","ltr",en,PLAIN[k]] for k,(_,_,en,pg) in enumerate(SPEC)]
 # فرگمنت زنده: هایلایت اول (اولین در ترتیب ظهور)، ۴ واژه‌ی اول و آخر از متن انگلیسی
-ew=SPEC[0][2].rstrip('.').split()
-frag=urllib.parse.quote(' '.join(ew[:4]),safe='')+','+urllib.parse.quote(' '.join(ew[-4:]),safe='')
+ew=re.sub(r'^\d+\.\s*','',SPEC[0][2]).rstrip('.').split()
+def fq(t): return urllib.parse.quote(t,safe='').replace('-','%2D')
+frag=fq(' '.join(ew[:4]))+','+fq(' '.join(ew[-4:]))
 art='''<style id="article-indent-style">
-  .reader-article-container p:not(.fa-original-en) { text-indent: 0.4cm !important; font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; text-align: right !important; }
-  .reader-article-container p:not(.fa-original-en) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
+  .reader-article-container p:not(.fa-original-en):not(.plain-explain-text) { text-indent: 0.4cm !important; font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 16px !important; font-weight: 500 !important; line-height: 1.9 !important; text-align: right !important; }
+  .reader-article-container p:not(.fa-original-en):not(.plain-explain-text) font { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; }
+</style>
+<style id="plain-explain-style">
+  .plain-explain { direction: rtl; text-align: right; background: #fbf6e6; border-right: 4px solid var(--b-forest); border-radius: 6px; padding: 12px 16px; margin: 6px 0 22px 0; color: #3a3446; }
+  .plain-explain .plain-explain-title { font-family: Vazirmatn, Tahoma, Arial, sans-serif; font-size: 12.5px; font-weight: 800; color: var(--b-forest-dark); margin-bottom: 6px; text-indent: 0; }
+  .plain-explain p.plain-explain-text { font-family: Vazirmatn, Tahoma, Arial, sans-serif !important; font-size: 15px !important; font-weight: 500 !important; line-height: 1.9 !important; margin: 0 !important; text-indent: 0 !important; text-align: right !important; }
+  body.dark-mode .plain-explain { background: #221d30; color: #e7e2f2; }
 </style>
 '''
 extra=open('tools/build/sacred_wide.css').read() if len(sys.argv)>2 else ''
@@ -82,6 +90,15 @@ m=re.search(r'<body[^>]*>',x); x=x[:m.end()]+chrome+x[m.end():]
 k=R77.index('<script id="kill-dialog-script"'); tail=R77[k:]
 tail,kk=re.subn(r'var TARGETS = \[.*?\];',lambda m_:'var TARGETS = '+json.dumps(T,ensure_ascii=False)+';',tail,count=1,flags=re.S); assert kk==1
 tail,kk=re.subn(r'var BOXES = [^;]*;',lambda m_:'var BOXES = '+json.dumps(BOXES,ensure_ascii=False)+';',tail,count=1); assert kk==1
+ins='blockAncestor.parentNode.insertBefore(box, blockAncestor.nextSibling);'
+assert tail.count(ins)==1
+tail=tail.replace(ins,ins+'''
+    if (spec[3]) {
+      var pe = document.createElement("div"); pe.className = "plain-explain";
+      var pt = document.createElement("div"); pt.className = "plain-explain-title"; pt.textContent = "یعنی چی؟ (توضیح به زبان ساده)";
+      var pp = document.createElement("p"); pp.className = "plain-explain-text"; pp.textContent = spec[3];
+      pe.appendChild(pt); pe.appendChild(pp); box.parentNode.insertBefore(pe, box.nextSibling);
+    }''')
 tail=tail.replace('var SKIP_ARROW = true;','var SKIP_ARROW = false;')
 x=x+'\n'+tail
 open(sys.argv[1],'w',encoding='utf-8').write(x); print(len(x))
