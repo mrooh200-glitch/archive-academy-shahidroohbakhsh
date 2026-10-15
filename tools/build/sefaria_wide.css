@@ -1,0 +1,14 @@
+html,body{height:auto !important;min-height:0 !important;overflow-y:visible !important;}
+#s2{position:static !important;height:auto !important;width:auto !important;overflow:visible !important;}
+.readerApp,.readerApp #main,#main,.panelContainer,#panelWrapBox,.readerPanelBox,.readerPanel{position:static !important;height:auto !important;min-height:0 !important;max-height:none !important;overflow:visible !important;width:auto !important;left:auto !important;right:auto !important;top:auto !important;}
+.readerPanel .textColumn{height:auto !important;max-height:none !important;overflow:visible !important;}
+.readerApp>.header,.siteWideBanner,.loadingMessage{display:none !important;}
+.readerPanel .textColumn{padding-left:16px !important;padding-right:16px !important;box-sizing:border-box !important;}
+.textRange.basetext{padding-left:0 !important;padding-right:0 !important;max-width:760px !important;margin-left:auto !important;margin-right:auto !important;box-sizing:border-box !important;}
+.textRange.basetext .segment{padding-left:0 !important;padding-right:0 !important;}
+@media (min-width:860px){.readerPanel .textColumn{padding-left:0 !important;padding-right:0 !important;}}
+@media (max-width:859px){.segmentNumber,.linkCount{display:none !important;}}
+@media (max-width:859px){.readerControlsOuter{overflow-x:clip !important;}}
+.textRange .segment p.segmentText{direction:rtl !important;}
+.textRange .segment{direction:rtl !important;text-align:right !important;}
+.textRange .segment p.segmentText{margin-left:0 !important;margin-right:0 !important;}

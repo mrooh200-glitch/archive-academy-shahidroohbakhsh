@@ -1,0 +1,4 @@
+const {chromium}=require('/opt/node22/lib/node_modules/playwright');
+(async()=>{const b=await chromium.launch();
+for(const w of [1280,390]){const pg=await b.newPage({viewport:{width:w,height:800}});await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(3500);
+console.log(w+'\n'+await pg.evaluate(()=>{let e=document.querySelector('mark.flash-highlight').closest('.segment'),o=[];while(e&&e!==document.documentElement){const r=e.getBoundingClientRect(),c=getComputedStyle(e);o.push(e.tagName+'.'+e.className.toString().replace(/\s+/g,'.').slice(0,28)+'#'+(e.id||'').slice(0,12)+' L'+Math.round(r.left)+' R'+Math.round(innerWidth-r.right)+' W'+Math.round(r.width)+' '+c.display+' '+c.position+(c.float!=='none'?' fl='+c.float:'')+' pl'+c.paddingLeft+' pr'+c.paddingRight);e=e.parentElement}return o.join('\n')}));await pg.close()}await b.close()})();

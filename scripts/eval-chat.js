@@ -102,6 +102,37 @@ function selectContext(scored, variant) {
   return out;
 }
 
+// واریانت rerank: r{C}k{K} = C نامزد cosine ← /rerank زنده ← K تکهٔ برتر (مثلاً r40k8).
+// اگر /rerank جواب نداد (ok:false) به K تکهٔ اول cosine برمی‌گردد و failed شمرده می‌شود،
+// دقیقاً مثل رفتار search-widget.js.
+const rerankStats = { calls: 0, failed: 0 };
+async function getContext(q, scored, variant) {
+  const m = variant.match(/^r(\d+)k(\d+)$/);
+  if (!m) return selectContext(scored, variant);
+  const C = Number(m[1]), K = Number(m[2]);
+  const cand = scored.slice(0, C);
+  rerankStats.calls++;
+  try {
+    const res = await fetch(BASE + "/rerank", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: ORIGIN },
+      body: JSON.stringify({ query: q._searchText, candidates: cand.map((c) => EMB[c.idx].text) }),
+      signal: AbortSignal.timeout(20000),
+    });
+    const data = res.ok ? await res.json() : null;
+    if (data && data.ok === true && Array.isArray(data.order) && data.order.length) {
+      const seen = new Set();
+      const out = [];
+      for (const row of data.order) {
+        if (Number.isInteger(row.id) && cand[row.id] && !seen.has(row.id)) { seen.add(row.id); out.push({ idx: cand[row.id].idx, via: "rr" }); }
+      }
+      if (out.length) return out.slice(0, K);
+    }
+  } catch { /* به cosine برمی‌گردیم */ }
+  rerankStats.failed++;
+  return scored.slice(0, K).map((t) => ({ idx: t.idx, via: "hit" }));
+}
+
 const matchesExpect = (text, expect) => (expect || []).some((s) => text.includes(s));
 
 // ---------- گرفتن بردار پرسش ----------
@@ -214,7 +245,7 @@ async function callChat(body) {
       variants: {},
     };
     for (const v of RETRIEVAL_VARIANTS) {
-      const ctx = selectContext(scored, v);
+      const ctx = await getContext(q, scored, v);
       const hit = q.expect ? ctx.some((c) => matchesExpect(EMB[c.idx].text, q.expect)) : null;
       const chars = ctx.reduce((s, c) => s + EMB[c.idx].text.length, 0);
       result.retrieval[q.id].variants[v] = { hit, n: ctx.length, chars };
@@ -230,6 +261,7 @@ async function callChat(body) {
     const cs = withExpect.map((q) => result.retrieval[q.id].variants[v].chars);
     lines.push(`variant=${v} hit=${hits}/${withExpect.length} (${pct(hits, withExpect.length)}) chunks_avg=${(mean(ns) ?? 0).toFixed(1)} chars_avg=${Math.round(mean(cs) ?? 0)}`);
   }
+  if (rerankStats.calls) lines.push(`rerank: calls=${rerankStats.calls} failed(fallback to cosine)=${rerankStats.failed}`);
   const rankMiss = withExpect.filter((q) => result.retrieval[q.id].rank === null).length;
   lines.push(`rank_of_first_correct: median=${median(withExpect.map((q) => result.retrieval[q.id].rank).filter((x) => x !== null))} not_in_top50=${rankMiss}`);
   lines.push("== SCORES (top1 / top5mean / gap12 / rank) ==");
@@ -244,7 +276,7 @@ async function callChat(body) {
     for (const q of questions) {
       if (!CHAT_SET.has(q.category)) continue;
       const scored = scoredByQ[q.id];
-      const ctx = selectContext(scored, CHAT_VARIANT);
+      const ctx = await getContext(q, scored, CHAT_VARIANT);
       const body = {
         question: q.question,
         context: ctx.map((c) => EMB[c.idx].text),

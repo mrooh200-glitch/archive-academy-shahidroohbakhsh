@@ -201,6 +201,58 @@ async function semanticSearch(query, topK = 5, bookFilter = null) {
   return scored.slice(0, topK);
 }
 
+// ---------- بازیابی برای گفتگو: ۴۰ نامزد ← reranker ← ۸ تکه ----------
+// ارزیابی (scripts/eval-chat.js روی eval-questions.json): با ۵ تکه، تکهٔ درست
+// در ۲۷ از ۳۳ پرسش آرشیوی به چت می‌رسید و با ۸ تکه در ۲۹ از ۳۳؛ چند پاسخ
+// درست در رتبهٔ ۸ تا ۴۰ بود. پس نامزدها را وسیع می‌گیریم و /rerank (Worker)
+// سؤال و هر نامزد را با هم می‌خواند و ۸ تای مرتبط‌تر را برمی‌گرداند. اگر
+// reranker خطا داد، دیر کرد یا جواب نامعتبر داد، بی‌صدا ۸ تکهٔ اول cosine
+// استفاده می‌شود؛ گفتگو هیچ‌وقت به‌خاطر این مرحله قطع نمی‌شود.
+const CHAT_CONTEXT_CHUNKS = 8;
+const RERANK_CANDIDATES = 40;
+// هم‌تراز MIN_TOP_SCORE در worker/src/index.js؛ زیر آن Worker بدون Gemini «یافت نشد» می‌دهد.
+const CHAT_RERANK_MIN_TOP_SCORE = 0.5;
+const RERANK_CLIENT_TIMEOUT_MS = 10000;
+
+async function rerankCandidatesAi(query, candidates) {
+  try {
+    const res = await fetch(`${WORKER_URL}/rerank`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, candidates: candidates.map((c) => c.text) }),
+      signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(RERANK_CLIENT_TIMEOUT_MS) : undefined,
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || data.ok !== true || !Array.isArray(data.order)) return null;
+    const ordered = [];
+    const seen = new Set();
+    for (const row of data.order) {
+      const c = row && Number.isInteger(row.id) ? candidates[row.id] : null;
+      if (c && !seen.has(row.id)) {
+        seen.add(row.id);
+        ordered.push(c);
+      }
+    }
+    return ordered.length > 0 ? ordered : null;
+  } catch {
+    return null;
+  }
+}
+
+// خروجی: { relevant: تکه‌های نهایی برای چت، topScore: بالاترین cosine (برای گیت آستانه) }
+async function retrieveForChatAi(query, bookFilter) {
+  const candidates = await semanticSearch(query, RERANK_CANDIDATES, bookFilter);
+  const topScore = candidates.length > 0 ? candidates[0].score : undefined;
+  const fallback = candidates.slice(0, CHAT_CONTEXT_CHUNKS);
+  // زیر آستانهٔ Worker (یا وقتی نامزد کم است) rerank بی‌فایده و فقط مصرف سهمیه است.
+  if (candidates.length <= CHAT_CONTEXT_CHUNKS || topScore < CHAT_RERANK_MIN_TOP_SCORE) {
+    return { relevant: fallback, topScore };
+  }
+  const reranked = await rerankCandidatesAi(query, candidates);
+  return { relevant: reranked ? reranked.slice(0, CHAT_CONTEXT_CHUNKS) : fallback, topScore };
+}
+
 // ---------- ساخت لینک به همان قطعهٔ متنی داخل صفحه (Text Fragment مرورگر) ----------
 // این یه ویژگی استاندارد مرورگرهاست: با اضافه‌کردن #:~:text=... به انتهای لینک،
 
@@ -510,7 +562,8 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
   // محدود باشه - پس نیازی به جست‌وجوی معنایی (که یه تماس شبکه‌ی اضافه‌ست)
   // نیست؛ context خالی می‌مونه و مآخذی هم نشون داده نمی‌شه.
   const searchQuery = buildFollowUpSearchQueryAi(question, history);
-  const relevant = mode === "general" ? [] : await semanticSearch(searchQuery, 5, bookFilter);
+  const retrieved = mode === "general" ? { relevant: [], topScore: undefined } : await retrieveForChatAi(searchQuery, bookFilter);
+  const relevant = retrieved.relevant;
   const contextTexts = relevant.map((r) => r.text);
 
   // قطعیِ اتصال (offline، فیلتر، DNS) با پیام انگلیسیِ خامِ مرورگر نشون داده
@@ -526,8 +579,8 @@ async function askQuestion(question, history = [], mode = "grounded", image = nu
         history,
         mode,
         image,
-        // بالاترین شباهتِ تکه‌های بازیابی‌شده؛ Worker زیر آستانه بدون Gemini «یافت نشد» می‌دهد.
-        topScore: mode === "general" || relevant.length === 0 ? undefined : relevant[0].score,
+        // بالاترین شباهتِ cosine بین همهٔ نامزدها (نه تکهٔ اول بعد از rerank)؛ Worker زیر آستانه بدون Gemini «یافت نشد» می‌دهد.
+        topScore: mode === "general" || relevant.length === 0 ? undefined : retrieved.topScore,
         // Item ۱۲: خصوصیاتِ دلخواهِ ذخیره‌شدهٔ کاربر (اگر تنظیم کرده باشد)
         customInstructions: getAiCustomInstructionsAi() || undefined,
       }),
