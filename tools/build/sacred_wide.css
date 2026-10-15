@@ -1,0 +1,8 @@
+.mm-public-variant[data-layout-variant=tablet]{display:block !important;}
+.mm-public-variant.sf-hidden{display:none !important;}
+.site-frame header,.site-frame .sticky.z-30,.site-frame .fixed.z-30,.fixed.z-40,.reader-mobile-toolbar,#reader-saved-sidebar{display:none !important;}
+.adsense-frame-content,.adsense-frame-chrome,ins.adsbygoogle{display:none !important;}
+.reader-article-container{max-width:760px !important;margin-left:auto !important;margin-right:auto !important;}
+.reader-article-container p{margin-left:0 !important;margin-right:0 !important;}
+.z-30{display:none !important;}
+.ista-ad-host,.ista-ad-placement,.adsense-slot{display:none !important;}
