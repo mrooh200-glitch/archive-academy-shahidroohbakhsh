@@ -2,7 +2,7 @@ import re,json,urllib.parse,html,sys,os
 PFX=os.environ.get('PFX','')  # پیشوندِ نامِ فایل: t = متن اصلی، s = مطالعات، خالی = فایل‌هایِ قدیمیِ بدونِ پیشوند
 P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
-REF=open(P+'t40.html',encoding='utf-8').read()
+REF=open(P+'t41.html',encoding='utf-8').read()
 raw=open(U+'3ca15625-204.html',encoding='utf-8').read()
 N=204; PDFPAGE=1; AUDIO='https://gharaati.ir/archive/tafsir/45/22-23.mp3'
 LIVE='https://gharaati.ir/%d8%aa%d9%81%d8%b3%db%8c%d8%b1-%d9%86%d9%88%d8%b1/#numsooreh=45&numayeh=3310'
