@@ -1,7 +1,8 @@
-import re,json,urllib.parse,html,sys
+import re,json,urllib.parse,html,sys,os
+PFX=os.environ.get('PFX','')  # پیشوندِ نامِ فایل: t = متن اصلی، s = مطالعات، خالی = فایل‌هایِ قدیمیِ بدونِ پیشوند
 P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
-R77=open(P+'77.html',encoding='utf-8').read()
+R77=open(P+'t22.html',encoding='utf-8').read()
 import os
 CFG=os.environ['CFG']
 if CFG=='123':
@@ -72,7 +73,7 @@ ci=R77.index('<div class="side-rail right">'); ce=R77.index('<div id=',ci) if Fa
 bi=R77.index('<div class="ref-source-banner">'); be=R77.index('</div></span></div>',bi)+len('</div></span></div>')
 chrome=R77[ci:be]+'\n'
 chrome,k=re.subn(r'<a href="https://hadith\.inoor\.ir[^"]*#:~:text=[^"]*"','<a href="'+LIVE+'#:~:text='+frag+'"',chrome,count=1); assert k==1,k
-chrome,k=re.subn(r'\.\./ref-pdf/[ts]?\d+\.pdf#page=\d+','../ref-pdf/%d.pdf#page=%d'%(N,PDFPAGE),chrome,count=1); assert k==1
+chrome,k=re.subn(r'\.\./ref-pdf/[ts]?\d+\.pdf#page=\d+','../ref-pdf/%s%d.pdf#page=%d'%(PFX,N,PDFPAGE),chrome,count=1); assert k==1
 m=re.search(r'<body[^>]*>',x); x=x[:m.end()]+chrome+x[m.end():]
 k=R77.index('<div class="cdk-live-announcer-element'); e=R77.index('\n',k); tail=R77[e+1:]
 tail,kk=re.subn(r'var TARGETS = \[.*?\];',lambda m_:'var TARGETS = '+json.dumps(T)+';',tail,count=1,flags=re.S); assert kk==1

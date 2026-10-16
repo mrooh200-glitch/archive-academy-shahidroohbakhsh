@@ -1,4 +1,5 @@
-import re,json,urllib.parse,html,sys
+import re,json,urllib.parse,html,sys,os
+PFX=os.environ.get('PFX','')  # پیشوندِ نامِ فایل: t = متن اصلی، s = مطالعات، خالی = فایل‌هایِ قدیمیِ بدونِ پیشوند
 P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
 REF=open(P+'61.html',encoding='utf-8').read()
@@ -69,7 +70,7 @@ x=x.replace('</head>',head+'</head>',1)
 # chrome
 ci=REF.index('<div class="side-rail right">'); ce=REF.index('<div class="ref-extract-box"'); chrome=REF[ci:ce]
 chrome,k=re.subn(r'<a href="https://shefayekhatam[^"]*" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="https://shefayekhatam[^"]*"[^>]*><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a><a href="\.\./ref-pdf/61\.pdf#page=3"',
-   lambda m:'<a href="'+LIVE+'#:~:text='+frag+'" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../ref-pdf/%d.pdf#page=%d"'%(N,BOX[0][0]),chrome); assert k==1,k
+   lambda m:'<a href="'+LIVE+'#:~:text='+frag+'" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه</span></a><a href="../ref-pdf/%s%d.pdf#page=%d"'%(PFX,N,BOX[0][0]),chrome); assert k==1,k
 chrome=chrome.replace('<span class="ref-menu-sub">برای مواقعی که نسخه‌ی زنده در دسترس نیست</span>','')
 box='<div class="ref-extract-box" dir="rtl">\n<span class="ref-extract-label">متن‌های مرتبط در نسخه‌ی PDF مقاله (در صفحه‌ی وب نیامده است):</span>\n'
 for pg,t in BOX:

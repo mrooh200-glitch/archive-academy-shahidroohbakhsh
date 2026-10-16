@@ -8,3 +8,4 @@ Thumbs.db
 *.orig
 *.tmp
 _prelock_bak/
+__pycache__/

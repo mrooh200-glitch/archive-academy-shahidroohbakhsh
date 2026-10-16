@@ -1,9 +1,10 @@
-import re,json,urllib.parse,html,sys
+import re,json,urllib.parse,html,sys,os
+PFX=os.environ.get('PFX','')  # پیشوندِ نامِ فایل: t = متن اصلی، s = مطالعات، خالی = فایل‌هایِ قدیمیِ بدونِ پیشوند
 P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
 REF=open(P+'61.html',encoding='utf-8').read()
 RAIL='<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>\n'
-R77=open(P+'77.html',encoding='utf-8').read()
+R77=open(P+'t22.html',encoding='utf-8').read()
 raw=open(U+'c10fb2fe-125.html',encoding='utf-8').read()
 N=125; PDFPAGE=int(sys.argv[2]) if len(sys.argv)>2 else 1
 LIVE='https://ensani.ir/fa/article/88253/%D8%AC%D8%B1%D8%A7%DB%8C%D9%85-%D8%AF%D8%B1-%D8%AD%D9%82%D9%88%D9%82-%DA%A9%DB%8C%D9%81%D8%B1%DB%8C-%DB%8C%D9%87%D9%88%D8%AF'
@@ -62,7 +63,7 @@ ci=REF.index('<div class="side-rail right">'); ce=REF.index('<div class="ref-ext
 chrome,k=re.subn(r'<a href="https://shefayekhatam\.ir/browse[^"]*"','<a href="'+LIVE+'#:~:text='+frag+'"',chrome,count=1); assert k==1
 chrome,k=re.subn(r'<a href="https://shefayekhatam\.ir/article[^"]*"[^>]*><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a>','',chrome,count=1); assert k==1
 chrome=chrome.replace('برای مواقعی که نسخه‌ی زنده در دسترس نیست','تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد')
-chrome,k=re.subn(r'\.\./ref-pdf/61\.pdf#page=3','../ref-pdf/%d.pdf#page=%d'%(N,PDFPAGE),chrome,count=1); assert k==1
+chrome,k=re.subn(r'\.\./ref-pdf/61\.pdf#page=3','../ref-pdf/%s%d.pdf#page=%d'%(PFX,N,PDFPAGE),chrome,count=1); assert k==1
 m=re.search(r'<body[^>]*>',x); assert m
 x=x[:m.end()]+chrome+x[m.end():]
 tail=REF[REF.index('<script id="kill-dialog-script"'):]
