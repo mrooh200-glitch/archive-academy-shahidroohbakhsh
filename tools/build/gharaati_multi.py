@@ -1,5 +1,5 @@
 import re,json,urllib.parse,html,sys
-P='/home/user/archive-academy-shahidroohbakhsh/aa/p/'
+P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
 REF=open(P+'84.html',encoding='utf-8').read()
 raw=open(U+'71519218-105.html',encoding='utf-8').read()
@@ -23,7 +23,7 @@ tag='<div class="main-wrap content-main-wrap">'
 bi=REF.index('dir=rtl>',REF.index('</head>'))+8; mi=REF.index(tag)
 TOP=REF[bi:mi+len(tag)]
 top,k=re.subn(r'<a href="https://gharaati\.ir[^"]*" rel="noopener" role="menuitem" target="_blank"><span class="ref-menu-label">نسخه‌ی زنده‌ی صفحه',lambda m_:'@@LIVE@@',TOP,count=1); assert k==1
-top,k=re.subn(r'\.\./pdf/\d+\.pdf#page=\d+','../pdf/%d.pdf#page=%d'%(N,PDFPAGE),top,count=1); assert k==1
+top,k=re.subn(r'\.\./ref-pdf/[ts]?\d+\.pdf#page=\d+','../ref-pdf/%d.pdf#page=%d'%(N,PDFPAGE),top,count=1); assert k==1
 old='\n '+tag; assert x.count(old)==1
 x_top_idx=x.index(old)
 # 4 audio

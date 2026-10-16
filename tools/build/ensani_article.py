@@ -1,5 +1,5 @@
 import re,json,urllib.parse,html,sys
-P='/home/user/archive-academy-shahidroohbakhsh/aa/p/'
+P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
 REF=open(P+'61.html',encoding='utf-8').read()
 RAIL='<style id="rail-safe-zone">@media (min-width:860px){body{padding-left:80px !important;padding-right:80px !important;box-sizing:border-box !important;}}</style>\n'
@@ -62,7 +62,7 @@ ci=REF.index('<div class="side-rail right">'); ce=REF.index('<div class="ref-ext
 chrome,k=re.subn(r'<a href="https://shefayekhatam\.ir/browse[^"]*"','<a href="'+LIVE+'#:~:text='+frag+'"',chrome,count=1); assert k==1
 chrome,k=re.subn(r'<a href="https://shefayekhatam\.ir/article[^"]*"[^>]*><span class="ref-menu-label">نسخه‌ی زنده‌ی PDF</span></a>','',chrome,count=1); assert k==1
 chrome=chrome.replace('برای مواقعی که نسخه‌ی زنده در دسترس نیست','تهیه‌شده از صفحه‌ی وب؛ این منبع، نسخه‌ی رسمیِ PDF ندارد')
-chrome,k=re.subn(r'\.\./pdf/61\.pdf#page=3','../pdf/%d.pdf#page=%d'%(N,PDFPAGE),chrome,count=1); assert k==1
+chrome,k=re.subn(r'\.\./ref-pdf/61\.pdf#page=3','../ref-pdf/%d.pdf#page=%d'%(N,PDFPAGE),chrome,count=1); assert k==1
 m=re.search(r'<body[^>]*>',x); assert m
 x=x[:m.end()]+chrome+x[m.end():]
 tail=REF[REF.index('<script id="kill-dialog-script"'):]

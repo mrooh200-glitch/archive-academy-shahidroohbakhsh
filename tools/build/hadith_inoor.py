@@ -1,5 +1,5 @@
 import re,json,urllib.parse,html,sys
-P='/home/user/archive-academy-shahidroohbakhsh/aa/p/'
+P='/home/user/archive-academy-shahidroohbakhsh/aa/ref/'
 U='/root/.claude/uploads/f828941e-4a2f-5bfe-9596-8ce0b171777c/'
 REF=open(P+'77.html',encoding='utf-8').read()
 raw=open(U+'13da542a-200.html',encoding='utf-8').read()
@@ -42,7 +42,7 @@ T=[sl(phrase_s0,phrase_s1)]
 print('occurrences of start',NS.count(''.join(norm(c) for c in phrase_s0)),'TARGET:',T)
 frag=urllib.parse.quote(T[0],safe='')
 seg2,k=re.subn(r'href="https://hadith\.inoor\.ir[^"]*#:~:text=[^"]*"','href="'+url+'#:~:text='+frag+'"',seg,count=1); assert k==1
-seg2,k=re.subn(r'\.\./pdf/\d+\.pdf#page=\d+','../pdf/%d.pdf#page=%d'%(N,PDFPAGE),seg2,count=1); assert k==1
+seg2,k=re.subn(r'\.\./ref-pdf/[ts]?\d+\.pdf#page=\d+','../ref-pdf/%d.pdf#page=%d'%(N,PDFPAGE),seg2,count=1); assert k==1
 m=re.search(r'<meta http-equiv=content-security-policy content="[^"]*"></head>\n<body dir=rtl>\n',x); assert m
 x=x[:m.start()]+seg2+x[m.end():]
 x=x.replace('<script type=module ','<script type="text/plain-disabled-by-archive" '); assert 'type=module' not in x
