@@ -966,7 +966,9 @@ var consent_api = {"consent_type":"optin","waitfor_consent_hook":"","cookie_expi
     text.className = "fa-original-en-text";
     text.textContent = spec[2];
     box.appendChild(label); box.appendChild(text);
-    blockAncestor.parentNode.insertBefore(box, blockAncestor.nextSibling);
+    var anchor = blockAncestor.__lastBox || blockAncestor;
+    anchor.parentNode.insertBefore(box, anchor.nextSibling);
+    blockAncestor.__lastBox = box;
   }
   function highlightAll() {
     if (window.__hlDone) return;
