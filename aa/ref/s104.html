@@ -1110,11 +1110,20 @@ var publisher_theme_ajax_search_loc = {"ajax_url":"https:\/\/gharaati.ir\/wp-adm
     document.body.appendChild(btn);
     labelIt();
   }
+  function pastLast() {
+    var ms = marks(); if (ms.length < 2) return false;
+    return window.scrollY > topOf(ms[0]) && bottomOf(ms[ms.length - 1]) < window.scrollY + window.innerHeight * 0.5;
+  }
   function refresh() {
     if (farApart()) { build(); btn.style.display = ""; labelIt(); }
+    else if (marks().length >= 2) {
+      build();
+      if (pastLast()) { btn.style.display = ""; btn.textContent = "↑ هایلایتِ اول"; }
+      else btn.style.display = "none";
+    }
     else if (btn) btn.style.display = "none";
   }
-  window.addEventListener("scroll", function() { if (btn) labelIt(); }, { passive: true });
+  window.addEventListener("scroll", function() { if (btn) { if (farApart()) labelIt(); else refresh(); } }, { passive: true });
   window.addEventListener("resize", refresh);
   window.addEventListener("load", refresh);
   document.addEventListener("DOMContentLoaded", refresh);
