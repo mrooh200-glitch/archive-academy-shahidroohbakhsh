@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سه بستری که فرزندکشی توش توجیه شد | مطالعات تکمیلی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri+Quran&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-cream: #faf9fc;
+    --c-cream-deep: #ede9fe;
+    --c-forest: #6d28d9;
+    --c-forest-dark: #4c1d95;
+    --c-maroon: #6b2fb3;
+    --c-gold: #b8912a;
+    --c-gold-light: #e3c876;
+    --c-ink: #201a2b;
+    --c-line: #e6e1f0;
+    --c-quote-bg: #fff7e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+    background: var(--c-cream);
+    color: var(--c-ink);
+    line-height: 1.9;
+  }
+  /* فیلتر مستقیم رو body نیست: هر جدِ دارایِ filter برای فرزندانِ
+     position:fixed (topbar/side-rail) containing block تازه می‌سازه و
+     "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو خودِ هر بلاکِ
+     سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  body.dark-mode .m-topbar,
+  body.dark-mode .m-wrap,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  /* حالتِ شب: نوارِ کناری و خطِ طلاییِ آن با opacity پایین تقریباً نامرئی می‌شد */
+  body.dark-mode .side-rail { opacity: .65; }
+  body.dark-mode .side-rail.right { border-left-width: 3px; }
+  body.dark-mode .side-rail.left { border-right-width: 3px; }
+  body.dark-mode img,
+  body.dark-mode iframe,
+  body.dark-mode video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  .m-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .m-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 40px;
+    background-image: radial-gradient(var(--c-forest) 1.3px, transparent 1.3px);
+    background-size: 14px 14px;
+    opacity: .35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .side-rail.right { right: 0; border-left: 2px solid var(--c-gold); }
+  .side-rail.left  { left: 0;  border-right: 2px solid var(--c-gold); }
+  @media (min-width: 860px) { .side-rail { display: block; } }
+
+  .m-topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000002;
+    background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25);
+  }
+  .m-topbar .m-title { font-weight: 600; }
+  .m-topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .m-topbar .m-badge {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .m-topbar a.m-badge:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  @media (max-width: 560px) {
+    .m-topbar { padding: 10px 12px; gap: 8px; }
+    .m-topbar .m-title { white-space: nowrap; }
+    .m-topbar .m-title-extra { display: none; }
+    .m-topbar-actions { gap: 6px; }
+    .m-topbar .m-badge { font-size: 11.5px; padding: 3px 9px; }
+  }
+  @media (max-width: 360px) {
+    .m-topbar { padding: 8px 10px; }
+    .m-topbar .m-title { font-size: 12px; }
+    .m-topbar .m-badge { font-size: 10.5px; padding: 3px 6px; }
+    .m-topbar .m-dark-toggle { width: 28px; height: 28px; font-size: 13px; }
+    .m-topbar-actions { gap: 4px; }
+  }
+
+  .m-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 70px;
+    background: var(--c-cream);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--c-line);
+  }
+  .m-wrap::before, .m-wrap::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
+    opacity: .55;
+  }
+  .m-wrap::before { right: 0; }
+  .m-wrap::after  { left: 0; }
+
+  .m-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--c-cream-deep);
+    color: var(--c-forest-dark);
+    font-weight: 800; font-size: 18px;
+    border: 1.5px solid var(--c-gold-light);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 24px; font-weight: 800;
+    color: var(--c-forest-dark);
+    margin: 0 0 28px;
+    line-height: 1.6;
+    border-bottom: 2px solid var(--c-line);
+    padding-bottom: 18px;
+  }
+  p.m-p { font-size: 17px; font-weight: 500; margin: 0 0 18px; text-align: right; text-indent: 0.4cm; }
+
+  h2.m-sub { font-size: 19px; font-weight: 800; color: var(--c-forest-dark); margin: 30px 0 10px; line-height: 1.6; text-align: right; text-indent: 0; border-right: 3px solid var(--c-gold-light); padding-right: 10px; }
+
+  blockquote.m-quote {
+    margin: 26px 0;
+    padding: 18px 20px;
+    background: var(--c-quote-bg);
+    border-right: 4px solid var(--c-gold);
+    border-radius: 6px;
+    font-size: 17px;
+    line-height: 1.95;
+  }
+  blockquote.m-quote .arabic {
+    display: block;
+    font-family: "Amiri Quran", "Vazirmatn", serif;
+    font-size: 23px; font-weight: 400;
+    color: var(--c-forest-dark);
+    margin-bottom: 10px;
+    text-indent: 0.4cm;
+  }
+  blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
+  blockquote.m-quote .translation { display: block; color: var(--c-ink); text-indent: 0.4cm; margin-top: 8px; }
+
+  sup.fn-ref, .m-footnotes li { scroll-margin-top: var(--topbar-h, 90px); }
+  sup.fn-ref { font-size: 12px; }
+  sup.fn-ref a {
+    color: var(--c-forest-dark);
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0 1px;
+  }
+  sup.fn-ref a:hover { text-decoration: underline; }
+
+  a.ref-link {
+    color: var(--c-forest);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--c-forest);
+    font-size: 14px;
+  }
+  a.ref-link:hover { color: var(--c-maroon); }
+
+  .m-footnotes {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--c-gold-light);
+    font-size: 14.5px;
+    color: #4a4356;
+  }
+  .m-footnotes-title { font-weight: 800; color: var(--c-forest-dark); margin-bottom: 10px; font-size: 14.5px; }
+  .m-footnotes ol { margin: 0; padding-inline-start: 22px; list-style-type: persian; }
+  .m-footnotes li { margin-bottom: 14px; line-height: 1.85; }
+  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0.4cm; }
+  .m-footnotes .fn-p:first-child { text-indent: 0; }
+  .m-footnotes .fn-p:last-child { margin-bottom: 0; }
+  .m-footnotes a.fn-back { color: var(--c-forest); text-decoration: none; font-weight: 700; font-size: 12.5px; margin-inline-end: 6px; }
+  .m-footnotes a.fn-back:hover { color: var(--c-maroon); }
+  .fn-p.fn-quote-en {
+    direction: ltr;
+    text-align: left;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #4a4458;
+    background: #f4f2fa;
+    border-left: 3px solid var(--c-gold);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 6px 0 12px !important;
+  }
+
+  /* ایموجی: رنگی و مستقل از دستگاه؛ در حالت تیره رنگ اصلی حفظ می‌شود */
+  .emo { font-family: "Noto Color Emoji", sans-serif; }
+  body.dark-mode .emo { filter: invert(1) hue-rotate(180deg); }
+
+  .m-nav {
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-line);
+    display: flex; justify-content: space-between;
+    font-size: 14.5px;
+  }
+  .m-nav a { color: var(--c-forest); text-decoration: none; font-weight: 600; }
+  .m-nav a:hover { color: var(--c-maroon); }
+  .m-nav .disabled { color: #b9b3c6; pointer-events: none; }
+</style>
+</head>
+<body>
+  <div class="side-rail right"></div>
+  <div class="side-rail left"></div>
+  <div class="m-topbar">
+    <span class="m-title">مطالعات تکمیلی<span class="m-title-extra"> — اصول اعتقادی</span></span>
+    <div class="m-topbar-actions">
+      <a class="m-badge" href="https://sroohbakhsh.ir/" target="_blank" rel="noopener">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+      <button id="darkModeToggle" type="button" class="m-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button>
+    </div>
+  </div>
+  <script id="dark-mode-script">
+  (function() {
+    var DARK_MODE_KEY = "roohbakhshDarkMode";
+    function applyDarkMode(enabled) {
+      document.body.classList.toggle("dark-mode", enabled);
+      document.documentElement.classList.toggle("dark-mode", enabled);
+      var button = document.getElementById("darkModeToggle");
+      if (button) {
+        button.textContent = enabled ? "☀️" : "🌙";
+        button.title = enabled ? "حالت روز" : "حالت شب";
+        button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+      }
+    }
+    var toggle = document.getElementById("darkModeToggle");
+    if (toggle) {
+      var saved = false;
+      try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+      applyDarkMode(saved);
+      toggle.addEventListener("click", function() {
+        var enabled = !document.body.classList.contains("dark-mode");
+        applyDarkMode(enabled);
+        try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+      });
+    }
+  })();
+  </script>
+  <script id="dynamic-offset-script">
+  (function() {
+    function applyOffset() {
+      var bar = document.querySelector('.m-topbar');
+      if (!bar) return;
+      var h = bar.getBoundingClientRect().height;
+      document.body.style.paddingTop = h + 'px';
+      document.documentElement.style.setProperty('--topbar-h', (h + 16) + 'px');
+    }
+    applyOffset();
+    document.addEventListener('DOMContentLoaded', applyOffset);
+    window.addEventListener('load', applyOffset);
+    window.addEventListener('resize', applyOffset);
+    setTimeout(applyOffset, 50);
+  })();
+  </script>
+  <div class="m-wrap"><div class="m-num">۱۸</div>
+    <h1>سه بستری که فرزندکشی توش توجیه شد</h1>
+    <p class="m-p"><span class="emo">📌</span> حالا سؤال اینه: عقلِ بدون وحی، چطور به خودش اجازه داد این کارو توجیه کنه؟ بریم سراغ سه حوزه: اقتصاد، اجتماع، و مذهبِ تحریف‌شده. جالبه که این توجیهات، از دنیای باستان تا امروز همچنان وجود دارن، فقط نقاب عوض کردن.</p>
+    <h2 class="m-sub">الف. اقتصاد: از حسابداریِ باستانی تا سرمایه‌داریِ مدرن <span class="emo">💰</span></h2>
+    <p class="m-p">تو جوامع باستانی - از عربستان تا اروپا - کشتن بچه‌ها معمولاً انگیزه‌ی مذهبی یا سادیستیک<sup class="fn-ref" id="fnref-1"><a href="#fn-1">۱</a></sup> نداشت. یه روش خشن برای «مدیریت معیشت» بود.<sup class="fn-ref" id="fnref-2"><a href="#fn-2">۲</a></sup> بچه‌ای که هنوز نیروی کار حساب نمی‌شد، یه دارایی قابل‌حذف بود.</p>
+    <p class="m-p"><span class="emo">🔎</span> تو حقوق روم باستان، اصل «Patria Potestas» (اقتدار پدرانه) به پدر اجازه می‌داد فرزندکشی رو ابزار تنظیم خانواده کنه.<sup class="fn-ref" id="fnref-3"><a href="#fn-3">۳</a></sup> ارسطو هم تو کتاب سیاست، سقط اجباری و جلوگیری از پرورش بچه‌های معلول رو برای «تعادل منابع جامعه» توجیه کرده بود.<sup class="fn-ref" id="fnref-4"><a href="#fn-4">۴</a></sup></p>
+    <p class="m-p">قرآن دقیقاً همین منطق رو نشونه گرفت:</p>
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>وَلَا تَقْتُلُوا أَوْلَادَكُمْ خَشْيَةَ إِمْلَاقٍ ۖ نَحْنُ نَرْزُقُهُمْ وَإِيَّاكُمْ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-5"><a href="#fn-5">۵</a></sup></span>
+      <span class="translation">فرزندانتان را از ترس فقر نکشید؛ ما به آن‌ها و شما روزی می‌دهیم.</span>
+    </blockquote>
+    <p class="m-p">نکته‌ی ظریفش اینه که قرآن بین دو حالت فرق می‌ذاره. اول، تو سوره‌ی انعام، آیه‌ی ۱۵۱، صحبت از فقرِ موجوده: «مِنْ إِمْلَاقٍ»<sup class="fn-ref" id="fnref-6"><a href="#fn-6">۶</a></sup>. دوم، تو سوره‌ی اسراء، صحبت از ترسِ ذهنی نسبت به آینده‌ست: «خَشْيَةَ إِمْلَاقٍ». <span class="emo">💡</span> یعنی قرآن حتی توهمِ کمبود منابعِ آینده رو هم رد می‌کنه، نه فقط فقرِ واقعیِ الان.</p>
+    <p class="m-p">این منطق امروز کجاست؟ هیچ نهاد مدرنی صریح نمی‌گه «به‌خاطر فقر، نوزاد رو حذف می‌کنیم». اما پشتِ کلماتی مثل «خودآیینی بدنی» (<span dir="ltr">Bodily Autonomy</span>)، همون ترسِ اقتصادیه که پنهون شده. <span class="emo">🤔</span> آمارها نشون می‌دن بخش زیادی از سقط‌های جنین تو دنیای مدرن، ریشه‌ش همون «نگرانی از تأمین زندگی» (اضطراب معیشتی) هست که قرآن هزار و چهارصد سال پیش اسمش رو گذاشت.<sup class="fn-ref" id="fnref-7"><a href="#fn-7">۷</a></sup></p>
+    <h2 class="m-sub">ب. اجتماع: ترس از آبرو، نه فقر <span class="emo">🎭</span></h2>
+    <p class="m-p">عامل دوم، «ترس از ننگ اجتماعی و حفظ آبرو» هست، نه کمبود مالی. قرآن این اضطراب رو خیلی شفاف به تصویر می‌کشه:</p>
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>وَإِذَا بُشِّرَ أَحَدُهُم بِالْأُنثَىٰ ظَلَّ وَجْهُهُ مُسْوَدًّا وَهُوَ كَظِيمٌ يَتَوَارَىٰ مِنَ الْقَوْمِ مِن سُوءِ مَا بُشِّرَ بِهِ ۚ أَيُمْسِكُهُ عَلَىٰ هُونٍ أَمْ يَدُسُّهُ فِي التُّرَابِ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-8"><a href="#fn-8">۸</a></sup></span>
+      <span class="translation">وقتی به یکیشون مژده‌ی دختر می‌دن، چهره‌ش سیاه می‌شه و خشمش رو فرو می‌خوره؛ از بدیِ چیزی که بهش مژده دادن، خودش رو از مردم پنهون می‌کنه. متحیره که با خواری نگهش داره یا تو خاک دفنش کنه؟</span>
+    </blockquote>
+    <p class="m-p">این «پنهون شدن از چشم مردم»، تصویر دقیقِ کسیه که برای حفظ آبروی اجتماعی، دست به بزرگ‌ترین جنایت می‌زنه.</p>
+    <p class="m-p">این الگو امروز کجاست؟ جاهلیت تاریخ انقضا نداره. <span class="emo">🔎</span> پژوهش‌ها نشون می‌دن سقط جنینِ گزینشیِ دختران، برخلاف تصور رایج، تو خانواده‌های مرفه و تحصیل‌کرده بیشتر از خانواده‌های فقیر دیده می‌شه.<sup class="fn-ref" id="fnref-9"><a href="#fn-9">۹</a></sup> همچنین تو کلان‌شهرهای امروز هم، سقط جنین گاهی ابزاری می‌شه برای پنهون کردن روابط خارج از چارچوب و فرار از قضاوت اجتماعی.</p>
+    <h2 class="m-sub">ج. مذهبِ تحریف‌شده: از قربان‌گاه مولوخ تا الهیاتِ توجیه‌گر <span class="emo">🔥</span></h2>
+    <p class="m-p">اگه انگیزه‌ی مادی هولناکه، انگیزه‌ی دینی عمیق‌تره. <span class="emo">🔎</span> شواهد باستان‌شناسیِ کارتاژ نشون می‌ده سوزوندن نوزادان، آیینِ رسمی برای جلب رضایت بت‌هایی مثل «بعل» و «مولوخ» بوده؛ ضعیف‌ترین عضو قربانی می‌شد تا قدرتمندان پیروز بشن.<sup class="fn-ref" id="fnref-10"><a href="#fn-10">۱۰</a></sup></p>
+    <p class="m-p">اسلام با ماجرای ذبح اسماعیل (علیه‌السلام) به این مناسک دینی شیطانی پایان داد و اعلام کرد خدا نیازی به قربانی‌شدنِ جانِ آدم‌ها نداره.<sup class="fn-ref" id="fnref-11"><a href="#fn-11">۱۱</a></sup></p>
+    <h2 class="m-sub">فکری پوسیده با قالبی تازه</h2>
+    <p class="m-p">اما این منطق تو قالب‌های تازه بازتولید شده؛ همون جنس قدیمی با بسته‌بندیِ شیک‌تر <span class="emo">🙃</span>:</p>
+    <p class="m-p">۱. تو هندوییسمِ برخی جریان‌ها: بر پایه‌ی «قوانین مانو»، نجات معنویِ پدر فقط به دستِ فرزندِ پسر ممکنه. همین باور، امروز یکی از عوامل سقط گزینشیِ دختران تو هندوستانه.<sup class="fn-ref" id="fnref-12"><a href="#fn-12">۱۲</a></sup></p>
+    <p class="m-p">۲. تو آیین کنفوسیوس: در چین باستان، ازدواج نکردن و نداشتن پسر (برای ادامه‌ی نسل) بزرگ‌ترین عمل نامشروع بود. همچنین انجام مراسم یادبود نیاکان بر عهده‌ی پسر بود. به همین دلیل خانواده‌ی بی‌پسر شرمنده می‌شد و دختر را باری برای خانواده می‌دانستند. و این به‌طور غیرمستقیم به کشتن فرزند دختر منجر می‌شد. همین‌طور این باور، یک بستر فرهنگی بود برای سیاست‌های کنترل جمعیت در عصر جدید در چین.<sup class="fn-ref" id="fnref-13"><a href="#fn-13">۱۳</a></sup></p>
+    <p class="m-p">۳. تو مسیحیتِ موسوم به «پیشرو»<sup class="fn-ref" id="fnref-14"><a href="#fn-14">۱۴</a></sup>: الهی‌دان‌هایی مثل ربکا تاد پیترز، سقط جنین رو نه گناه، بلکه «تصمیمی اخلاقی مبتنی بر حق انتخاب زن» معرفی می‌کنن.<sup class="fn-ref" id="fnref-15"><a href="#fn-15">۱۵</a></sup></p>
+    <p class="m-p">۴. تو فقه یهودی (هالاخا): جنینی که جان مادر رو تهدید کنه، تو مفهوم حقوقیِ «متجاوز» (<span dir="ltr">Rodef</span>) قرار می‌گیره و قبل از تولد، حقوقِ کاملِ یه انسان (<span dir="ltr">Nefesh</span>) رو نداره؛ حتی غرامتِ آسیب بهش بر اساس افتِ ارزشِ مادیِ مادر حساب می‌شه، نه دیه‌ی یه انسانِ کامل.<sup class="fn-ref" id="fnref-16"><a href="#fn-16">۱۶</a></sup></p>
+    <p class="m-p"><span class="emo">💡</span> نقطه‌ی مقابلِ همه‌ی این‌ها، مفهومِ «نفخ روح» تو اسلامه. جنینِ صاحبِ روح، یه «نفسِ محترم» هست؛ نه متجاوز (رد نگاه یهودی) و نه ابزارِ تنظیمِ خانواده (رد نگاه سکولار) و نه دارایی مادی (رد نگاه سرمایه‌داری).</p>
+    <h2 class="m-sub">جمع‌بندی: چرا این تاریخ هنوز زنده‌ست؟ <span class="emo">⚖️</span></h2>
+    <p class="m-p">این الگوهای شرم‌آور، فقط یه سری داده‌ی تاریخیِ «جاهلیتِ اول» نیستن؛ کدهایی هستن برای فهمِ همه‌ی عصرها. آدمِ امروز، با وجودِ پیشرفتِ تکنولوژیک، بازم همون انحرافات رو تو قالب‌های تازه تکرار می‌کنه.</p>
+    <p class="m-p">قرآن جلوی همه‌ی این توجیهات - اقتصادی، اجتماعی، مذهبی - یه تصویری از یک دادگاه جهانی می‌ذاره:</p>
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>وَإِذَا الْمَوْءُودَةُ سُئِلَتْ بِأَيِّ ذَنْبٍ قُتِلَتْ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-17"><a href="#fn-17">۱۷</a></sup></span>
+      <span class="translation">و آن‌گاه که از دخترِ زنده‌به‌گورشده پرسیده شود: به کدام گناه کشته شد؟</span>
+    </blockquote>
+    <p class="m-p"><span class="emo">🧭</span> روزِ قیامت، خدا از والدین یا قانون‌گذارها نمی‌پرسه، بلکه مستقیم از خودِ مقتولِ بی‌دفاع می‌پرسه. این آیه، حکومتِ مطلقِ بزرگ‌ترها روی جانِ فرزند رو برای همیشه لغو می‌کنه و جنین رو تبدیل می‌کنه به تنها شاکیِ رسمیِ دادگاهِ قیامت.</p>
+    <div class="m-footnotes">
+      <div class="m-footnotes-title">پی‌نوشت‌ها</div>
+      <ol>
+        <li id="fn-1">
+          <p class="fn-p"><a class="fn-back" href="#fnref-1" aria-label="بازگشت به متن">↑</a>سادیستیک: یعنی کسی که حالش با اذیت کردن، تحقیر کردن یا درد کشیدن دیگران خوب می‌شه.</p>
+        </li>
+        <li id="fn-2">
+          <p class="fn-p"><a class="fn-back" href="#fnref-2" aria-label="بازگشت به متن">↑</a>ضیایی، محمد عادل. (۱۳۸۷). «زنده به گور کردن دختران در میان اعراب جاهلی». پژوهش دینی، (۱۷)، ۱۱۹–۱۴۰. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s75.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">همین‌طور برای مطالعه‌ی منابع دیگر:</p>
+          <p class="fn-p">دورانت، ویل. (بی‌تا). «تاریخ تمدن: مشرق زمین، گاهواره تمدن» (جلد ۱، ترجمه احمد آرام و دیگران). نسخۀ دیجیتال. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s76.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p"><span dir="ltr">Smith, W. R. (1885). <em>Kinship and Marriage in Early Arabia</em>. Cambridge University Press.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s77.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-3">
+          <p class="fn-p"><a class="fn-back" href="#fnref-3" aria-label="بازگشت به متن">↑</a>دورانت، ویل. (بی‌تا). «تاریخ تمدن: قیصر و مسیح» (جلد ۳، ترجمه حمید عنایت و دیگران). نسخۀ دیجیتال. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s78.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Nichols, M. (2008). Did Ancient Romans Love Their Children? Infanticide in Ancient Rome. Western Oregon University.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s79.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-4">
+          <p class="fn-p"><a class="fn-back" href="#fnref-4" aria-label="بازگشت به متن">↑</a>دورانت، ویل. (بی‌تا). «تاریخ تمدن: یونان باستان» (جلد ۲، ترجمه امیرحسین آریان‌پور و دیگران، ص. ۱۰۶۳). نسخۀ دیجیتال. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s80.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Aristotle. (1885). <em>Politics</em> (B. Jowett, Trans.). Oxford: Clarendon Press.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s81.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-5">
+          <p class="fn-p"><a class="fn-back" href="#fnref-5" aria-label="بازگشت به متن">↑</a>سوره اسراء، آیه ۳۱. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s82.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</p>
+        </li>
+        <li id="fn-6">
+          <p class="fn-p"><a class="fn-back" href="#fnref-6" aria-label="بازگشت به متن">↑</a>سوره انعام، آیه ۱۵۱. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s83.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</p>
+        </li>
+        <li id="fn-7">
+          <p class="fn-p"><a class="fn-back" href="#fnref-7" aria-label="بازگشت به متن">↑</a><span dir="ltr">Foster, D. G., Biggs, M. A., Ralph, L., Gerdts, C., Roberts, S., &amp; Glymour, M. M. (2018). Socioeconomic Outcomes of Women Who Receive and Women Who Are Denied Wanted Abortions in the United States. <em>American Journal of Public Health, 108</em>(3), 407–413.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s84.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Tiefenbrun, S., &amp; Edwards, C. J. (2008). Gendercide and the cultural context of sex trafficking in China. <em>Fordham International Law Journal, 32</em>(3), 731–780.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s85.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-8">
+          <p class="fn-p"><a class="fn-back" href="#fnref-8" aria-label="بازگشت به متن">↑</a>سوره نحل، آیه ۵۹. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s86.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</p>
+        </li>
+        <li id="fn-9">
+          <p class="fn-p"><a class="fn-back" href="#fnref-9" aria-label="بازگشت به متن">↑</a>پژوهش‌های گسترده در هند نشان می‌دهند که سقط گزینشی جنین‌های دختر، برخلاف تصور رایج، در خانواده‌های مرفه و تحصیل‌کرده رایج‌تر از خانواده‌های فقیر است. کاهش نسبت دختران به پسران به‌ویژه در تولد دوم پس از دختر اول، و در مادران تحصیل‌کرده و ثروتمندترین خانوارها دیده شده است (<a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s87.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>، <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s88.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>). بخشی از این تفاوت را با دسترسی بیشتر این طبقه به سونوگرافی و سقط توضیح داده‌اند (<a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s88.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>). پژوهش‌های دیگر نقش انگیزه‌های طبقاتی را هم نشان می‌دهند: در نظام ارث پدرتبار، حفظ دارایی در تبار خانواده انگیزهٔ پسرخواهی را تقویت می‌کند (<a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s89.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>).</p>
+        </li>
+        <li id="fn-10">
+          <p class="fn-p"><a class="fn-back" href="#fnref-10" aria-label="بازگشت به متن">↑</a>دورانت، ویل. (بی‌تا). «تاریخ تمدن: قیصر و مسیح» (جلد ۳، ترجمه حمید عنایت و دیگران، ص. ۱۲۰۰). نسخۀ دیجیتال. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s90.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Stager, L. E., &amp; Wolff, S. R. (1984). Child Sacrifice at Carthage: Religious Rite or Population Control? <em>Biblical Archaeology Review, 10</em>(1), 30–51.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s91.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-11">
+          <p class="fn-p"><a class="fn-back" href="#fnref-11" aria-label="بازگشت به متن">↑</a>قرائتی، محسن. تفسیر نور، تفسیر سوره‌ی صافات، آیات ۱۰۳ تا ۱۰۶. وبگاه «درس‌هایی از قرآن». <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s92.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-12">
+          <p class="fn-p"><a class="fn-back" href="#fnref-12" aria-label="بازگشت به متن">↑</a><span dir="ltr">Manu. <em>Sacred Books of the East, Vol. 25</em>. Sacred Texts.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s93.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">یک منبع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Evans, J. (2022, March 2). Key findings on Indian attitudes toward gender roles. Pew Research Center.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s94.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-13">
+          <p class="fn-p"><a class="fn-back" href="#fnref-13" aria-label="بازگشت به متن">↑</a>دورانت، ویل. (بی‌تا). «تاریخ تمدن: مشرق زمین، گاهواره تمدن» (جلد ۱، ترجمه احمد آرام و دیگران، ص. ۵۷۱). نسخۀ دیجیتال. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s95.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">همین‌طور برای مطالعه‌ی منابع دیگر:</p>
+          <p class="fn-p"><span dir="ltr" lang="zh">佚名. (約公元前11–前6世紀). 〈斯干〉，載《詩經·小雅·祈父之什》. 中國哲學書電子化計劃.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s96.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p"><span dir="ltr" lang="zh">趙岐. (約公元2世紀). 《孟子章句·離婁章句上》第26章，載《孟子注疏》. 中國哲學書電子化計劃.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s97.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p"><span dir="ltr">Tiefenbrun, S., &amp; Edwards, C. J. (2008). Gendercide and the cultural context of sex trafficking in China. <em>Fordham International Law Journal, 32</em>(3), 731–780.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s85.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-14">
+          <p class="fn-p"><a class="fn-back" href="#fnref-14" aria-label="بازگشت به متن">↑</a>نسخه‌ای جدید و تحریف‌شده از دین که سعی می‌کنه قوانین رو به نفع ارزش‌های مدرن و سرمایه‌داری تغییر بده.</p>
+        </li>
+        <li id="fn-15">
+          <p class="fn-p"><a class="fn-back" href="#fnref-15" aria-label="بازگشت به متن">↑</a><span dir="ltr">Blanchard, K. D. (2019). Trust Women: A Progressive Christian Argument for Reproductive Justice by Rebecca Todd Peters (Review). <em>Journal of the Society of Christian Ethics, 39</em>(2), 421–423.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s98.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-16">
+          <p class="fn-p"><a class="fn-back" href="#fnref-16" aria-label="بازگشت به متن">↑</a>سلیمانی، حسین. (۱۳۸۱). «جرایم در حقوق کیفری یهود». هفت آسمان، ۱۶. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s99.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p">همین‌طور برای مطالعه‌ی منابع دیگر:</p>
+          <p class="fn-p"><span dir="ltr">Talmud (Mishnah). (n.d.). Mishnah Oholot, 7:6. Sefaria Digital Library.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s100.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+          <p class="fn-p"><span dir="ltr">Talmud (Mishnah). (n.d.). Mishnah Bava Kamma, 5:4. Sefaria.</span> <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s101.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+        </li>
+        <li id="fn-17">
+          <p class="fn-p"><a class="fn-back" href="#fnref-17" aria-label="بازگشت به متن">↑</a>سوره تکویر، آیات ۸ و ۹. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s102.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</p>
+        </li>
+      </ol>
+    </div>
+    <div class="m-nav">
+      <a href="17.html">« قبلی</a>
+      <a href="19.html">بعدی »</a>
+    </div>
+  </div>
+
+</body>
+</html>
