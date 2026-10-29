@@ -165,12 +165,7 @@ function cosineSimilarity(a, b) {
 // bookFilter: (اختیاری) Set از اسم کتاب‌هایی که جست‌وجو باید فقط
 // محدود به اون‌ها باشه - برای «محدودهٔ جست‌وجو» (بند ب). اگه خالی یا
 // undefined باشه، مثل قبل رو کل آرشیو جست‌وجو می‌کنه.
-async function semanticSearch(query, topK = 5, bookFilter = null) {
-  const data = await loadEmbeddings();
-  const scopedData = bookFilter && bookFilter.size > 0
-    ? data.filter((item) => bookFilter.has(item.book))
-    : data;
-
+async function embedQuery(query) {
   // گرفتن بردار عبارت جست‌وجو از Worker
   const embedRes = await fetch(`${WORKER_URL}/embed`, {
     method: "POST",
@@ -189,16 +184,29 @@ async function semanticSearch(query, topK = 5, bookFilter = null) {
     }
     throw new Error(message);
   }
-  const { vector: queryVector } = await embedRes.json();
+  const { vector } = await embedRes.json();
+  return vector;
+}
 
-  // مقایسهٔ شباهت با همهٔ بخش‌های ذخیره‌شده (یا فقط زیرمجموعهٔ محدودشده)
-  const scored = scopedData.map((item) => ({
-    ...item,
-    score: cosineSimilarity(queryVector, item.vector),
-  }));
-
+// امتیاز cosine همهٔ تکه‌های داخل محدوده، مرتب از بیشترین؛ هر ردیف
+// {index: جای تکه در EMBEDDINGS، score}.
+async function scoreAllChunks(query, bookFilter = null) {
+  const data = await loadEmbeddings();
+  const queryVector = await embedQuery(query);
+  const scored = [];
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (bookFilter && bookFilter.size > 0 && !bookFilter.has(item.book)) continue;
+    scored.push({ index: i, score: cosineSimilarity(queryVector, item.vector) });
+  }
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, topK);
+  return scored;
+}
+
+async function semanticSearch(query, topK = 5, bookFilter = null) {
+  const data = await loadEmbeddings();
+  const scored = await scoreAllChunks(query, bookFilter);
+  return scored.slice(0, topK).map((row) => ({ ...data[row.index], score: row.score }));
 }
 
 // ---------- بازیابی برای گفتگو: ۴۰ نامزد ← reranker ← ۸ تکه ----------
@@ -256,17 +264,130 @@ async function retrieveForChatAi(query, bookFilter) {
 // ---------- ساخت لینک به همان قطعهٔ متنی داخل صفحه (Text Fragment مرورگر) ----------
 // این یه ویژگی استاندارد مرورگرهاست: با اضافه‌کردن #:~:text=... به انتهای لینک،
 
-// ---------- بازیابی برای تب جست‌وجوی مفهومی: آستانه + reranker ----------
-// همان روشِ گفتگو: ۴۰ نامزد ← reranker ← ۵ نتیجه. اگر بالاترین شباهت cosine زیر
-// آستانه باشد، نتیجهٔ بی‌ربط نشان داده نمی‌شود (belowThreshold). اگر reranker
-// خطا داد، بی‌صدا ترتیب cosine می‌ماند.
+// ---------- جست‌وجوی کلیدواژه‌ای (BM25) برای جست‌وجوی ترکیبی ----------
+// جست‌وجوی برداری معنا را می‌گیرد ولی نام‌ها و عبارت‌های دقیق (مثلاً «شقشقیه»)
+// را ممکن است گم کند. BM25 روی همان تکه‌های embeddings.json در مرورگر ساخته
+// می‌شود (بدون Worker و بدون بازسازی embeddings) و با RRF با نتیجهٔ برداری
+// ادغام می‌شود.
+const KEYWORD_STOPWORDS = new Set(
+  ("و در به از که این آن را با برای است بود شد شده می های ها هم یا تا بر هر نیز اما اگر چه چرا " +
+   "چون پس همه کرد کنید کند کرده باشد باشند است‌ هست نیست یک دو بین بعد قبل خود ای " +
+   "من تو او ما شما ایشان آنها ان ای الی علی فی من عن ما لا هذا هذه ذلک الذی التی و")
+    .split(/\s+/)
+);
+
+function keywordNormalize(text) {
+  return String(text || "")
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "") // اعراب و کشیده
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/ة/g, "ه")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ی")
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/\u200c/g, " ")
+    .toLowerCase();
+}
+
+function keywordTokens(text) {
+  const out = [];
+  for (const t of keywordNormalize(text).split(/[^\p{L}\p{N}]+/u)) {
+    if (t.length >= 2 && !KEYWORD_STOPWORDS.has(t)) out.push(t);
+  }
+  return out;
+}
+
+let keywordIndex = null; // {source: EMBEDDINGS، docs: [Map(term→tf)], len: [..], df: Map, avgLen}
+
+function getKeywordIndex(data) {
+  if (keywordIndex && keywordIndex.source === data) return keywordIndex;
+  const docs = new Array(data.length);
+  const len = new Array(data.length);
+  const df = new Map();
+  let total = 0;
+  for (let i = 0; i < data.length; i++) {
+    const tf = new Map();
+    const tokens = keywordTokens(data[i].text);
+    for (const t of tokens) tf.set(t, (tf.get(t) || 0) + 1);
+    for (const t of tf.keys()) df.set(t, (df.get(t) || 0) + 1);
+    docs[i] = tf;
+    len[i] = tokens.length;
+    total += tokens.length;
+  }
+  keywordIndex = { source: data, docs, len, df, avgLen: total / Math.max(1, data.length) || 1 };
+  return keywordIndex;
+}
+
+// خروجی: { hits: [{index, bm25, coverage}] مرتب، terms: تعداد واژه‌های یکتای پرسش }
+function keywordSearch(data, query, bookFilter, limit) {
+  const idx = getKeywordIndex(data);
+  const terms = [...new Set(keywordTokens(query))];
+  if (terms.length === 0) return { hits: [], terms: 0 };
+  const N = data.length;
+  const K1 = 1.5;
+  const B = 0.75;
+  const idf = terms.map((t) => {
+    const n = idx.df.get(t) || 0;
+    return Math.log(1 + (N - n + 0.5) / (n + 0.5));
+  });
+  const idfSum = idf.reduce((a, b) => a + b, 0);
+  const hits = [];
+  for (let i = 0; i < N; i++) {
+    if (bookFilter && bookFilter.size > 0 && !bookFilter.has(data[i].book)) continue;
+    const tf = idx.docs[i];
+    let score = 0;
+    let matchedIdf = 0;
+    for (let k = 0; k < terms.length; k++) {
+      const f = tf.get(terms[k]);
+      if (!f) continue;
+      matchedIdf += idf[k];
+      score += idf[k] * ((f * (K1 + 1)) / (f + K1 * (1 - B + (B * idx.len[i]) / idx.avgLen)));
+    }
+    // پوشش وزن‌دار با idf: واژهٔ کمیاب (یا ناموجود در آرشیو) بیشتر از واژهٔ رایج وزن دارد.
+    if (matchedIdf > 0) hits.push({ index: i, bm25: score, coverage: matchedIdf / idfSum });
+  }
+  hits.sort((a, b) => b.bm25 - a.bm25);
+  return { hits: hits.slice(0, limit), terms: terms.length };
+}
+
+// ---------- بازیابی برای تب جست‌وجوی مفهومی: ترکیبی + آستانه + reranker ----------
+// ۱) ۴۰ نامزد برداری (cosine) و ۴۰ نامزد کلیدواژه‌ای (BM25) با RRF ادغام می‌شوند.
+// ۲) آستانه: اگر نه بالاترین cosine به حد آستانه می‌رسد و نه تکه‌ای با پوشش
+//    دست‌کم ۷۵٪ (وزن‌دار با idf) واژه‌های پرسش پیدا شده، نتیجه‌ای نشان داده نمی‌شود.
+// ۳) reranker نامزدهای ادغام‌شده را مرتب می‌کند؛ اگر خطا داد، ترتیب RRF می‌ماند.
+const RRF_K = 60;
+const KEYWORD_STRONG_COVERAGE = 0.75;
+
 async function semanticSearchPrecise(query, topK = 5, bookFilter = null) {
-  const candidates = await semanticSearch(query, RERANK_CANDIDATES, bookFilter);
-  if (candidates.length === 0) return { results: [], belowThreshold: false };
-  if (candidates[0].score < CHAT_RERANK_MIN_TOP_SCORE) return { results: [], belowThreshold: true };
-  if (candidates.length <= topK) return { results: candidates, belowThreshold: false };
-  const reranked = await rerankCandidatesAi(query, candidates);
-  return { results: (reranked || candidates).slice(0, topK), belowThreshold: false };
+  const data = await loadEmbeddings();
+  const scored = await scoreAllChunks(query, bookFilter);
+  if (scored.length === 0) return { results: [], belowThreshold: false };
+
+  const vectorTop = scored.slice(0, RERANK_CANDIDATES);
+  const keyword = keywordSearch(data, query, bookFilter, RERANK_CANDIDATES);
+  const keywordStrong = keyword.hits.some((h) => h.coverage >= KEYWORD_STRONG_COVERAGE);
+
+  if (vectorTop[0].score < CHAT_RERANK_MIN_TOP_SCORE && !keywordStrong) {
+    return { results: [], belowThreshold: true };
+  }
+
+  const cosineByIndex = new Map(scored.map((row) => [row.index, row.score]));
+  const rrf = new Map();
+  const addRanks = (rows) =>
+    rows.forEach((row, rank) => rrf.set(row.index, (rrf.get(row.index) || 0) + 1 / (RRF_K + rank + 1)));
+  addRanks(vectorTop);
+  addRanks(keyword.hits);
+
+  const merged = [...rrf.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, RERANK_CANDIDATES)
+    .map(([index]) => ({ ...data[index], score: cosineByIndex.get(index) ?? 0 }));
+
+  if (merged.length <= topK) return { results: merged, belowThreshold: false };
+  const reranked = await rerankCandidatesAi(query, merged);
+  return { results: (reranked || merged).slice(0, topK), belowThreshold: false };
 }
 
 // ---------- فیلتر کتاب‌ها بر اساس عنوان / نویسنده / موضوع (مشترک بین سه پنل 📚) ----------
