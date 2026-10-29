@@ -188,16 +188,26 @@ async function embedQuery(query) {
   return vector;
 }
 
-// امتیاز cosine همهٔ تکه‌های داخل محدوده، مرتب از بیشترین؛ هر ردیف
+// امتیاز cosine همهٔ تکه‌های داخل محدوده (برای چند نسخهٔ پرسش: بیشینهٔ cosine)، مرتب از بیشترین؛ هر ردیف
 // {index: جای تکه در EMBEDDINGS، score}.
-async function scoreAllChunks(query, bookFilter = null) {
+async function scoreAllChunks(queries, bookFilter = null) {
+  const list = Array.isArray(queries) ? queries : [queries];
   const data = await loadEmbeddings();
-  const queryVector = await embedQuery(query);
+  // بردار پرسش اصلی باید موفق شود؛ بردار نسخه‌های بازنویسی‌شده اختیاری است.
+  const [mainVector, ...extraVectors] = await Promise.all(
+    list.map((q, i) => (i === 0 ? embedQuery(q) : embedQuery(q).catch(() => null)))
+  );
+  const vectors = [mainVector, ...extraVectors.filter(Boolean)];
   const scored = [];
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
     if (bookFilter && bookFilter.size > 0 && !bookFilter.has(item.book)) continue;
-    scored.push({ index: i, score: cosineSimilarity(queryVector, item.vector) });
+    let best = -1;
+    for (const v of vectors) {
+      const c = cosineSimilarity(v, item.vector);
+      if (c > best) best = c;
+    }
+    scored.push({ index: i, score: best });
   }
   scored.sort((a, b) => b.score - a.score);
   return scored;
@@ -360,13 +370,26 @@ function keywordSearch(data, query, bookFilter, limit) {
 const RRF_K = 60;
 const KEYWORD_STRONG_COVERAGE = 0.75;
 
-async function semanticSearchPrecise(query, topK = 5, bookFilter = null) {
+async function semanticSearchPrecise(query, topK = 5, bookFilter = null, extraQueries = []) {
   const data = await loadEmbeddings();
-  const scored = await scoreAllChunks(query, bookFilter);
+  const queries = [query, ...extraQueries];
+  const scored = await scoreAllChunks(queries, bookFilter);
   if (scored.length === 0) return { results: [], belowThreshold: false };
 
   const vectorTop = scored.slice(0, RERANK_CANDIDATES);
-  const keyword = keywordSearch(data, query, bookFilter, RERANK_CANDIDATES);
+  // کلیدواژه‌ای: برای هر نسخهٔ پرسش جدا جست‌وجو و نتیجه با بیشینهٔ امتیاز ادغام می‌شود.
+  const keywordByIndex = new Map();
+  for (const q of queries) {
+    for (const h of keywordSearch(data, q, bookFilter, RERANK_CANDIDATES).hits) {
+      const prev = keywordByIndex.get(h.index);
+      if (!prev) keywordByIndex.set(h.index, { ...h });
+      else {
+        prev.bm25 = Math.max(prev.bm25, h.bm25);
+        prev.coverage = Math.max(prev.coverage, h.coverage);
+      }
+    }
+  }
+  const keyword = { hits: [...keywordByIndex.values()].sort((a, b) => b.bm25 - a.bm25).slice(0, RERANK_CANDIDATES) };
   const keywordStrong = keyword.hits.some((h) => h.coverage >= KEYWORD_STRONG_COVERAGE);
 
   if (vectorTop[0].score < CHAT_RERANK_MIN_TOP_SCORE && !keywordStrong) {
@@ -388,6 +411,30 @@ async function semanticSearchPrecise(query, topK = 5, bookFilter = null) {
   if (merged.length <= topK) return { results: merged, belowThreshold: false };
   const reranked = await rerankCandidatesAi(query, merged);
   return { results: (reranked || merged).slice(0, topK), belowThreshold: false };
+}
+
+// ---------- بازنویسی سؤال (Worker: /rewrite) ----------
+// فقط برای پرسش‌های دست‌کم ۳ کلمه‌ای؛ خروجی: آرایه‌ای از نسخه‌های اضافه (فارسی
+// روشن‌تر و عربی). هر خطا، تایم‌اوت یا پاسخ نامعتبر → [] و جست‌وجوی معمولی می‌ماند.
+const REWRITE_MIN_WORDS = 3;
+const REWRITE_CLIENT_TIMEOUT_MS = 4000;
+
+async function rewriteQueryAi(query) {
+  if (query.split(/\s+/).filter(Boolean).length < REWRITE_MIN_WORDS) return [];
+  try {
+    const res = await fetch(`${WORKER_URL}/rewrite`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+      signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(REWRITE_CLIENT_TIMEOUT_MS) : undefined,
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data || data.ok !== true || !Array.isArray(data.queries)) return [];
+    return data.queries.filter((q) => typeof q === "string" && q.trim()).slice(0, 2);
+  } catch {
+    return [];
+  }
 }
 
 // ---------- فیلتر کتاب‌ها بر اساس عنوان / نویسنده / موضوع (مشترک بین سه پنل 📚) ----------
@@ -1971,6 +2018,32 @@ document.addEventListener("DOMContentLoaded", () => {
           activeResultIndex = -1;
           updateAiSearchNavButtons();
           renderAiResultsHtml();
+
+          // بازنویسی سؤال: نتیجهٔ فعلی همین حالا نشان داده شد؛ اگر بازنویسی
+          // رسید و نتیجه فرق کرد، فهرست به‌روز می‌شود (بدون معطل‌کردن کاربر).
+          rewriteQueryAi(query)
+            .then(async (extra) => {
+              if (extra.length === 0 || myToken !== searchToken) return;
+              const refined = await semanticSearchPrecise(query, RERANK_CANDIDATES, aiSearchBookScope, extra);
+              if (myToken !== searchToken) return;
+              const keyOf = (rows) => rows.map((r) => `${r.source}|${r.text.slice(0, 40)}`).join("\n");
+              if (keyOf(refined.results) === keyOf(latestSearchResults) && refined.belowThreshold === belowThreshold) return;
+              latestSearchResults = refined.results;
+              aiResultsPage = 1;
+              searchSelectedIndexes.clear();
+              activeResultIndex = -1;
+              if (aiSearchStatus) {
+                aiSearchStatus.textContent = refined.belowThreshold
+                  ? "در آرشیو مطلب مرتبطی پیدا نشد. سؤال را کامل‌تر یا با کلمات دیگری بنویسید."
+                  : "نتایج با کمک بازنویسی سؤال به‌روز شد.";
+              }
+              if (aiSearchResultsDropdown) {
+                aiSearchResultsDropdown.style.display = refined.results.length > 0 || refined.belowThreshold ? "block" : "none";
+              }
+              updateAiSearchNavButtons();
+              renderAiResultsHtml();
+            })
+            .catch(() => {});
         } catch (err) {
           if (myToken !== searchToken) return;
           if (aiSearchStatus) aiSearchStatus.textContent = err.message || "در جست‌وجو خطایی رخ داد. لطفاً مجدداً تلاش کنید.";
