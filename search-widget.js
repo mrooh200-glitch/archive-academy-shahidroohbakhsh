@@ -165,12 +165,31 @@ function cosineSimilarity(a, b) {
 // bookFilter: (اختیاری) Set از اسم کتاب‌هایی که جست‌وجو باید فقط
 // محدود به اون‌ها باشه - برای «محدودهٔ جست‌وجو» (بند ب). اگه خالی یا
 // undefined باشه، مثل قبل رو کل آرشیو جست‌وجو می‌کنه.
+// نرمال‌سازی پرسش پیش از بردارسازی؛ باید دقیقاً هم‌ارز embedNormalize در
+// scripts/build-embeddings.js بماند (متن آرشیو هم با همان تابع بردار شده است).
+function embedNormalize(text) {
+  return String(text || "")
+    .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED]/g, "")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/ة/g, "ه")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ی")
+    .replace(/ء/g, "")
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function embedQuery(query) {
   // گرفتن بردار عبارت جست‌وجو از Worker
   const embedRes = await fetch(`${WORKER_URL}/embed`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query: embedNormalize(query) || query }),
   });
   if (!embedRes.ok) {
     // اگه Worker یه پیام فارسی مشخص برگردونده (مثلاً سهمیهٔ روزانه تموم شده

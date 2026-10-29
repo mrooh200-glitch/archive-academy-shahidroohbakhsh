@@ -47,6 +47,8 @@ const ONLY_IDS = args.ids ? new Set(String(args.ids).split(",")) : null;
 // ---------- همان منطق کلاینت (از خود search-widget.js خوانده می‌شود تا جدا نشود) ----------
 const widgetSrc = fs.readFileSync("search-widget.js", "utf8");
 const FOLLOW_UP_MARKERS = new Function("return " + widgetSrc.match(/const FOLLOW_UP_MARKERS_AI = (\/.*\/);/)[1])();
+// نرمال‌سازی پرسش پیش از بردارسازی (فقط با --normalize-query؛ برای embeddings ساخته‌شده با نرمال‌سازی)
+const embedNormalize = new Function(widgetSrc.match(/function embedNormalize\([\s\S]*?\n}\n/)[0] + "; return embedNormalize;")();
 const answerIndicatesNotFound = new Function(widgetSrc.match(/function answerIndicatesNotFoundAi\([\s\S]*?\n}\n/)[0] + "; return answerIndicatesNotFoundAi;")();
 function buildFollowUpSearchQuery(question, history) {
   if (!Array.isArray(history) || history.length === 0) return question;
@@ -218,7 +220,7 @@ async function callChat(body) {
     } else if (args.offline) {
       throw new Error("بردار ذخیره‌شده برای " + key + " نیست یا متن جست‌وجو فرق دارد");
     } else {
-      const v = await embedQuery(searchText);
+      const v = await embedQuery(args["normalize-query"] ? embedNormalize(searchText) || searchText : searchText);
       result.vectors[key] = { text: searchText, b64: toB64(v) };
       await sleep(300);
     }

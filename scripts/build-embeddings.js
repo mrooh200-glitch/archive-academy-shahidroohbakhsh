@@ -140,71 +140,133 @@ function extractBookTitle($, filePath, titleIndex) {
   return path.basename(filePath, path.extname(filePath));
 }
 
-// ---------- ۵. استخراج عنوان و پاراگراف‌های تمیز از هر فایل htm ----------
-// Item جدید (شمارهٔ صفحهٔ چاپی - رفع مورد ۹: ساختار واقعی فایل‌ها با
-// فرضِ اولیه فرق داشت): برای فایل‌هایی که از پایپ‌لاین صفحه‌بندی‌شده
-// ساخته شده‌اند، هر پاراگراف داخل <section class="page" data-display="N">
-// قرار داره (نه class="pdf-page" و data-page-number که قبلاً فرض شده
-// بود). اینجا همراه با متن هر پاراگراف، همون شماره صفحهٔ نمایشی (اگه
-// وجود داشته باشه) رو هم نگه می‌داریم تا بعداً تو embeddings.json ذخیره
-// بشه. data-display="0" مخصوص جلد/صفحات بی‌شماره‌ست و نادیده گرفته
-// می‌شه. برای فایل‌های خام Word که این ساختار رو ندارن، page همیشه
-// null می‌مونه.
-function extractBookContent(filePath, titleIndex) {
+// ---------- ۵. استخراج عنوان و «واحدهای» متن از هر فایل htm ----------
+// هر فایل به چند «واحد» تقسیم می‌شود: متنِ بین دو عنوان (h1..h6). عنوان‌ها
+// (مثل فصل، خطبه، نامه، حکمت) به‌صورت زنجیرهٔ زمینه کنار هر تکه می‌مانند تا
+// هنگام ساخت بردار به ابتدای متن اضافه شوند (نه به متن نمایشی). عنوان‌هایی که
+// واحد قبلی هنوز کوتاه‌تر از MIN_CHUNK_LENGTH است، مرز جدید نمی‌سازند و فقط به
+// زمینه اضافه می‌شوند. نشانگرهای صفحهٔ «ص:۳۶» که در نهج‌البلاغه پاراگراف جدا
+// هستند و جمله را وسط می‌شکنند حذف می‌شوند. فایل‌های بدون عنوان یک واحد دارند.
+// شمارهٔ صفحهٔ چاپی (section.page[data-display]) مثل قبل از اولین پاراگراف
+// هر تکه خوانده می‌شود؛ data-display="0" (جلد) نادیده است.
+const PAGE_MARKER_RE = /^ص\s*[:：]\s*[\d۰-۹٠-٩]+$/;
+const IGNORED_HEADINGS = new Set(["اشاره"]);
+
+function extractBookUnits(filePath, titleIndex) {
   const raw = fs.readFileSync(filePath, "utf-8");
   const $ = cheerio.load(raw);
-
   const title = extractBookTitle($, filePath, titleIndex);
 
-  // خروجی Word معمولاً متن رو داخل تگ‌های <p> می‌ذاره
-  const paragraphs = [];
-  $("p").each((_, el) => {
+  const chain = []; // chain[level-1] = متن عنوان فعلی آن سطح
+  const units = [];
+  let cur = { chain: [], extraTitles: [], paragraphs: [], length: 0 };
+  const flush = () => {
+    if (cur.paragraphs.length > 0) units.push(cur);
+    cur = { chain: chain.filter(Boolean), extraTitles: [], paragraphs: [], length: 0 };
+  };
+
+  $("h1,h2,h3,h4,h5,h6,p").each((_, el) => {
+    const tag = el.tagName.toLowerCase();
     const text = $(el).text().replace(/\s+/g, " ").trim();
-    if (text.length > 0) {
-      const pageSection = $(el).closest("section.page[data-display]");
-      const rawPage = pageSection.length ? pageSection.attr("data-display") : null;
-      const page = rawPage && rawPage !== "0" ? rawPage : null;
-      paragraphs.push({ text, page });
+    if (!text) return;
+
+    if (tag[0] === "h") {
+      if ($(el).parents("h1,h2,h3,h4,h5,h6").length) return;
+      if (IGNORED_HEADINGS.has(text)) return;
+      const level = Number(tag[1]);
+      chain.length = level - 1;
+      chain[level - 1] = text;
+      if (cur.length >= MIN_CHUNK_LENGTH) flush();
+      else if (cur.paragraphs.length > 0) cur.extraTitles.push(text);
+      else cur.chain = chain.filter(Boolean);
+      return;
     }
+
+    if ($(el).parents("h1,h2,h3,h4,h5,h6").length) return;
+    if (PAGE_MARKER_RE.test(text)) return;
+    const pageSection = $(el).closest("section.page[data-display]");
+    const rawPage = pageSection.length ? pageSection.attr("data-display") : null;
+    const page = rawPage && rawPage !== "0" ? rawPage : null;
+    cur.paragraphs.push({ text, page });
+    cur.length += text.length;
   });
+  flush();
 
   // اگه هیچ <p> پیدا نشد (ساختار متفاوت بود)، کل متن body رو بگیر و بر اساس خط جدید تقسیم کن
-  if (paragraphs.length === 0) {
+  if (units.length === 0) {
     const bodyText = $("body").text();
-    return {
-      title,
-      paragraphs: bodyText
-        .split(/\n+/)
-        .map((t) => t.replace(/\s+/g, " ").trim())
-        .filter((t) => t.length > 0)
-        .map((text) => ({ text, page: null })),
-    };
+    const paragraphs = bodyText
+      .split(/\n+/)
+      .map((t) => t.replace(/\s+/g, " ").trim())
+      .filter((t) => t.length > 0 && !PAGE_MARKER_RE.test(t))
+      .map((text) => ({ text, page: null }));
+    if (paragraphs.length > 0) units.push({ chain: [], extraTitles: [], paragraphs, length: 0 });
   }
 
-  return { title, paragraphs };
+  return { title, units };
 }
 
-// ---------- ۶. تبدیل پاراگراف‌ها به تکه‌های (chunk) با طول مناسب ----------
-// Item جدید (شمارهٔ صفحهٔ چاپی): هر تکه، شمارهٔ صفحهٔ همون پاراگراف اولش
-// رو به‌عنوان شمارهٔ صفحهٔ کل تکه نگه می‌داره (چون یه تکه معمولاً داخل
-// یک صفحه یا نهایتاً مرز دو صفحهٔ پشت‌سرهم می‌مونه).
-function chunkParagraphs(paragraphs) {
+// ---------- نرمال‌سازی متن برای بردارسازی ----------
+// فقط برای ساخت بردار (متن نمایشی دست‌نخورده می‌ماند): اعراب و کشیده حذف و
+// حروف هم‌شکل یکسان می‌شوند. باید دقیقاً هم‌ارز embedNormalize در
+// search-widget.js بماند (پرسش کاربر هم با همان تابع نرمال می‌شود).
+function embedNormalize(text) {
+  return String(text || "")
+    .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED]/g, "")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/ة/g, "ه")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ی")
+    .replace(/ء/g, "")
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// ---------- ۶. تبدیل واحدها به تکه‌های (chunk) با طول مناسب ----------
+// تکه‌ها هرگز از مرز یک واحد (عنوان) رد نمی‌شوند. داخل یک واحد، پاراگراف‌ها تا
+// سقف MAX_CHUNK_LENGTH کنار هم می‌آیند و هم‌پوشانی دارند: آخرین پاراگراف کوتاه
+// (حداکثر OVERLAP_MAX_LENGTH کاراکتر) هر تکه ابتدای تکهٔ بعدیِ همان واحد هم
+// تکرار می‌شود تا مطلبِ روی مرز گم نشود. زمینه (book › chain) جدا برمی‌گردد.
+const OVERLAP_MAX_LENGTH = 200;
+
+function chunkUnits(bookTitle, units) {
   const chunks = [];
-  let current = "";
-  let currentPage = null;
+  for (const unit of units) {
+    const ctxParts = [bookTitle, ...unit.chain].filter((p, i, a) => p && a.indexOf(p) === i);
+    let ctx = ctxParts.join(" › ");
+    if (unit.extraTitles.length > 0) ctx += " | " + unit.extraTitles.join(" | ");
+    ctx = ctx.slice(0, 300);
 
-  for (const para of paragraphs) {
-    if ((current + " " + para.text).length > MAX_CHUNK_LENGTH && current.length >= MIN_CHUNK_LENGTH) {
-      chunks.push({ text: current.trim(), page: currentPage });
-      current = para.text;
-      currentPage = para.page;
-    } else {
-      if (!current) currentPage = para.page;
-      current = current ? current + " " + para.text : para.text;
+    let current = "";
+    let currentPage = null;
+    let lastPara = null;
+    let paraCount = 0; // تعداد پاراگراف‌های تازه (بدون هم‌پوشانی) در تکهٔ جاری
+
+    for (const para of unit.paragraphs) {
+      if (current && (current + " " + para.text).length > MAX_CHUNK_LENGTH && current.length >= MIN_CHUNK_LENGTH) {
+        chunks.push({ text: current.trim(), page: currentPage, ctx });
+        if (lastPara && lastPara.text.length <= OVERLAP_MAX_LENGTH && paraCount > 1) {
+          current = lastPara.text + " " + para.text;
+          currentPage = lastPara.page;
+        } else {
+          current = para.text;
+          currentPage = para.page;
+        }
+        paraCount = 1;
+      } else {
+        if (!current) currentPage = para.page;
+        current = current ? current + " " + para.text : para.text;
+        paraCount++;
+      }
+      lastPara = para;
     }
+    if (current.trim().length > 0) chunks.push({ text: current.trim(), page: currentPage, ctx });
   }
-  if (current.trim().length > 0) chunks.push({ text: current.trim(), page: currentPage });
-
   return chunks;
 }
 
@@ -237,8 +299,18 @@ async function embedBatch(texts) {
 
 // ---------- ۵الف. کلید یکتا برای هر تکه (برای تشخیص «همون تکهٔ قبلیه») ----------
 // source + متن دقیق تکه، چون اگه حتی یک کلمه عوض بشه باید دوباره embed بشه.
-function chunkKey(sourceFile, text) {
-  return `${sourceFile}:::${text}`;
+// متنِ واقعیِ بردارسازی = زمینه + متن، نرمال‌شده؛ کلید روی هش همین متن است (نه متن نمایشی)،
+// پس تغییر نرمال‌سازی یا زمینه هم تکه را «تغییرکرده» حساب می‌کند.
+function embedTextOf(chunk) {
+  return embedNormalize(`${chunk.ctx}\n${chunk.text}`);
+}
+
+function embedHash(embedText) {
+  return crypto.createHash("sha1").update(embedText).digest("hex").slice(0, 12);
+}
+
+function chunkKey(sourceFile, hash) {
+  return `${sourceFile}:::${hash}`;
 }
 
 // ---------- ۵ب. خوندن embeddings.json قبلی (اگه وجود داشته باشه) ----------
@@ -252,7 +324,7 @@ function loadPreviousEmbeddingsMap() {
     const prevRaw = fs.readFileSync(OUTPUT_FILE, "utf-8");
     const prevData = JSON.parse(prevRaw);
     for (const item of prevData) {
-      map.set(chunkKey(item.source, item.text), item);
+      if (item.h) map.set(chunkKey(item.source, item.h), item);
     }
   } catch (err) {
     console.warn("هشدار: خوندن embeddings.json قبلی ناموفق بود، همه‌چیز از نو embed می‌شه.", err.message);
@@ -280,9 +352,10 @@ async function main() {
   const allChunks = []; // { book, source, text, page }
 
   for (const file of files) {
-    const { title: bookName, paragraphs } = extractBookContent(file, titleIndex);
-    const chunks = chunkParagraphs(paragraphs);
-    console.log(`  ${bookName}: ${paragraphs.length} پاراگراف → ${chunks.length} تکه`);
+    const { title: bookName, units } = extractBookUnits(file, titleIndex);
+    const chunks = chunkUnits(bookName, units);
+    const paragraphCount = units.reduce((n, u) => n + u.paragraphs.length, 0);
+    console.log(`  ${bookName}: ${paragraphCount} پاراگراف، ${units.length} واحد → ${chunks.length} تکه`);
     // رفع باگ: قبلاً فقط اسم فایل (بدون نام پوشه) ذخیره می‌شد، پس برای
     // کتاب‌هایی که داخل یک زیرپوشه‌ن (مثل Seyed_Kazem_Roohbakhsh/...)
     // لینک نتیجهٔ جست‌وجو به‌جای مسیر واقعی، به ریشهٔ سایت اشاره می‌کرد و
@@ -290,7 +363,7 @@ async function main() {
     // ذخیره می‌شه تا لینک همیشه درست باشه.
     const relativeSource = path.relative(REPO_ROOT, file).split(path.sep).join("/");
     for (const chunk of chunks) {
-      allChunks.push({ book: bookName, source: relativeSource, text: chunk.text, page: chunk.page });
+      allChunks.push({ book: bookName, source: relativeSource, text: chunk.text, page: chunk.page, ctx: chunk.ctx });
     }
   }
 
@@ -303,14 +376,16 @@ async function main() {
 
   for (let i = 0; i < allChunks.length; i++) {
     const chunk = allChunks[i];
-    const key = chunkKey(chunk.source, chunk.text);
+    chunk.embedText = embedTextOf(chunk);
+    chunk.h = embedHash(chunk.embedText);
+    const key = chunkKey(chunk.source, chunk.h);
     const prev = previousMap.get(key);
 
     if (prev && prev.vector) {
       // این تکه دقیقاً قبلاً هم بوده و متنش عوض نشده -- بردار قبلی رو نگه دار
-      results[i] = { book: chunk.book, source: chunk.source, text: chunk.text, page: chunk.page, vector: prev.vector };
+      results[i] = { book: chunk.book, source: chunk.source, text: chunk.text, page: chunk.page, h: chunk.h, vector: prev.vector };
     } else {
-      toEmbed.push({ index: i, text: chunk.text });
+      toEmbed.push({ index: i, text: chunk.embedText });
     }
   }
 
@@ -340,6 +415,7 @@ async function main() {
           source: chunk.source,
           text: chunk.text,
           page: chunk.page,
+          h: chunk.h,
           vector: vectorToBase64(vectors[j]),
         };
       }
