@@ -256,6 +256,19 @@ async function retrieveForChatAi(query, bookFilter) {
 // ---------- ساخت لینک به همان قطعهٔ متنی داخل صفحه (Text Fragment مرورگر) ----------
 // این یه ویژگی استاندارد مرورگرهاست: با اضافه‌کردن #:~:text=... به انتهای لینک،
 
+// ---------- بازیابی برای تب جست‌وجوی مفهومی: آستانه + reranker ----------
+// همان روشِ گفتگو: ۴۰ نامزد ← reranker ← ۵ نتیجه. اگر بالاترین شباهت cosine زیر
+// آستانه باشد، نتیجهٔ بی‌ربط نشان داده نمی‌شود (belowThreshold). اگر reranker
+// خطا داد، بی‌صدا ترتیب cosine می‌ماند.
+async function semanticSearchPrecise(query, topK = 5, bookFilter = null) {
+  const candidates = await semanticSearch(query, RERANK_CANDIDATES, bookFilter);
+  if (candidates.length === 0) return { results: [], belowThreshold: false };
+  if (candidates[0].score < CHAT_RERANK_MIN_TOP_SCORE) return { results: [], belowThreshold: true };
+  if (candidates.length <= topK) return { results: candidates, belowThreshold: false };
+  const reranked = await rerankCandidatesAi(query, candidates);
+  return { results: (reranked || candidates).slice(0, topK), belowThreshold: false };
+}
+
 // ---------- فیلتر کتاب‌ها بر اساس عنوان / نویسنده / موضوع (مشترک بین سه پنل 📚) ----------
 // متادیتای هر کتاب از data-author و data-subject روی <li class="searchable-item">
 // در index.htm می‌آید. field یکی از all|title|author|subject است.
@@ -1677,6 +1690,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let debounceTimer;
     let searchToken = 0; // شمارندهٔ نسل: هر بار تایپ، شماره‌ای جدید می‌گیره
     let latestSearchResults = []; // نتایج جست‌وجوی آخر، برای نوار ابزار زیرش
+    // صفحه‌بندی نتایج (هم‌شکل جست‌وجوی متنی): هر کادر ۸ نتیجه، بقیه در صفحه‌های بعد.
+    const AI_RESULTS_PER_PAGE = 8;
+    let aiResultsPage = 1;
     const searchSelectedIndexes = new Set(); // ایندکس‌های تیک‌خورده در همین نتایج
     // آیتم ب: محدودهٔ جست‌وجو - Set از کتاب‌های تیک‌خورده (خالی = کل آرشیو)
     const aiSearchBookScope = setupScopeSelector("aiSearchScopeToggle", "aiSearchScopePanel", "aiSearchScopeList");
@@ -1691,11 +1707,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // شمارهٔ ردیف‌ها (و data-ai-index) سراسری است، نه شمارهٔ داخل صفحه؛ پس
+    // انتخاب، کپی و خروجی روی همهٔ نتایج کار می‌کنند.
     function renderAiResultsHtml() {
+      const totalPages = Math.max(1, Math.ceil(latestSearchResults.length / AI_RESULTS_PER_PAGE));
+      aiResultsPage = Math.min(Math.max(aiResultsPage, 1), totalPages);
+      const start = (aiResultsPage - 1) * AI_RESULTS_PER_PAGE;
       aiSearchResults.innerHTML = latestSearchResults
-        .map(
-          (r, i) =>
-            `<div class="ai-search-result-row">
+        .slice(start, start + AI_RESULTS_PER_PAGE)
+        .map((r, k) => {
+          const i = start + k;
+          return `<div class="ai-search-result-row${i === activeResultIndex ? " is-active-result" : ""}" data-ai-row="${i}">
               <div class="ai-result-marker">
                 <input type="checkbox" class="result-checkbox ai-result-checkbox" data-ai-index="${i}" title="انتخاب برای کپی/خروجی/نشانه" ${searchSelectedIndexes.has(i) ? "checked" : ""}>
                 <span class="result-number">${i + 1}</span>
@@ -1706,9 +1728,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>${r.text}</p>
                 <small>میزان تطابق مفهومی: ${(r.score * 100).toFixed(1)}٪ — برای مشاهدهٔ کتاب کلیک کنید</small>
               </a>
-            </div>`
-        )
+            </div>`;
+        })
         .join("");
+      renderAiPagination(totalPages);
+    }
+
+    function renderAiPagination(totalPages) {
+      let box = document.getElementById("aiSearchPagination");
+      if (!box) {
+        box = document.createElement("div");
+        box.id = "aiSearchPagination";
+        box.className = "pagination";
+        aiSearchResults.insertAdjacentElement("afterend", box);
+        box.addEventListener("click", (e) => {
+          const button = e.target.closest(".page-button");
+          if (!button || button.disabled) return;
+          const target = Number(button.dataset.page);
+          if (!target || target === aiResultsPage) return;
+          aiResultsPage = target;
+          renderAiResultsHtml();
+          const dropdown = document.querySelector(".ai-search-results-dropdown");
+          if (dropdown) dropdown.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+      if (totalPages <= 1) {
+        box.innerHTML = "";
+        return;
+      }
+      const btn = (label, page, disabled, current) =>
+        `<button type="button" class="page-button${current ? " current-page" : ""}" data-page="${page}" ${disabled ? "disabled" : ""} ${current ? 'aria-current="page"' : ""}>${label}</button>`;
+      const parts = [btn("صفحهٔ قبلی", aiResultsPage - 1, aiResultsPage === 1, false)];
+      for (let n = 1; n <= totalPages; n++) parts.push(btn(`صفحهٔ ${n}`, n, false, n === aiResultsPage));
+      parts.push(btn("صفحهٔ بعدی", aiResultsPage + 1, aiResultsPage === totalPages, false));
+      box.innerHTML = parts.join("");
     }
 
     // نوار ابزار یک‌بار ساخته و بعد از باکس نتایج قرار می‌گیره؛ هر بار
@@ -1760,6 +1813,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!query) {
           aiSearchResults.innerHTML = "";
           latestSearchResults = [];
+          aiResultsPage = 1;
           searchSelectedIndexes.clear();
           if (aiSearchStatus) aiSearchStatus.textContent = "";
           if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = "none";
@@ -1774,7 +1828,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // می‌رسید تایپ‌کردن هیچ خروجی‌ای ندارد. الان همین‌جا باز می‌شود.
         if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = "block";
         try {
-          const results = await semanticSearch(query, 5, aiSearchBookScope);
+          const { results, belowThreshold } = await semanticSearchPrecise(query, RERANK_CANDIDATES, aiSearchBookScope);
           // اگه در این فاصله کاربر متن رو پاک کرده یا چیز دیگه‌ای تایپ کرده،
           // این جواب دیگه منسوخ شده و نباید روی وضعیت فعلی بشینه.
           if (myToken !== searchToken) return;
@@ -1786,10 +1840,13 @@ document.addEventListener("DOMContentLoaded", () => {
             trackEvent("semanticSearch", query);
           }
 
-          if (aiSearchStatus) aiSearchStatus.textContent = "";
+          if (aiSearchStatus) {
+            aiSearchStatus.textContent = belowThreshold ? "در آرشیو مطلب مرتبطی پیدا نشد. سؤال را کامل‌تر یا با کلمات دیگری بنویسید." : "";
+          }
           latestSearchResults = results;
+          aiResultsPage = 1;
           searchSelectedIndexes.clear();
-          if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = results.length > 0 ? "block" : "none";
+          if (aiSearchResultsDropdown) aiSearchResultsDropdown.style.display = results.length > 0 || belowThreshold ? "block" : "none";
           activeResultIndex = -1;
           updateAiSearchNavButtons();
           renderAiResultsHtml();
@@ -1898,6 +1955,7 @@ document.addEventListener("DOMContentLoaded", () => {
           latestSearchResults = [...latestSearchResults].sort((a, b) => b.score - a.score);
         }
 
+        aiResultsPage = 1;
         searchSelectedIndexes.clear();
         activeResultIndex = -1;
         updateAiSearchNavButtons();
@@ -1948,27 +2006,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function focusAiResult(index, direction) {
-      const rows = aiSearchResults.querySelectorAll(".ai-search-result-row");
-      if (rows.length === 0) return;
+      const total = latestSearchResults.length;
+      if (total === 0) return;
 
       const previousIndex = activeResultIndex;
-      activeResultIndex = ((index % rows.length) + rows.length) % rows.length;
-      rows.forEach((row, i) => row.classList.toggle("is-active-result", i === activeResultIndex));
+      activeResultIndex = ((index % total) + total) % total;
+
+      // نتیجهٔ فعال ممکن است در صفحهٔ دیگری باشد؛ صفحه را عوض می‌کنیم.
+      const targetPage = Math.floor(activeResultIndex / AI_RESULTS_PER_PAGE) + 1;
+      const pageChanged = targetPage !== aiResultsPage;
+      if (pageChanged) aiResultsPage = targetPage;
+      renderAiResultsHtml();
+
+      const rows = [...aiSearchResults.querySelectorAll(".ai-search-result-row")];
+      const activeRow = rows.find((row) => Number(row.dataset.aiRow) === activeResultIndex);
+      const previousRow = rows.find((row) => Number(row.dataset.aiRow) === previousIndex);
+      if (!activeRow) return;
 
       // فقط اسکرول داخلیِ خودِ بلوک شناور نتایج جابه‌جا می‌شه - نه
       // بلوک جستجو، نه کل صفحه - و دقیقاً به‌اندازهٔ فاصلهٔ واقعیِ بین
       // دو ردیف (نه یه عدد تقریبی که می‌تونست بلوک رو نصفه‌ونیمه
       // نشون بده).
       const dropdown = document.querySelector(".ai-search-results-dropdown");
-      if (
-        dropdown &&
-        direction &&
-        previousIndex >= 0 &&
-        previousIndex < rows.length &&
-        previousIndex !== activeResultIndex
-      ) {
-        const delta = rows[activeResultIndex].getBoundingClientRect().top - rows[previousIndex].getBoundingClientRect().top;
+      if (dropdown && direction && previousRow && !pageChanged && previousRow !== activeRow) {
+        const delta = activeRow.getBoundingClientRect().top - previousRow.getBoundingClientRect().top;
         dropdown.scrollBy({ top: delta, behavior: "smooth" });
+      } else if (dropdown && direction) {
+        activeRow.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
 
