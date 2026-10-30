@@ -149,6 +149,9 @@ function extractBookTitle($, filePath, titleIndex) {
 // هستند و جمله را وسط می‌شکنند حذف می‌شوند. فایل‌های بدون عنوان یک واحد دارند.
 // شمارهٔ صفحهٔ چاپی (section.page[data-display]) مثل قبل از اولین پاراگراف
 // هر تکه خوانده می‌شود؛ data-display="0" (جلد) نادیده است.
+// حالت تکه‌بندی: "light" (پیش‌فرض) = فقط نرمال‌سازی و حذف نشانگر صفحه، بدون برش ساختاری،
+// زمینهٔ عنوان و هم‌پوشانی؛ "full" = همهٔ آن‌ها. ارزیابی نشان داد "full" دقت را کم می‌کند.
+const CHUNK_MODE = process.env.CHUNK_MODE === "full" ? "full" : "light";
 const PAGE_MARKER_RE = /^ص\s*[:：]\s*[\d۰-۹٠-٩]+$/;
 const IGNORED_HEADINGS = new Set(["اشاره"]);
 
@@ -171,6 +174,7 @@ function extractBookUnits(filePath, titleIndex) {
     if (!text) return;
 
     if (tag[0] === "h") {
+      if (CHUNK_MODE !== "full") return;
       if ($(el).parents("h1,h2,h3,h4,h5,h6").length) return;
       if (IGNORED_HEADINGS.has(text)) return;
       const level = Number(tag[1]);
@@ -240,7 +244,7 @@ function chunkUnits(bookTitle, units) {
     const ctxParts = [bookTitle, ...unit.chain].filter((p, i, a) => p && a.indexOf(p) === i);
     let ctx = ctxParts.join(" › ");
     if (unit.extraTitles.length > 0) ctx += " | " + unit.extraTitles.join(" | ");
-    ctx = ctx.slice(0, 300);
+    ctx = CHUNK_MODE === "full" ? ctx.slice(0, 300) : "";
 
     let current = "";
     let currentPage = null;
@@ -250,7 +254,7 @@ function chunkUnits(bookTitle, units) {
     for (const para of unit.paragraphs) {
       if (current && (current + " " + para.text).length > MAX_CHUNK_LENGTH && current.length >= MIN_CHUNK_LENGTH) {
         chunks.push({ text: current.trim(), page: currentPage, ctx });
-        if (lastPara && lastPara.text.length <= OVERLAP_MAX_LENGTH && paraCount > 1) {
+        if (CHUNK_MODE === "full" && lastPara && lastPara.text.length <= OVERLAP_MAX_LENGTH && paraCount > 1) {
           current = lastPara.text + " " + para.text;
           currentPage = lastPara.page;
         } else {
@@ -302,7 +306,7 @@ async function embedBatch(texts) {
 // متنِ واقعیِ بردارسازی = زمینه + متن، نرمال‌شده؛ کلید روی هش همین متن است (نه متن نمایشی)،
 // پس تغییر نرمال‌سازی یا زمینه هم تکه را «تغییرکرده» حساب می‌کند.
 function embedTextOf(chunk) {
-  return embedNormalize(`${chunk.ctx}\n${chunk.text}`);
+  return embedNormalize(chunk.ctx ? `${chunk.ctx}\n${chunk.text}` : chunk.text);
 }
 
 function embedHash(embedText) {
