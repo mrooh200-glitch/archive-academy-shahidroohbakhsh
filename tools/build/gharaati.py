@@ -93,12 +93,12 @@ if 'bs-pinning-wrapper' not in x:
 x,k=re.subn(r'bs-pinning-block smart (?:pinned|unpinned)','bs-pinning-block smart unpinned',x,count=1); assert k==1
 if 'class=wrapper-sticky' not in x:
     o='<div class="col-sm-4 col-xs-12 sidebar-column sidebar-column-primary" id=list>'; assert x.count(o)==1
-    x=x.replace(o,'<div class=wrapper-sticky style=display:block;height:0px;width:33.3333%;margin:auto;position:relative;float:right;inset:auto;vertical-align:top><div class="col-sm-4 col-xs-12 sidebar-column sidebar-column-primary" id=list style="width:0px;inset:auto;position:absolute">',1)
+    x=x.replace(o,'<div class=wrapper-sticky style=display:block;height:669.4px;width:33.3333%;margin:auto;position:relative;float:right;inset:auto;vertical-align:top><div class="col-sm-4 col-xs-12 sidebar-column sidebar-column-primary" id=list style="width:313.325px;inset:1714px auto auto 0px;position:absolute">',1)
     o3='\n </div>\n </div>\n <div class="col-sm-8 col-xs-12" id=content>'; assert x.count(o3)==1
     x=x.replace(o3,'\n </div>\n </div></div>\n <div class="col-sm-8 col-xs-12" id=content>',1)
 else:
-    x,k=re.subn(r'<div class=wrapper-sticky style=[^>]*>','<div class=wrapper-sticky style=display:block;height:0px;width:33.3333%;margin:auto;position:relative;float:right;inset:auto;vertical-align:top>',x,count=1); assert k==1
-    x,k=re.subn(r'(sidebar-column-primary" id=list) style="[^"]*"',r'\1 style="width:0px;inset:auto;position:absolute"',x,count=1); assert k==1
+    x,k=re.subn(r'<div class=wrapper-sticky style=[^>]*>','<div class=wrapper-sticky style=display:block;height:669.4px;width:33.3333%;margin:auto;position:relative;float:right;inset:auto;vertical-align:top>',x,count=1); assert k==1
+    x,k=re.subn(r'(sidebar-column-primary" id=list) style="[^"]*"',r'\1 style="width:313.325px;inset:1714px auto auto 0px;position:absolute"',x,count=1); assert k==1
 # modules
 x=x.replace('<script type=module ','<script type="text/plain-disabled-by-archive" ')
 # end scripts
