@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاکله (سیستم عامل درونیِ تو) | مطالعات تکمیلی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri+Quran&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-cream: #faf9fc;
+    --c-cream-deep: #ede9fe;
+    --c-forest: #6d28d9;
+    --c-forest-dark: #4c1d95;
+    --c-maroon: #6b2fb3;
+    --c-gold: #b8912a;
+    --c-gold-light: #e3c876;
+    --c-ink: #201a2b;
+    --c-line: #e6e1f0;
+    --c-quote-bg: #fff7e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+    background: var(--c-cream);
+    color: var(--c-ink);
+    line-height: 1.9;
+  }
+  /* فیلتر مستقیم رو body نیست: هر جدِ دارایِ filter برای فرزندانِ
+     position:fixed (topbar/side-rail) containing block تازه می‌سازه و
+     "شناوریِ نسبت‌به‌viewport" رو می‌شکنه؛ به‌جاش رو خودِ هر بلاکِ
+     سطحِ‌بالا جدا اعمال می‌شه. */
+  body.dark-mode { background: #0d0d10; }
+  html.dark-mode { background: #0d0d10 !important; }
+  html.dark-mode body.dark-mode { background: transparent !important; }
+  body.dark-mode .m-topbar,
+  body.dark-mode .m-wrap,
+  body.dark-mode .side-rail {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  /* حالتِ شب: نوارِ کناری و خطِ طلاییِ آن با opacity پایین تقریباً نامرئی می‌شد */
+  body.dark-mode .side-rail { opacity: .65; }
+  body.dark-mode .side-rail.right { border-left-width: 3px; }
+  body.dark-mode .side-rail.left { border-right-width: 3px; }
+  body.dark-mode img,
+  body.dark-mode iframe,
+  body.dark-mode video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  .m-dark-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .m-dark-toggle:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  .side-rail {
+    display: none;
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 40px;
+    background-image: radial-gradient(var(--c-forest) 1.3px, transparent 1.3px);
+    background-size: 14px 14px;
+    opacity: .35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .side-rail.right { right: 0; border-left: 2px solid var(--c-gold); }
+  .side-rail.left  { left: 0;  border-right: 2px solid var(--c-gold); }
+  @media (min-width: 860px) { .side-rail { display: block; } }
+
+  .m-topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000002;
+    background: linear-gradient(135deg, var(--c-forest-dark), var(--c-forest));
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 10px rgba(76,29,149,.25);
+  }
+  .m-topbar .m-title { font-weight: 600; }
+  .m-topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .m-topbar .m-badge {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .m-topbar a.m-badge:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+  @media (max-width: 560px) {
+    .m-topbar { padding: 10px 12px; gap: 8px; }
+    .m-topbar .m-title { white-space: nowrap; }
+    .m-topbar .m-title-extra { display: none; }
+    .m-topbar-actions { gap: 6px; }
+    .m-topbar .m-badge { font-size: 11.5px; padding: 3px 9px; }
+  }
+  @media (max-width: 360px) {
+    .m-topbar { padding: 8px 10px; }
+    .m-topbar .m-title { font-size: 12px; }
+    .m-topbar .m-badge { font-size: 10.5px; padding: 3px 6px; }
+    .m-topbar .m-dark-toggle { width: 28px; height: 28px; font-size: 13px; }
+    .m-topbar-actions { gap: 4px; }
+  }
+
+  .m-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 70px;
+    background: var(--c-cream);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--c-line);
+  }
+  .m-wrap::before, .m-wrap::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--c-gold-light) 12%, var(--c-gold-light) 88%, transparent);
+    opacity: .55;
+  }
+  .m-wrap::before { right: 0; }
+  .m-wrap::after  { left: 0; }
+
+  .m-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--c-cream-deep);
+    color: var(--c-forest-dark);
+    font-weight: 800; font-size: 18px;
+    border: 1.5px solid var(--c-gold-light);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 24px; font-weight: 800;
+    color: var(--c-forest-dark);
+    margin: 0 0 28px;
+    line-height: 1.6;
+    border-bottom: 2px solid var(--c-line);
+    padding-bottom: 18px;
+  }
+  p.m-p { font-size: 17px; font-weight: 500; margin: 0 0 18px; text-align: right; text-indent: 0.4cm; }
+
+  blockquote.m-quote {
+    margin: 26px 0;
+    padding: 18px 20px;
+    background: var(--c-quote-bg);
+    border-right: 4px solid var(--c-gold);
+    border-radius: 6px;
+    font-size: 17px;
+    line-height: 1.95;
+  }
+  blockquote.m-quote .arabic {
+    display: block;
+    font-family: "Amiri Quran", "Vazirmatn", serif;
+    font-size: 23px; font-weight: 400;
+    color: var(--c-forest-dark);
+    margin-bottom: 10px;
+    text-indent: 0.4cm;
+  }
+  blockquote.m-quote .ayah-bracket { color: var(--c-gold); }
+  blockquote.m-quote .translation { display: block; color: var(--c-ink); text-indent: 0.4cm; margin-top: 8px; }
+
+  sup.fn-ref, .m-footnotes li { scroll-margin-top: var(--topbar-h, 90px); }
+  sup.fn-ref { font-size: 12px; }
+  sup.fn-ref a {
+    color: var(--c-forest-dark);
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0 1px;
+  }
+  sup.fn-ref a:hover { text-decoration: underline; }
+
+  a.ref-link {
+    color: var(--c-forest);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--c-forest);
+    font-size: 14px;
+  }
+  a.ref-link:hover { color: var(--c-maroon); }
+
+  .m-footnotes {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--c-gold-light);
+    font-size: 14.5px;
+    color: #4a4356;
+  }
+  .m-footnotes-title { font-weight: 800; color: var(--c-forest-dark); margin-bottom: 10px; font-size: 14.5px; }
+  .m-footnotes ol { margin: 0; padding-inline-start: 22px; list-style-type: persian; }
+  .m-footnotes li { margin-bottom: 14px; line-height: 1.85; }
+  .m-footnotes .fn-p { margin: 0 0 8px; text-indent: 0.4cm; }
+  .m-footnotes .fn-p:first-child { text-indent: 0; }
+  .m-footnotes .fn-p:last-child { margin-bottom: 0; }
+  .m-footnotes a.fn-back { color: var(--c-forest); text-decoration: none; font-weight: 700; font-size: 12.5px; margin-inline-end: 6px; }
+  .m-footnotes a.fn-back:hover { color: var(--c-maroon); }
+  .fn-p.fn-quote-en {
+    direction: ltr;
+    text-align: left;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #4a4458;
+    background: #f4f2fa;
+    border-left: 3px solid var(--c-gold);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 6px 0 12px !important;
+  }
+
+  /* ایموجی رنگیِ ثابت در همهٔ دستگاه‌ها */
+  .emo { font-family: "Noto Color Emoji", sans-serif; }
+  body.dark-mode .emo { filter: invert(1) hue-rotate(180deg); }
+
+  .m-nav {
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-line);
+    display: flex; justify-content: space-between;
+    font-size: 14.5px;
+  }
+  .m-nav a { color: var(--c-forest); text-decoration: none; font-weight: 600; }
+  .m-nav a:hover { color: var(--c-maroon); }
+  .m-nav .disabled { color: #b9b3c6; pointer-events: none; }
+
+  /* ===== زیرنویس هوشمند (صوت + متن هم‌زمان) ===== */
+  .lec{margin:44px 0 8px;padding-top:26px;border-top:2px solid var(--c-gold-light)}
+  .lec-h{font-size:19px;font-weight:800;color:var(--c-forest-dark);margin:0 0 6px;line-height:1.7}
+  .lec-note{font-size:13.5px;color:#6a6279;margin:0 0 18px;line-height:1.9}
+  p.lp{position:relative;margin:0 0 14px;padding:12px 14px 12px 12px;border-radius:10px;font-size:17px;font-weight:500;line-height:2.05;text-align:right;transition:background .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  p.lp.cur{background:var(--c-cream-deep)}
+  p.lp .pp{all:unset;cursor:pointer;display:inline-block;font:600 12px/1 "Vazirmatn",Tahoma,sans-serif;color:var(--c-forest-dark);background:#fff;border:1px solid var(--c-line);border-radius:99px;padding:5px 10px;margin-inline-end:8px;vertical-align:middle;direction:ltr}
+  p.lp .pp:focus-visible,#sbar button:focus-visible,#sbar input:focus-visible{outline:3px solid var(--c-gold);outline-offset:2px}
+  p.lp.cur .pp{background:var(--c-forest);color:#fff;border-color:var(--c-forest)}
+  .w{border-radius:4px;transition:background .12s,color .12s;cursor:pointer}
+  .w.q{font-family:"Amiri Quran","Vazirmatn",serif;font-size:1.22em;color:var(--c-forest-dark)}
+  .w.u{background:var(--c-gold-light);color:#201a2b;box-shadow:0 0 0 2px var(--c-gold-light)}
+  #sbar{position:fixed;left:0;right:0;bottom:0;z-index:1000001;background:#1f1633;color:#fff;border-top:2px solid var(--c-gold);padding:8px 12px calc(8px + env(safe-area-inset-bottom));transition:transform .25s;direction:rtl;font-family:"Vazirmatn",Tahoma,sans-serif}
+  #sbar.hid{transform:translateY(100%)}
+  #sbar .row{display:flex;align-items:center;gap:8px;max-width:700px;margin:0 auto;flex-wrap:wrap}
+  #sbar button{all:unset;cursor:pointer;min-width:40px;height:40px;border-radius:99px;text-align:center;line-height:40px;font-size:15px;color:#fff;background:rgba(255,255,255,.12);padding:0 10px;box-sizing:border-box;white-space:nowrap}
+  #sbar button:hover{background:rgba(255,255,255,.22)}
+  #sbar button.main{background:var(--c-gold);color:#201a2b;font-size:18px;min-width:46px;height:46px;line-height:46px}
+  #sbar button.on{background:var(--c-gold-light);color:#201a2b}
+  #sbar .seek{flex:1 1 200px;display:flex;align-items:center;gap:8px;min-width:180px;order:5;width:100%}
+  #sbar input[type=range]{flex:1;direction:rtl;accent-color:var(--c-gold)}
+  #sbar .tm{font-size:12.5px;opacity:.85;direction:ltr;white-space:nowrap}
+  #sbar .grp{display:flex;gap:4px;margin-inline-start:auto}
+  #sbar .grp button{font-size:12.5px;min-width:0;height:34px;line-height:34px}
+  #spdm{position:absolute;bottom:62px;right:12px;background:#2b1f47;border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:6px;display:none;flex-direction:column;gap:2px}
+  #spdm.on{display:flex}
+  #spdm button{height:34px;line-height:34px;border-radius:8px;background:transparent;text-align:right;min-width:90px}
+  .sh{display:flex;align-items:center;gap:10px;margin:28px 0 10px;flex-wrap:wrap}
+  .sh h3{font-size:16.5px;font-weight:800;color:var(--c-forest-dark);margin:0;flex:1 1 200px;line-height:1.7}
+  .sh .sp{all:unset;cursor:pointer;width:36px;height:36px;border-radius:50%;background:var(--c-forest);color:#fff;text-align:center;line-height:36px;font-size:13px;flex:none}
+  .sh.cur .sp{background:var(--c-gold);color:#201a2b}
+  .sh .stm{font-size:12.5px;color:#6a6279;width:100%;padding-inline-start:46px;margin-top:-8px}
+  .sh .sp:focus-visible{outline:3px solid var(--c-gold);outline-offset:2px}
+  #smenu{position:fixed;left:0;right:0;bottom:var(--bh,150px);z-index:1000001;background:#2b1f47;color:#fff;border-top:1px solid rgba(255,255,255,.2);max-height:55vh;overflow:auto;display:none;padding:8px 12px;direction:rtl;font-family:"Vazirmatn",Tahoma,sans-serif}
+  #smenu.on{display:block}
+  #smenu .it{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;max-width:700px;margin:2px auto;padding:10px 12px;border-radius:10px;line-height:1.7}
+  #smenu .it:hover{background:rgba(255,255,255,.1)}#smenu .it.cur{background:var(--c-gold-light);color:#201a2b}
+  #smenu .it small{display:block;opacity:.75;font-size:12px}
+  #smenu .it:focus-visible{outline:3px solid var(--c-gold)}
+  #vf{position:sticky;top:var(--tb,50px);z-index:5;margin:0 0 16px;background:#120b22;border:2px solid var(--c-gold);border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(32,26,43,.25)}
+  #vf[hidden]{display:none}
+  #vf video{display:block;width:100%;max-height:var(--vh,30vh);object-fit:contain;background:#000;cursor:pointer}
+  #vcap{min-height:3.6em;max-height:7em;overflow:auto;padding:8px 12px;color:#fff;font:600 15.5px/1.9 "Vazirmatn",Tahoma,sans-serif;text-align:center;direction:rtl}
+  #vcap .q{font-family:"Amiri Quran","Vazirmatn",serif;color:var(--c-gold-light)}
+  #vf .vb{all:unset;cursor:pointer;position:absolute;top:8px;left:8px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;text-align:center;line-height:34px;font-size:15px;border:1px solid rgba(255,255,255,.45)}
+  #vf .vb:focus-visible{outline:3px solid var(--c-gold)}
+  #vf .vb2{left:48px}
+  #vfc{display:none;direction:ltr;align-items:center;gap:10px;padding:8px 12px;background:rgba(18,11,34,.92);color:#fff}
+  #vfc button{all:unset;cursor:pointer;min-width:42px;height:42px;border-radius:50%;text-align:center;line-height:42px;font:600 16px "Vazirmatn",Tahoma,sans-serif;background:rgba(255,255,255,.12);color:#fff}
+  #vfc button:focus-visible{outline:3px solid var(--c-gold)}
+  #vfc input[type=range]{flex:1;min-width:0;accent-color:var(--c-gold-light);height:32px}
+  #vfc .tm{font:600 13px/1 "Vazirmatn",Tahoma,sans-serif;min-width:42px;text-align:center;opacity:.9}
+  #vf.fs{position:fixed;inset:0;z-index:2000000;margin:0;border:0;border-radius:0;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;filter:none!important}
+  #vf.fs video{flex:1 1 auto;min-height:0;max-height:none;height:auto}
+  #vf.fs #vcap{position:absolute;left:0;right:0;bottom:62px;min-height:0;max-height:34%;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.78) 40%);padding:22px 14px 10px;font-size:clamp(16px,3.2vw,26px);pointer-events:none}
+  #vf.fs #vcap:empty{display:none}
+  #vf.fs #vfc{display:flex}
+  #vf.fs .vb{display:none}
+  body.dark-mode #vf.fs{filter:none!important}
+  #vf .vb3{left:88px}
+  p.lp,.sh{scroll-margin-top:var(--lim,110px)}
+  body.dark-mode #vf{filter:invert(1) hue-rotate(180deg)}
+  body.dark-mode #vf video{filter:none}
+  body{padding-bottom:150px}
+  @media(max-width:520px){#sbar .grp{margin-inline-start:0;width:100%;justify-content:center}}
+  @media(prefers-reduced-motion:reduce){#sbar,p.lp,.w{transition:none}}
+</style>
+</head>
+<body>
+  <div class="side-rail right"></div>
+  <div class="side-rail left"></div>
+  <div class="m-topbar">
+    <span class="m-title">مطالعات تکمیلی<span class="m-title-extra"> — اصول اعتقادی</span></span>
+    <div class="m-topbar-actions">
+      <a class="m-badge" href="https://sroohbakhsh.ir/" target="_blank" rel="noopener">پایگاه علمی‌پژوهشی شهید روحبخش</a>
+      <button id="darkModeToggle" type="button" class="m-dark-toggle" title="حالت شب" aria-label="حالت شب">🌙</button>
+    </div>
+  </div>
+  <script id="dark-mode-script">
+  (function() {
+    var DARK_MODE_KEY = "roohbakhshDarkMode";
+    function applyDarkMode(enabled) {
+      document.body.classList.toggle("dark-mode", enabled);
+      document.documentElement.classList.toggle("dark-mode", enabled);
+      var button = document.getElementById("darkModeToggle");
+      if (button) {
+        button.textContent = enabled ? "☀️" : "🌙";
+        button.title = enabled ? "حالت روز" : "حالت شب";
+        button.setAttribute("aria-label", enabled ? "حالت روز" : "حالت شب");
+      }
+    }
+    var toggle = document.getElementById("darkModeToggle");
+    if (toggle) {
+      var saved = false;
+      try { saved = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+      applyDarkMode(saved);
+      toggle.addEventListener("click", function() {
+        var enabled = !document.body.classList.contains("dark-mode");
+        applyDarkMode(enabled);
+        try { localStorage.setItem(DARK_MODE_KEY, enabled ? "1" : "0"); } catch (e) {}
+      });
+    }
+  })();
+  </script>
+  <script id="dynamic-offset-script">
+  (function() {
+    function applyOffset() {
+      var bar = document.querySelector('.m-topbar');
+      if (!bar) return;
+      var h = bar.getBoundingClientRect().height;
+      document.body.style.paddingTop = h + 'px';
+      document.documentElement.style.setProperty('--topbar-h', (h + 16) + 'px');
+    }
+    applyOffset();
+    document.addEventListener('DOMContentLoaded', applyOffset);
+    window.addEventListener('load', applyOffset);
+    window.addEventListener('resize', applyOffset);
+    setTimeout(applyOffset, 50);
+  })();
+  </script>
+  <div class="m-wrap">
+    <div class="m-num">۱</div>
+    <h1>شاکله (سیستم عامل درونیِ تو)</h1>
+    <p class="m-p">گوشیت رو نگاه کن. حتی اگه آخرین مدل دنیا باشه، بدون سیستم‌عامل فقط یه تیکه فلز و شیشه‌ست. هر اپی که باز می‌کنی، هر کاری که می‌کنی، همه‌ش زیر نظر همون سیستم‌عامله.</p>
+    <p class="m-p">مغز تو هم دقیقاً همینه.</p>
+    <p class="m-p"><span class="emo">💡</span> روان‌شناسی و علوم اعصاب می‌گن ما یه «ساختار درونی» داریم که مثل سیستم‌عامل، رفتارها و برداشت‌هامون رو فیلتر می‌کنه؛ اسم قدیمی‌ترش «شاکله»ست.<sup class="fn-ref" id="fnref-1"><a href="#fn-1">۱</a></sup></p>
+    <p class="m-p">جالبه که قرآن هم دقیقاً همین واژه رو به کار برده:</p>
+    <blockquote class="m-quote">
+      <span class="arabic"><span class="ayah-bracket">﴿</span>قُلْ كُلٌّ يَعْمَلُ عَلَىٰ شَاكِلَتِهِ<span class="ayah-bracket">﴾</span><sup class="fn-ref" id="fnref-2"><a href="#fn-2">۲</a></sup></span>
+      <span class="translation">بگو: هر کسی طبق شاکله‌ی خودش عمل می‌کنه.</span>
+    </blockquote>
+    <p class="m-p">یعنی رفتار آدم از یه ساختار درونی بیرون میاد؛ همونی که امروز بهش «سیستم‌عامل» می‌گیم.</p>
+    <p class="m-p">نکته‌ی عجیب اینه: بیشتر کارهایی که می‌کنی، اصلاً آگاهانه نیست. یعنی چی؟</p>
+    <p class="m-p">یعنی هیچ رفتاری از تو سر نمی‌زنه مگه اینکه از قبل، دستورش از همون سیستم‌عامل ناخودآگاهت صادر شده باشه.</p>
+    <p class="m-p">بی‌حوصله‌ای، بدون فکر گوشی رو باز می‌کنی و اسکرول می‌کنی؟ اون سیستم‌عامله. <span class="emo">😅</span></p>
+    <p class="m-p">داری تصمیم می‌گیری پولت رو کجا خرج کنی؟ بازم همون.</p>
+    <p class="m-p">تو فقط دکمه رو می‌زنی؛ قوانین بازی رو شاکله‌ات از قبل چیده.</p>
+    <p class="m-p">حالا بخش ترسناکش: <span class="emo">😬</span></p>
+    <p class="m-p">گوشی‌ها یه سیستم‌عامل ثابت دارن که از کارخونه میاد. اما سیستم‌عامل ذهن تو «متن‌بازه». یعنی هر کسی می‌تونه توش دست ببره.</p>
+    <p class="m-p">اینجا یه دوراهیه:</p>
+    <p class="m-p">یا خودت آگاهانه میشی مهندس این سیستم،</p>
+    <p class="m-p">یا صندلی رو خالی می‌گذاری تا الگوریتم تیک‌تاک، ترندهای اینستا و اقتصاد توجه بیان کدنویسیش کنن.</p>
+    <p class="m-p">وقتی کنترل دست الگوریتم‌هاست، فکر می‌کنی خیلی آزادی، «هر کاری دلت بخواد می‌کنی». اما واقعیتش اینه که فقط یه برنامه رو اجرا می‌کنی که یکی دیگه روی ذهنت نصب کرده.</p>
+    <p class="m-p">شاید بگی: «پس من اختیار ندارم؟ اگه همه‌چی از سیستم‌عامل ناخودآگاهم میاد، مسئولیتش دیگه با منه؟»</p>
+    <p class="m-p">سؤال خوبیه. جوابش تو همون مثال گوشیه: کاربر سیستم‌عامل رو از صفر نمی‌نویسه، ولی می‌تونه اپ نصب کنه، حذف کنه و آپدیت کنه. سیستم‌عامل ذهن هم «متن‌بازه»؛ قفل‌شده نیست.</p>
+    <p class="m-p">مثلاً کسی که هر شب بی‌اراده گوشی رو برمی‌داره، می‌تونه تصمیم بگیره چند هفته یه چیز دیگه کنار تختش بذاره. کم‌کم دستش یاد می‌گیره بره سمت اون. سیستم‌عامل همونه، فقط کدهاش عوض شده. <span class="emo">🌱</span></p>
+    <p class="m-p">پس اختیار تو از جنس «هر لحظه کد نوشتن» نیست؛ از جنس انتخاب اینه که چی و کی توی ذهنت نصب بشه. مسئولیتت هم دقیقاً همین‌جاست.</p>
+    <p class="m-p">حالا یه لحظه فکر کن: <span class="emo">🤔</span></p>
+    <p class="m-p">کدهای سیستم‌عاملت رو الان کی می‌نویسه؟</p>
+    <div class="lec" id="lec">
+      <h2 class="lec-h">گوش کن: همین بحث، با زیرنویس هوشمند</h2>
+      <p class="lec-note">پخش را بزن؛ پاراگراف و جمله‌ای که خوانده می‌شود رنگی می‌شود و صفحه دنبالش می‌آید. روی هر جملهٔ متن دو بار بزن تا صوت از همان‌جا پخش شود. یک بار بزن تا نوار پایین پنهان یا نمایان شود.</p>
+      <div id="vf" hidden><video id="svid" muted playsinline preload="none"></video><button type="button" class="vb" id="vx" aria-label="بستن فیلم">✕</button><button type="button" class="vb vb3" id="vdl" aria-label="دانلود فیلم زیرنویس‌شده" title="دانلود فیلم زیرنویس‌شده">⬇</button><button type="button" class="vb vb2" id="vfs" aria-label="تمام‌صفحه" title="تمام‌صفحه">⛶</button><div id="vcap" aria-hidden="true"></div><div id="vfc"><button type="button" id="fpp" aria-label="پخش">▶</button><button type="button" id="fb" aria-label="ده ثانیه عقب">−۱۰</button><input type="range" id="fseek" min="0" max="1000" value="0" aria-label="جابه‌جایی در فیلم"><button type="button" id="ff" aria-label="ده ثانیه جلو">+۱۰</button><span class="tm" id="ftm">۰:۰۰</span><button type="button" id="fx" aria-label="خروج از تمام‌صفحه">⤡</button></div></div>
+<div class="sh" id="sh0"><button type="button" class="sp" aria-label="پخش این مقطع">▶</button><h3>الگو؛ نخستین عامل ساخت شاکله</h3><span class="stm">۰:۰۰ تا ۰:۳۸ · ۳۹ ثانیه</span></div>
+<p class="lp" id="lp0" data-i="0"><button type="button" class="pp" aria-label="پخش از این پاراگراف">▶</button><span class="tx"><span class="w" data-k="0">چه</span> <span class="w" data-k="1">چیزی</span> <span class="w" data-k="2">شاکلهٔ</span> <span class="w" data-k="3">انسان</span> <span class="w" data-k="4">را</span> <span class="w" data-k="5">شکل</span> <span class="w" data-k="6">می‌دهد؟</span> <span class="w" data-k="7">این</span> <span class="w" data-k="8">آیه</span> <span class="w" data-k="9">را</span> <span class="w" data-k="10">زحمت</span> <span class="w" data-k="11">کشیدند</span> <span class="w" data-k="12">آوردند:</span> <span class="w q" data-k="13">﴿قُلْ</span> <span class="w q" data-k="14">كُلٌّ</span> <span class="w q" data-k="15">يَعْمَلُ</span> <span class="w q" data-k="16">عَلَى</span> <span class="w q" data-k="17">شَاكِلَتِهِ</span> <span class="w q" data-k="18">فَرَبُّكُمْ</span> <span class="w q" data-k="19">أَعْلَمُ</span> <span class="w q" data-k="20">بِمَنْ</span> <span class="w q" data-k="21">هُوَ</span> <span class="w q" data-k="22">أَهْدَى</span> <span class="w q" data-k="23">سَبِيلًا﴾.</span> <span class="w" data-k="24">خیلی</span> <span class="w" data-k="25">هم</span> <span class="w" data-k="26">جالب</span> <span class="w" data-k="27">است</span> <span class="w" data-k="28">آن</span> <span class="w q" data-k="29">«فَرَبُّكُمْ</span> <span class="w q" data-k="30">أَعْلَمُ</span> <span class="w q" data-k="31">بِمَنْ</span> <span class="w q" data-k="32">هُوَ</span> <span class="w q" data-k="33">أَهْدَى</span> <span class="w q" data-k="34">سَبِيلًا»؛</span> <span class="w" data-k="35">یعنی</span> <span class="w" data-k="36">خدای</span> <span class="w" data-k="37">سبحان</span> <span class="w" data-k="38">می‌داند</span> <span class="w" data-k="39">که</span> <span class="w" data-k="40">خلاصه</span> <span class="w" data-k="41">در</span> <span class="w" data-k="42">درون</span> <span class="w" data-k="43">چه</span> <span class="w" data-k="44">کسی</span> <span class="w" data-k="45">چه</span> <span class="w" data-k="46">چیزی</span> <span class="w" data-k="47">هست</span> <span class="w" data-k="48">که</span> <span class="w" data-k="49">آن</span> <span class="w" data-k="50">چه</span> <span class="w" data-k="51">در</span> <span class="w" data-k="52">درونش</span> <span class="w" data-k="53">هست،</span> <span class="w" data-k="54">او</span> <span class="w" data-k="55">را</span> <span class="w" data-k="56">هدایت</span> <span class="w" data-k="57">می‌کند.</span> <span class="w" data-k="58">بگذریم؛</span> <span class="w" data-k="59">آن‌جا</span> <span class="w" data-k="60">یک</span> <span class="w" data-k="61">بحث</span> <span class="w" data-k="62">مفصلی</span> <span class="w" data-k="63">است</span> <span class="w" data-k="64">که</span> <span class="w" data-k="65">آن</span> <span class="w" data-k="66">عواملی</span> <span class="w" data-k="67">که</span> <span class="w" data-k="68">شاکله</span> <span class="w" data-k="69">را</span> <span class="w" data-k="70">می‌سازد</span> <span class="w" data-k="71">چیست.</span> <span class="w" data-k="72">یکی</span> <span class="w" data-k="73">از</span> <span class="w" data-k="74">آن‌ها</span> <span class="w" data-k="75">الگوست؛</span> <span class="w" data-k="76">الگو</span> <span class="w" data-k="77">شاکله</span> <span class="w" data-k="78">[را</span> <span class="w" data-k="79">می‌سازد].</span></span></p>
+<div class="sh" id="sh1"><button type="button" class="sp" aria-label="پخش این مقطع">▶</button><h3>شاکله یعنی طبیعت ثانویه</h3><span class="stm">۰:۳۸ تا ۱:۲۳ · ۴۴ ثانیه</span></div>
+<p class="lp" id="lp1" data-i="1"><button type="button" class="pp" aria-label="پخش از این پاراگراف">▶</button><span class="tx"><span class="w" data-k="0">اصلاً</span> <span class="w" data-k="1">شاکله</span> <span class="w" data-k="2">چیست؟</span> <span class="w" data-k="3">شاکله</span> <span class="w" data-k="4">یعنی</span> <span class="w" data-k="5">طبیعت</span> <span class="w" data-k="6">ثانویه.</span> <span class="w" data-k="7">طبیعت</span> <span class="w" data-k="8">اولیهٔ</span> <span class="w" data-k="9">انسان</span> <span class="w" data-k="10">[این</span> <span class="w" data-k="11">است</span> <span class="w" data-k="12">که]:</span> <span class="w q" data-k="13">«کُلُّ</span> <span class="w q" data-k="14">مَوْلُودٍ</span> <span class="w q" data-k="15">يُولَدُ</span> <span class="w q" data-k="16">عَلَى</span> <span class="w q" data-k="17">الْفِطْرَةِ»؛</span> <span class="w" data-k="18">همهٔ</span> <span class="w" data-k="19">انسان‌ها</span> <span class="w" data-k="20">خداپرست</span> <span class="w" data-k="21">خلق</span> <span class="w" data-k="22">شده‌اند،</span> <span class="w" data-k="23">خداخواه</span> <span class="w" data-k="24">خلق</span> <span class="w" data-k="25">شده‌اند،</span> <span class="w" data-k="26">عدالت‌خواه</span> <span class="w" data-k="27">خلق</span> <span class="w" data-k="28">شده‌اند،</span> <span class="w" data-k="29">ارزش‌ها</span> <span class="w" data-k="30">را</span> <span class="w" data-k="31">دوست</span> <span class="w" data-k="32">دارند.</span> <span class="w" data-k="33">خب،</span> <span class="w" data-k="34">حالا</span> <span class="w" data-k="35">از</span> <span class="w" data-k="36">این‌جا</span> <span class="w" data-k="37">به</span> <span class="w" data-k="38">بعد</span> <span class="w" data-k="39">اگر</span> <span class="w" data-k="40">این</span> <span class="w" data-k="41">طبیعت</span> <span class="w" data-k="42">اولیه</span> <span class="w" data-k="43">را</span> <span class="w" data-k="44">با</span> <span class="w" data-k="45">الگو،</span> <span class="w" data-k="46">با</span> <span class="w" data-k="47">رفیق،</span> <span class="w" data-k="48">با</span> <span class="w" data-k="49">مطالعه،</span> <span class="w" data-k="50">با</span> <span class="w" data-k="51">دیدنی‌های</span> <span class="w" data-k="52">خوب،</span> <span class="w" data-k="53">با</span> <span class="w" data-k="54">شنیدنیِ</span> <span class="w" data-k="55">خوب</span> <span class="w" data-k="56">تبدیلش</span> <span class="w" data-k="57">کردی</span> <span class="w" data-k="58">به</span> <span class="w" data-k="59">طبیعت</span> <span class="w" data-k="60">ثانویه</span> <span class="w" data-k="61">و</span> <span class="w" data-k="62">تثبیتش</span> <span class="w" data-k="63">کردی،</span> <span class="w" data-k="64">خب</span> <span class="w" data-k="65">می‌شود:</span> <span class="w q" data-k="66">﴿قُلْ</span> <span class="w q" data-k="67">كُلٌّ</span> <span class="w q" data-k="68">يَعْمَلُ</span> <span class="w q" data-k="69">عَلَى</span> <span class="w q" data-k="70">شَاكِلَتِهِ﴾.</span> <span class="w" data-k="71">شاکلهٔ</span> <span class="w" data-k="72">این</span> <span class="w" data-k="73">شخص</span> <span class="w" data-k="74">می‌شود</span> <span class="w" data-k="75">زهرایی،</span> <span class="w" data-k="76">می‌شود</span> <span class="w" data-k="77">علوی،</span> <span class="w" data-k="78">می‌شود</span> <span class="w" data-k="79">نبوی.</span></span></p>
+<div class="sh" id="sh2"><button type="button" class="sp" aria-label="پخش این مقطع">▶</button><h3>الگوی منفی: ابولهب و همسرش</h3><span class="stm">۱:۲۳ تا ۲:۴۶ · ۱ دقیقه و ۲۳ ثانیه</span></div>
+<p class="lp" id="lp2" data-i="2"><button type="button" class="pp" aria-label="پخش از این پاراگراف">▶</button><span class="tx"><span class="w" data-k="0">حالا</span> <span class="w" data-k="1">اگر</span> <span class="w" data-k="2">الگویش</span> <span class="w" data-k="3">شد</span> <span class="w" data-k="4">ابولهب</span> <span class="w" data-k="5">و</span> <span class="w" data-k="6">حامی‌اش</span> <span class="w" data-k="7">هم</span> <span class="w" data-k="8">شد</span> <span class="w" data-k="9">همسرش:</span> <span class="w q" data-k="10">﴿وَامْرَأَتُهُ</span> <span class="w q" data-k="11">حَمَّالَةَ</span> <span class="w q" data-k="12">الْحَطَبِ</span> <span class="w q" data-k="13">*</span> <span class="w q" data-k="14">فِي</span> <span class="w q" data-k="15">جِيدِهَا</span> <span class="w q" data-k="16">حَبْلٌ</span> <span class="w q" data-k="17">مِنْ</span> <span class="w q" data-k="18">مَسَدٍ﴾؛</span> <span class="w" data-k="19">خب</span> <span class="w" data-k="20">اگر</span> <span class="w" data-k="21">او</span> <span class="w" data-k="22">خودش</span> <span class="w" data-k="23">شد</span> <span class="w" data-k="24">آتش‌بیار</span> <span class="w" data-k="25">معرکه،</span> <span class="w" data-k="26">یعنی</span> <span class="w" data-k="27">در</span> <span class="w" data-k="28">مقابل</span> <span class="w" data-k="29">پیامبر</span> <span class="w" data-k="30">که</span> <span class="w" data-k="31">اسوه</span> <span class="w" data-k="32">است</span> <span class="w" data-k="33">ایستاد؛</span> <span class="w" data-k="34">با</span> <span class="w" data-k="35">چه</span> <span class="w" data-k="36">ایستاد؟</span> <span class="w" data-k="37">با</span> <span class="w" data-k="38">مالش</span> <span class="w" data-k="39">و</span> <span class="w" data-k="40">ما</span> <span class="w q" data-k="41">کَسَبش.</span> <span class="w" data-k="42">«ما</span> <span class="w q" data-k="43">کَسَب»</span> <span class="w" data-k="44">یعنی</span> <span class="w" data-k="45">مقامش،</span> <span class="w" data-k="46">یعنی</span> <span class="w" data-k="47">ثروتش</span> <span class="w" data-k="48">را،</span> <span class="w" data-k="49">جایگاهش</span> <span class="w" data-k="50">را،</span> <span class="w" data-k="51">اعتبارش</span> <span class="w" data-k="52">را،</span> <span class="w" data-k="53">فامیلش</span> <span class="w" data-k="54">را،</span> <span class="w" data-k="55">عشیره‌اش</span> <span class="w" data-k="56">را،</span> <span class="w" data-k="57">همه</span> <span class="w" data-k="58">را</span> <span class="w" data-k="59">آورد</span> <span class="w" data-k="60">پایِ</span> <span class="w" data-k="61">چه</span> <span class="w" data-k="62">کسی؟</span> <span class="w" data-k="63">پایِ</span> <span class="w" data-k="64">یک</span> <span class="w" data-k="65">اسوه</span> <span class="w" data-k="66">که</span> <span class="w" data-k="67">او</span> <span class="w" data-k="68">را</span> <span class="w" data-k="69">خدا</span> <span class="w" data-k="70">اسوه</span> <span class="w" data-k="71">قرار</span> <span class="w" data-k="72">داده،</span> <span class="w" data-k="73">که</span> <span class="w" data-k="74">این</span> <span class="w" data-k="75">را</span> <span class="w" data-k="76">نابود</span> <span class="w" data-k="77">کند.</span> <span class="w" data-k="78">بعد،</span> <span class="w" data-k="79">آتش‌بیار</span> <span class="w" data-k="80">معرکه‌ای</span> <span class="w" data-k="81">که</span> <span class="w" data-k="82">هیچ‌وقت</span> <span class="w" data-k="83">نگذارد</span> <span class="w" data-k="84">این</span> <span class="w" data-k="85">آتش</span> <span class="w" data-k="86">خاموش</span> <span class="w" data-k="87">بشود،</span> <span class="w" data-k="88">همسرش</span> <span class="w" data-k="89">است.</span> <span class="w" data-k="90">اگر</span> <span class="w" data-k="91">همسرش</span> <span class="w" data-k="92">خلافِ</span> <span class="w" data-k="93">او</span> <span class="w" data-k="94">فکر</span> <span class="w" data-k="95">می‌کرد،</span> <span class="w" data-k="96">ممکن</span> <span class="w" data-k="97">بود</span> <span class="w" data-k="98">که</span> <span class="w" data-k="99">آتش</span> <span class="w" data-k="100">کینهٔ</span> <span class="w" data-k="101">ابولهب</span> <span class="w" data-k="102">خاموش</span> <span class="w" data-k="103">بشود</span> <span class="w" data-k="104">و</span> <span class="w" data-k="105">او</span> <span class="w" data-k="106">مسیرش</span> <span class="w" data-k="107">عوض</span> <span class="w" data-k="108">بشود،</span> <span class="w" data-k="109">اما</span> <span class="w" data-k="110">همسرش</span> <span class="w" data-k="111">در</span> <span class="w" data-k="112">شاکله</span> <span class="w" data-k="113">یعنی</span> <span class="w" data-k="114">همان</span> <span class="w" data-k="115">طبیعت</span> <span class="w" data-k="116">ثانویِ</span> <span class="w" data-k="117">او</span> <span class="w" data-k="118">دمید</span> <span class="w" data-k="119">و</span> <span class="w" data-k="120">آن</span> <span class="w" data-k="121">شاکله</span> <span class="w" data-k="122">شکل</span> <span class="w" data-k="123">گرفت:</span> <span class="w q" data-k="124">﴿قُلْ</span> <span class="w q" data-k="125">كُلٌّ</span> <span class="w q" data-k="126">يَعْمَلُ</span> <span class="w q" data-k="127">عَلَى</span> <span class="w q" data-k="128">شَاكِلَتِهِ﴾.</span> <span class="w" data-k="129">از</span> <span class="w" data-k="130">ابولهب</span> <span class="w" data-k="131">هم</span> <span class="w" data-k="132">همان</span> <span class="w" data-k="133">تراوش</span> <span class="w" data-k="134">می‌کند؛</span> <span class="w" data-k="135">چه</span> <span class="w" data-k="136">چیزی</span> <span class="w" data-k="137">تراوش</span> <span class="w" data-k="138">می‌کند؟</span> <span class="w" data-k="139">از</span> <span class="w" data-k="140">آتش</span> <span class="w" data-k="141">کینه،</span> <span class="w" data-k="142">حسد،</span> <span class="w" data-k="143">غرور،</span> <span class="w" data-k="144">منیت،</span> <span class="w" data-k="145">تکبر.</span></span></p>
+<div class="sh" id="sh3"><button type="button" class="sp" aria-label="پخش این مقطع">▶</button><h3>سرانجام شاکلهٔ منفی و نتیجه‌گیری</h3><span class="stm">۲:۴۶ تا ۳:۲۲ · ۳۶ ثانیه</span></div>
+<p class="lp" id="lp3" data-i="3"><button type="button" class="pp" aria-label="پخش از این پاراگراف">▶</button><span class="tx"><span class="w" data-k="0">خب،</span> <span class="w" data-k="1">آن</span> <span class="w" data-k="2">وقت</span> <span class="w" data-k="3">نتیجه‌اش</span> <span class="w" data-k="4">چه</span> <span class="w" data-k="5">می‌شود؟</span> <span class="w q" data-k="6">﴿تَبَّتْ</span> <span class="w q" data-k="7">يَدَا</span> <span class="w q" data-k="8">أَبِي</span> <span class="w q" data-k="9">لَهَبٍ</span> <span class="w q" data-k="10">وَتَبَّ</span> <span class="w q" data-k="11">*</span> <span class="w q" data-k="12">مَا</span> <span class="w q" data-k="13">أَغْنَى</span> <span class="w q" data-k="14">عَنْهُ</span> <span class="w q" data-k="15">مَالُهُ</span> <span class="w q" data-k="16">وَمَا</span> <span class="w q" data-k="17">كَسَبَ﴾؛</span> <span class="w" data-k="18">هم</span> <span class="w" data-k="19">خودش</span> <span class="w" data-k="20">نابود</span> <span class="w" data-k="21">می‌شود،</span> <span class="w" data-k="22">هم</span> <span class="w" data-k="23">مالش</span> <span class="w" data-k="24">نابود</span> <span class="w" data-k="25">می‌شود،</span> <span class="w" data-k="26">هم</span> <span class="w" data-k="27">همسرش</span> <span class="w" data-k="28">و</span> <span class="w" data-k="29">هم</span> <span class="w" data-k="30">حامی‌اش</span> <span class="w" data-k="31">نابود</span> <span class="w" data-k="32">می‌شود:</span> <span class="w q" data-k="33">﴿سَيَصْلَى</span> <span class="w q" data-k="34">نَارًا</span> <span class="w q" data-k="35">ذَاتَ</span> <span class="w q" data-k="36">لَهَبٍ﴾.</span></span></p>
+<p class="lp" id="lp4" data-i="4"><button type="button" class="pp" aria-label="پخش از این پاراگراف">▶</button><span class="tx"><span class="w" data-k="0">عرضم</span> <span class="w" data-k="1">در</span> <span class="w" data-k="2">این‌جا</span> <span class="w" data-k="3">این</span> <span class="w" data-k="4">بود</span> <span class="w" data-k="5">که</span> <span class="w" data-k="6">انسان</span> <span class="w" data-k="7">اگر</span> <span class="w" data-k="8">بخواهد</span> <span class="w" data-k="9">به</span> <span class="w" data-k="10">جایگاه</span> <span class="w" data-k="11">انسانی</span> <span class="w" data-k="12">خودش</span> <span class="w" data-k="13">برسد،</span> <span class="w" data-k="14">حتماً</span> <span class="w" data-k="15">باید</span> <span class="w" data-k="16">الگو</span> <span class="w" data-k="17">داشته</span> <span class="w" data-k="18">باشد.</span> <span class="w" data-k="19">الگو</span> <span class="w" data-k="20">برای</span> <span class="w" data-k="21">او</span> <span class="w" data-k="22">شاکله</span> <span class="w" data-k="23">می‌سازد</span> <span class="w" data-k="24">و</span> <span class="w" data-k="25">هر</span> <span class="w" data-k="26">کسی</span> <span class="w" data-k="27">بر</span> <span class="w" data-k="28">طبق</span> <span class="w" data-k="29">شاکله</span> <span class="w" data-k="30">[عمل</span> <span class="w" data-k="31">می‌کند].</span></span></p>
+    </div>
+    <div class="m-footnotes">
+      <div class="m-footnotes-title">پی‌نوشت‌ها</div>
+      <ol>
+        <li id="fn-1">
+          
+    <p class="fn-p"><a class="fn-back" href="#fnref-1" aria-label="بازگشت به متن">↑</a>محمدعلی‌نژاد عمران، روح‌الله؛ شمخی، مینا. (۱۳۹۹). «مقایسه تحلیلی شخصیت از دیدگاه روان‌شناسی با مفهوم شاکله در قرآن». فصلنامه فرهنگ مشاوره و روان‌درمانی، ۱۱(۴۳)، ۱۵۹–۱۸۲. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s1.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+    <p class="fn-p">همین‌طور برای مطالعه‌ی یک منبع دیگر:</p>
+    <p class="fn-p" dir="ltr">Augusto, L. M. (2011). "Accommodating Unconscious Beliefs." <em>Principios: Revista de Filosofia (UFRN)</em>, 17(28), 129–154. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s2.html" target="_blank" rel="noopener">مشاهده‌ی منبع</a>.</p>
+  </li>
+        <li id="fn-2">
+    <p class="fn-p"><a class="fn-back" href="#fnref-2" aria-label="بازگشت به متن">↑</a>سوره اسراء، آیه ۸۴. <a class="ref-link" href="https://sroohbakhsh.ir/aa/ref/s3.html" target="_blank" rel="noopener">مشاهده‌ی تفسیر آیه</a>.</p>
+  </li>
+      </ol>
+    </div>
+    <div class="m-nav">
+      <span class="disabled">« قبلی</span>
+      <a href="2.html">بعدی »</a>
+    </div>
+  </div>
+  <div id="sbar" role="region" aria-label="پخش‌کنندهٔ صوت">
+    <div class="row">
+      <button type="button" class="main" id="spp" aria-label="پخش">▶</button>
+      <button type="button" id="sback" aria-label="ده ثانیه به عقب">«۱۰</button>
+      <button type="button" id="sfwd" aria-label="ده ثانیه جلو">۱۰»</button>
+      <button type="button" id="sspd" aria-haspopup="true">۱×</button>
+      <button type="button" id="smn" aria-expanded="false">فهرست</button><button type="button" id="svb" aria-pressed="false">فیلم</button>
+      <div class="grp" role="group" aria-label="دقت پخش و هایلایت">
+        <button type="button" data-g="p">پاراگراف</button><button type="button" data-g="s">جمله</button><button type="button" data-g="w">کلمه</button>
+        <button type="button" id="sfol" aria-pressed="true">دنبال‌کردن متن</button>
+      </div>
+      <div class="seek"><span class="tm" id="scur">۰۰:۰۰</span><input type="range" id="sseek" min="0" max="1000" value="0" aria-label="جابه‌جایی در صوت"><span class="tm" id="stot">۰۰:۰۰</span></div>
+    </div>
+    <div id="spdm" role="menu"></div>
+  </div>
+  <div id="smenu" role="menu" aria-label="فهرست مقاطع"></div>
+  <audio id="sau" preload="metadata"></audio>
+  <script type="application/octet-stream" id="sb64"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},au=$('sau'),bar=$('sbar');
+var WT={"0": [66, 130, 174, 250, 284, 298, 338, 404, 461, 517, 574, 630, 687, 743, 800, 856, 913, 969, 1026, 1082, 1139, 1195, 1252, 1308, 1352, 1386, 1396, 1432, 1469, 1506, 1542, 1578, 1615, 1652, 1688, 1730, 1790, 1820, 1852, 1888, 1936, 1978, 2000, 2042, 2060, 2082, 2097, 2112, 2150, 2226, 2247, 2268, 2288, 2340, 2363, 2386, 2396, 2450, 2546, 2593, 2689, 2737, 2784, 2832, 2880, 2914, 2944, 3008, 3022, 3072, 3086, 3186, 3236, 3286, 3336, 3436, 3486, 3536, 3586, 3636], "1": [3890, 3890, 3890, 3890, 3974, 4028, 4124, 4356, 4444, 4498, 4534, 4569, 4605, 4640, 4676, 4711, 4747, 4782, 4818, 4886, 4974, 5018, 5063, 5151, 5195, 5240, 5328, 5458, 5493, 5564, 5658, 5670, 5706, 5742, 5836, 5848, 5867, 5906, 5922, 5954, 6020, 6066, 6124, 6198, 6282, 6396, 6458, 6512, 6584, 6640, 6724, 6764, 6832, 6862, 6886, 6932, 6982, 7086, 7118, 7140, 7190, 7217, 7244, 7314, 7368, 7412, 7501, 7545, 7589, 7634, 7678, 7722, 7766, 7786, 7835, 7933, 7982, 8079, 8128, 8226], "2": [8302, 8446, 8474, 8528, 8653, 8778, 8902, 9152, 9168, 9216, 9300, 9383, 9467, 9467, 9550, 9634, 9718, 9801, 9885, 9969, 10052, 10136, 10220, 10303, 10387, 10554, 10612, 10664, 10688, 10753, 10819, 10884, 10949, 11015, 11080, 11145, 11211, 11276, 11300, 11352, 11406, 11461, 11515, 11570, 11624, 11638, 11810, 11882, 11954, 11976, 12058, 12078, 12160, 12196, 12231, 12267, 12338, 12358, 12402, 12410, 12434, 12474, 12513, 12553, 12592, 12632, 12694, 12754, 12768, 12772, 12798, 12828, 12850, 12886, 12932, 12984, 13037, 13089, 13142, 13214, 13308, 13352, 13374, 13418, 13440, 13452, 13484, 13520, 13555, 13590, 13626, 13730, 13840, 13988, 14018, 14045, 14098, 14150, 14172, 14190, 14232, 14289, 14346, 14403, 14460, 14518, 14575, 14632, 14689, 14746, 14802, 14860, 14896, 14933, 14970, 15032, 15072, 15120, 15146, 15206, 15266, 15286, 15338, 15374, 15470, 15513, 15556, 15598, 15641, 15684, 15727, 15770, 15813, 15855, 15898, 15984, 16027, 16070, 16112, 16198, 16218, 16262, 16344, 16412, 16480, 16550], "3": [16620, 16776, 16786, 16800, 16852, 16866, 16922, 16970, 17018, 17065, 17113, 17113, 17161, 17209, 17257, 17304, 17352, 17400, 17448, 17528, 17608, 17648, 17682, 17808, 17886, 17930, 18096, 18128, 18214, 18242, 18279, 18352, 18426, 18489, 18543, 18596, 18649], "4": [18920, 18920, 18920, 18920, 18932, 18952, 19028, 19128, 19154, 19180, 19196, 19228, 19280, 19316, 19382, 19468, 19512, 19564, 19594, 19630, 19758, 19810, 19834, 19898, 19950, 20042, 20066, 20100, 20122, 20152, 20152, 20152]},PT={"0": 0.0, "1": 38.9, "2": 83.0, "3": 166.2, "4": 189.2},SEC=[{"a": 0.0, "e": 38.9, "t": "الگو؛ نخستین عامل ساخت شاکله", "p": 0}, {"a": 38.9, "e": 83.0, "t": "شاکله یعنی طبیعت ثانویه", "p": 1}, {"a": 83.0, "e": 166.2, "t": "الگوی منفی: ابولهب و همسرش", "p": 2}, {"a": 166.2, "e": 202.04, "t": "سرانجام شاکلهٔ منفی و نتیجه‌گیری", "p": 3}],VSRC="https://files.sroohbakhsh.ir/aa/s/aas1.mp4",ASRC="https://files.sroohbakhsh.ir/aa/s/aas1.mp3",SUBSRC="https://files.sroohbakhsh.ir/aa/s/aas1-sub.mp4";
+var FA='۰۱۲۳۴۵۶۷۸۹';function fa(s){return String(s).replace(/\d/g,function(d){return FA[d]})}
+function mmss(t){t=Math.max(0,Math.floor(t));var m=Math.floor(t/60),s=t%60;return fa((m<10?'0':'')+m+':'+(s<10?'0':'')+s)}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+if(ASRC)au.src=ASRC;else(function(){var b=atob($('sb64').textContent.trim()),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);au.src=URL.createObjectURL(new Blob([u],{type:'audio/mpeg'}))})();
+var P=[].slice.call(document.querySelectorAll('p.lp')).map(function(el){var i=+el.dataset.i;return{el:el,i:i,t:PT[i],w:[].slice.call(el.querySelectorAll('.w')),a:WT[i],pp:el.querySelector('.pp')}});
+var GR=ls('sub_gr')||'s',follow=ls('sub_fol')!=='0',curP=null,curU=[],unitKey='',lastUser=0;
+function autoOK(){return Date.now()-lastUser>6000}
+['wheel','touchmove'].forEach(function(e){addEventListener(e,function(){lastUser=Date.now()},{passive:true,capture:true})});
+addEventListener('keydown',function(e){if(e.key==='ArrowDown'||e.key==='ArrowUp'||e.key==='PageDown'||e.key==='PageUp'||e.key===' ')lastUser=Date.now()},true);
+var SEND=/[.,،؛;:؟!?…][»"'\)\]﴾]*$/;
+function sentB(ws,i){var segs=[],a=0,k;for(k=0;k<ws.length;k++){if(SEND.test(ws[k].textContent)||k===ws.length-1){segs.push([a,k]);a=k+1}}
+ for(k=0;k<segs.length;k++){if(segs[k][1]-segs[k][0]===0){if(k+1<segs.length){segs[k+1][0]=segs[k][0];segs.splice(k,1);k--}else if(k>0){segs[k-1][1]=segs[k][1];segs.splice(k,1)}}}
+ for(k=0;k<segs.length;k++){if(i>=segs[k][0]&&i<=segs[k][1])return segs[k]}return[i,i]}
+function setPP(p){var on=(p===curP&&!au.paused);p.pp.textContent=(on?'❚❚ ':'▶ ')+mmss(p.t)}
+function allPP(){P.forEach(setPP);$('spp').textContent=au.paused?'▶':'❚❚';$('spp').setAttribute('aria-label',au.paused?'پخش':'مکث')}
+function play(){var q=au.play();if(q&&q.catch)q.catch(function(){})}
+function seekTo(t,keep){au.currentTime=Math.max(0,t);lastUser=0;if(!keep)play();tick(true)}
+function markP(p){if(curP===p)return;if(curP)curP.el.classList.remove('cur');var old=curP;curP=p;if(old)setPP(old);if(p){p.el.classList.add('cur');setPP(p);
+ if(follow&&!au.paused&&autoOK()){centerEl(p.el)}}}
+function clearU(){curU.forEach(function(w){w.classList.remove('u')});curU=[];unitKey=''}
+function updUnit(){if(GR==='p'||!curP){clearU();return}var t=au.currentTime*100,a=curP.a,idx=-1;for(var i=0;i<a.length;i++){if(a[i]<=t)idx=i;else break}if(idx<0){clearU();return}
+ var lo=idx,hi=idx;if(GR==='s'){var sb=sentB(curP.w,idx);lo=sb[0];hi=sb[1]}var key=curP.i+'|'+GR+'|'+lo+'-'+hi;if(key===unitKey)return;clearU();unitKey=key;
+ for(var k=lo;k<=hi;k++){curP.w[k].classList.add('u');curU.push(curP.w[k])}
+ if(follow&&!au.paused&&autoOK()){centerEl(curP.w[lo])}}
+function tick(force){var t=au.currentTime,p=null;for(var i=0;i<P.length;i++){if(P[i].t<=t+0.05)p=P[i];else break}
+ markP(p);markS();updUnit();vsync();var d=au.duration||203.0;if(!seeking)$('sseek').value=Math.round(t/d*1000);$('scur').textContent=mmss(t);$('stot').textContent=mmss(d)}
+var seeking=false;
+au.addEventListener('timeupdate',tick);au.addEventListener('play',allPP);au.addEventListener('pause',allPP);au.addEventListener('ended',allPP);au.addEventListener('loadedmetadata',function(){tick(true)});
+(function loop(){if(!au.paused)tick();requestAnimationFrame(loop)})();
+$('spp').onclick=function(){au.paused?play():au.pause()};
+$('sback').onclick=function(){seekTo(au.currentTime-10,au.paused)};$('sfwd').onclick=function(){seekTo(au.currentTime+10,au.paused)};
+$('sseek').addEventListener('input',function(){seeking=true;var d=au.duration||203.0;$('scur').textContent=mmss(this.value/1000*d)});
+$('sseek').addEventListener('change',function(){seeking=false;var d=au.duration||203.0;seekTo(this.value/1000*d,au.paused)});
+P.forEach(function(p){p.pp.onclick=function(e){e.stopPropagation();if(p===curP&&!au.paused)au.pause();else seekTo(p.t)}});
+var SP=[0.75,1,1.25,1.5,1.75,2],spd=parseFloat(ls('sub_spd'))||1;
+function setSpd(v){spd=v;au.playbackRate=v;ls('sub_spd',v);$('sspd').textContent=fa(String(v).replace('.','٫'))+'×';[].forEach.call($('spdm').children,function(b){b.classList.toggle('on',+b.dataset.v===v)})}
+$('spdm').innerHTML=SP.map(function(v){return '<button type="button" role="menuitem" data-v="'+v+'">'+fa(String(v).replace('.','٫'))+'×</button>'}).join('');
+$('spdm').onclick=function(e){var b=e.target.closest('button');if(b){setSpd(+b.dataset.v);$('spdm').classList.remove('on')}};
+$('sspd').onclick=function(){$('spdm').classList.toggle('on')};setSpd(spd);
+function setGr(g,u){GR=g;if(u)ls('sub_gr',g);[].forEach.call(bar.querySelectorAll('[data-g]'),function(b){b.classList.toggle('on',b.dataset.g===g);b.setAttribute('aria-pressed',b.dataset.g===g)});clearU();updUnit()}
+[].forEach.call(bar.querySelectorAll('[data-g]'),function(b){b.onclick=function(){setGr(b.dataset.g,true)}});setGr(GR);
+function setFol(f,u){follow=f;if(u)ls('sub_fol',f?'1':'0');$('sfol').classList.toggle('on',f);$('sfol').setAttribute('aria-pressed',f)}
+$('sfol').onclick=function(){setFol(!follow,true);lastUser=0};setFol(follow);
+/* دو بار زدن روی متن: پخش از همان پاراگراف، جمله یا کلمه؛ یک بار: نمایان/پنهان‌کردن نوار */
+var lc={t:0,el:null};
+$('lec').addEventListener('click',function(e){if(e.target.closest('.pp'))return;var w=e.target.closest('.w'),pe=e.target.closest('p.lp');if(!pe)return;var now=Date.now();
+ if(w&&lc.el===w&&now-lc.t<400){lc.el=null;bar.classList.toggle('hid');var p=P[+pe.dataset.i],k=+w.dataset.k,t=p.t;
+  if(GR!=='p'&&p.a){var kk=GR==='s'?sentB(p.w,k)[0]:k;t=p.a[kk]/100}seekTo(t);return}
+ lc.el=w||pe;lc.t=now;bar.classList.toggle('hid')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')$('spdm').classList.remove('on')});
+allPP();
+/* ===== فهرست مقاطع ===== */
+var SH=[].slice.call(document.querySelectorAll('.sh')),curS=-1,menu=$('smenu');
+function secAt(t){var s=-1;for(var i=0;i<SEC.length;i++){if(SEC[i].a<=t+0.05)s=i;else break}return s}
+function markS(){var s=secAt(au.currentTime);if(s===curS)return;curS=s;SH.forEach(function(h,i){h.classList.toggle('cur',i===s)});[].forEach.call(menu.children,function(b,i){b.classList.toggle('cur',i===s)})}
+menu.innerHTML=SEC.map(function(x,i){return '<button type="button" class="it" role="menuitem" data-i="'+i+'">'+fa(i+1)+'. '+x.t+'<small>'+mmss(x.a)+' تا '+mmss(x.e)+'</small></button>'}).join('');
+function goSec(i,scroll){var x=SEC[i];if(!x)return;seekTo(x.a);if(scroll!==false){lastUser=Date.now();SH[i].scrollIntoView({behavior:'smooth',block:'start'})}}
+menu.onclick=function(e){var b=e.target.closest('.it');if(!b)return;goSec(+b.dataset.i);setMenu(false)};
+function setMenu(on){menu.classList.toggle('on',on);$('smn').classList.toggle('on',on);$('smn').setAttribute('aria-expanded',on)}
+$('smn').onclick=function(){setMenu(!menu.classList.contains('on'))};
+SH.forEach(function(h,i){h.querySelector('.sp').onclick=function(){if(i===curS&&!au.paused)au.pause();else goSec(i,false)}});
+function bh(){document.documentElement.style.setProperty('--bh',bar.getBoundingClientRect().height+'px')}bh();addEventListener('resize',bh);
+/* ===== فیلم با زیرنویس: تصویر بی‌صدا و هم‌تراز با همین صوت ===== */
+var vf=$('vf'),vid=$('svid'),vcap=$('vcap'),vOpen=false,lastSub='',tbar=document.querySelector('.m-topbar');
+function tbH(){return tbar?tbar.offsetHeight:50}
+function topLim(){return tbH()+(vOpen?vf.offsetHeight:0)+12}
+function setLim(){var d=document.documentElement.style;d.setProperty('--tb',tbH()+'px');d.setProperty('--lim',topLim()+'px');d.setProperty('--vh',Math.round(innerHeight*(innerWidth<520?0.26:0.4))+'px')}
+addEventListener('resize',function(){setLim();bh()});
+function subText(){if(!curP)return'';var t=au.currentTime*100,a=curP.a,idx=0;for(var i=0;i<a.length;i++){if(a[i]<=t)idx=i;else break}var sb=sentB(curP.w,idx);return curP.w.slice(sb[0],sb[1]+1).map(function(w){return '<span'+(w.classList.contains('q')?' class="q"':'')+'>'+w.textContent+'</span>'}).join(' ')}
+function vsync(){if(!vOpen)return;var h=subText();if(h!==lastSub){lastSub=h;vcap.innerHTML=h}
+ if(vid.readyState>0&&Math.abs(vid.currentTime-au.currentTime)>0.35)vid.currentTime=au.currentTime;
+ if(au.paused!==vid.paused){if(au.paused)vid.pause();else{var q=vid.play();if(q&&q.catch)q.catch(function(){})}}
+ if(vid.playbackRate!==au.playbackRate)vid.playbackRate=au.playbackRate}
+function openV(){if(!vid.getAttribute('src')){vid.src=VSRC;vid.load()}vOpen=true;vf.hidden=false;setMenu(false);vid.muted=true;$('svb').classList.add('on');$('svb').setAttribute('aria-pressed','true');
+ var go=function(){vid.currentTime=au.currentTime;if(!au.paused){var q=vid.play();if(q&&q.catch)q.catch(function(){})}};
+ if(vid.readyState>0)go();else vid.addEventListener('loadedmetadata',go,{once:true});lastSub='';setLim();vsync();
+ if(vf.getBoundingClientRect().top>innerHeight*0.6||vf.getBoundingClientRect().bottom<0){lastUser=Date.now();$('lec').scrollIntoView({behavior:'smooth',block:'start'})}}
+function closeV(){exitFS();vOpen=false;vf.hidden=true;vid.pause();$('svb').classList.remove('on');$('svb').setAttribute('aria-pressed','false');setLim()}
+$('svb').onclick=function(){vOpen?closeV():openV()};$('vx').onclick=closeV;vid.onclick=function(){au.paused?play():au.pause()};
+vid.addEventListener('error',function(){vcap.textContent='فیلم بارگذاری نشد؛ نشانی فیلم یا ثبت آن در کلودفلر را بررسی کنید.'});
+/* ===== تمام‌صفحه: کادر فیلم با زیرنویس و نوار کوچک پخش ===== */
+var fsOn=false,fsPh=null,fsReal=false,fsSeeking=false;
+function fsUI(){var p=au.paused;$('fpp').textContent=p?'▶':'❚❚';$('fpp').setAttribute('aria-label',p?'پخش':'مکث');
+ var d=au.duration||1;if(!fsSeeking)$('fseek').value=Math.round(au.currentTime/d*1000);$('ftm').textContent=mmss(au.currentTime)}
+function enterFS(){if(fsOn||!vOpen)return;fsOn=true;
+ fsPh=document.createElement('div');fsPh.style.height=vf.offsetHeight+'px';vf.parentNode.insertBefore(fsPh,vf);document.body.appendChild(vf);vf.classList.add('fs');
+ var rf=vf.requestFullscreen||vf.webkitRequestFullscreen;fsReal=false;
+ if(rf){try{var r=rf.call(vf);fsReal=true;if(r&&r.then){r.then(function(){try{screen.orientation.lock('landscape').catch(function(){})}catch(e){}},function(){fsReal=false})}}catch(e){fsReal=false}}
+ fsUI();document.body.style.overflow='hidden'}
+function exitFS(){if(!fsOn)return;fsOn=false;
+ var fe=document.fullscreenElement||document.webkitFullscreenElement;if(fe){try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}
+ try{screen.orientation.unlock()}catch(e){}
+ vf.classList.remove('fs');if(fsPh&&fsPh.parentNode){fsPh.parentNode.insertBefore(vf,fsPh);fsPh.remove()}fsPh=null;document.body.style.overflow='';setLim()}
+function onFSChange(){if(fsOn&&fsReal&&!(document.fullscreenElement||document.webkitFullscreenElement))exitFS()}
+document.addEventListener('fullscreenchange',onFSChange);document.addEventListener('webkitfullscreenchange',onFSChange);
+$('vfs').onclick=enterFS;$('fx').onclick=exitFS;
+$('fpp').onclick=function(){au.paused?play():au.pause()};
+$('fb').onclick=function(){seekTo(au.currentTime-10,au.paused)};$('ff').onclick=function(){seekTo(au.currentTime+10,au.paused)};
+$('fseek').addEventListener('input',function(){fsSeeking=true;$('ftm').textContent=mmss(this.value/1000*(au.duration||0))});
+$('fseek').addEventListener('change',function(){fsSeeking=false;seekTo((this.value/1000)*(au.duration||0),au.paused)});
+au.addEventListener('play',fsUI);au.addEventListener('pause',fsUI);au.addEventListener('timeupdate',fsUI);
+/* ===== دانلود فیلم زیرنویس‌شده ===== */
+var dlBusy=false;
+function dlFile(){var a=document.createElement('a');a.href=SUBSRC;a.target='_blank';a.rel='noopener';a.setAttribute('download',SUBNAME);document.body.appendChild(a);a.click();a.remove()}
+function dlRun(){if(dlBusy)return;dlBusy=true;var b=$('vdl'),sm=b;b.disabled=true;b.style.fontSize='10px';sm.textContent='…';
+ var done=function(){dlBusy=false;b.disabled=false;b.style.fontSize='';sm.textContent='⬇'};
+ fetch(SUBSRC).then(function(r){if(!r.ok)throw 0;var L=+r.headers.get('content-length')||0,rd=r.body&&r.body.getReader?r.body.getReader():null;if(!rd)return r.blob();
+  var ch=[],got=0;return rd.read().then(function pump(x){if(x.done)return new Blob(ch,{type:'video/mp4'});ch.push(x.value);got+=x.value.length;sm.textContent=L?fa(Math.round(got/L*100))+'٪':fa((got/1048576).toFixed(1).replace('.','٫'));return rd.read().then(pump)})})
+ .then(function(bl){var u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=SUBNAME;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);done()})
+ .catch(function(){dlFile();done()})}
+var SUBNAME=SUBSRC.split('/').pop();
+$('vdl').onclick=dlRun;
+function centerEl(el){var r=el.getBoundingClientRect(),top=topLim(),bot=innerHeight-bar.getBoundingClientRect().height-10;if(r.top<top||r.bottom>bot)window.scrollBy({top:r.top-(top+(bot-top)*0.35),behavior:'smooth'})}
+setLim();
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(fsOn)exitFS();else if(vOpen)closeV();else setMenu(false)}});
+tick(true);
+})();
+</script>
+</body>
+</html>

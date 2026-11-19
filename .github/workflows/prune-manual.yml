@@ -1,0 +1,47 @@
+name: Prune unlisted files (manual)
+# Runs ONLY when you press "Run workflow" in the Actions tab. No schedule.
+# Default is a dry run (just lists files). Set "apply" to true to really delete.
+permissions:
+  contents: write
+concurrency:
+  group: prune-manual
+  cancel-in-progress: false
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Really delete the files? (false = only list them)"
+        type: boolean
+        default: false
+      max_delete:
+        description: "Abort if more files than this would be removed"
+        type: string
+        default: "20"
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: List or remove files not in keep.txt
+        env:
+          APPLY: ${{ inputs.apply }}
+          MAX_DELETE: ${{ inputs.max_delete }}
+        run: |
+          if [ "$APPLY" = "true" ]; then
+            scripts/prune-unlisted.sh --apply --max-delete "$MAX_DELETE"
+          else
+            scripts/prune-unlisted.sh --max-delete "$MAX_DELETE"
+          fi
+      - name: Commit and push if anything was removed
+        if: ${{ inputs.apply }}
+        run: |
+          if git diff --cached --quiet; then
+            echo "Nothing to prune."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: prune files not listed in keep.txt"
+          git push origin HEAD:main

@@ -1,0 +1,13 @@
+const {chromium}=require('/opt/node22/lib/node_modules/playwright');
+(async()=>{const b=await chromium.launch();
+for(const [w,h] of [[1280,800],[390,844]]){const pg=await b.newPage({viewport:{width:w,height:h}});const errs=[];pg.on('pageerror',e=>errs.push(String(e)));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(5000);
+const r=await pg.evaluate(()=>{const ms=[...document.querySelectorAll('mark.flash-highlight')];const m=ms[0];
+let e=m.parentElement;while(e&&(getComputedStyle(e).display.startsWith('inline')||e.getBoundingClientRect().width<(innerWidth>800?480:250)))e=e.parentElement;const q=e.getBoundingClientRect();
+const A=document.querySelector('#back-to-top-link');const mr=m.getBoundingClientRect();
+const p=m.closest('p');const cs=getComputedStyle(p);
+return {n:ms.length,arrows:document.querySelectorAll('#back-to-top-link').length,arrowFirst:!!(A&&A.parentNode.firstChild===A),gap:A?Math.round(mr.top-A.getBoundingClientRect().bottom):null,col:[e.tagName+'.'+e.className.toString().slice(0,20),Math.round(q.left),Math.round(innerWidth-q.right),Math.round(q.width)],align:cs.textAlign,dir:cs.direction,fs:cs.fontSize,fw:cs.fontWeight,ti:cs.textIndent,sw:document.documentElement.scrollWidth,iw:innerWidth,bodyOY:getComputedStyle(document.body).overflowY,hdr:Math.round(document.querySelector('.brand-topbar').getBoundingClientRect().bottom),ban:Math.round(document.querySelector('.ref-source-banner').getBoundingClientRect().top),items:[...document.querySelectorAll('.ref-menu-dropdown a')].map(a=>a.textContent.trim().slice(0,24)+'→'+a.getAttribute('href').slice(-30)),ratio:+((mr.top+scrollY)/innerHeight).toFixed(2),dlg:document.querySelectorAll('dialog[open]').length}});
+console.log(w,JSON.stringify(r),errs);
+await pg.evaluate(()=>scrollTo(0,0));await pg.waitForTimeout(300);await pg.screenshot({path:`/tmp/claude-0/x/b/t${w}.png`});
+await pg.evaluate(()=>{const m=document.querySelector('mark.flash-highlight');scrollTo(0,m.getBoundingClientRect().top+scrollY-300)});await pg.waitForTimeout(400);await pg.screenshot({path:`/tmp/claude-0/x/b/u${w}.png`});
+await pg.close()}await b.close()})();

@@ -1,0 +1,43 @@
+# Files/folders that must stay in the repository. Everything else is removed
+# by scripts/prune-unlisted.sh when you run it by hand.
+# One entry per line. A trailing "/" means a whole folder. "*" wildcards work.
+# Lines starting with # are comments.
+
+# site
+CNAME
+index.htm
+stats.html
+sw.js
+manifest.json
+icon-*.png
+roohbakhsh-hero.jpg
+in-page-search.js
+search-widget.js
+nahjol_balaghih.htm
+embeddings.json
+embeddings-version.json
+
+# articles (html + pdf)
+Hoosh_Hayajani_Pishine_Roykardha_Din_Ravanshenasi.*
+Modakhele_Amouzeshi_Eslami_Khishtandari_Jensi_Pesaran.*
+Tanzim_Hayajan_Dar_Quran.*
+Daramadi_Moalefehaye_Modiriyat_Darman_Hayajani_Eslam.*
+Khashm_Negah_Eslam_Ravanshenasi.*
+Khodkontroli_Sazokarhaye_Royesh_Avamel_Zedayesh_Quran.*
+Mabani_Kontrol_Hayajan_Dar_Quran.*
+Modakhele_Khodkontroli_Hayajan_Eslami_Khodarzayi_Nojavanan.*
+Rahkarha_Kontrol_Zehn_Khavater_Nafsani_Eslam.*
+
+# content folders
+aa/
+Seyed_Kazem_Roohbakhsh/
+
+# code / automation
+worker/
+scripts/
+.github/
+
+# repo housekeeping
+keep.txt
+.gitignore
+README.md

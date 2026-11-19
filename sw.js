@@ -1,0 +1,158 @@
+/**
+ * sw.js — Service Worker برای حالت آفلاین
+ *
+ * (نسخه‌ی وب‌سایت پژوهشی شهید روحبخش — بر پایه‌ی همان سرویس‌ورکر
+ * سایت استاد میلانی، فقط با پیشوند کش جداگانه تا این دو سایت با هم
+ * تداخل نکنند.)
+ *
+ * استراتژی:
+ *  - «پوستهٔ» اصلی سایت (index.htm، اسکریپت‌ها، ویوئر PDF) در نصب،
+ *    از قبل کش می‌شود - تا خودِ سایت حتی در اولین بازدیدِ بدون‌اینترنتِ
+ *    بعدی هم باز شود.
+ *  - صفحات مقالات/کتاب‌ها و فایل‌های PDF، به‌صورت خودکار «هرکدام که
+ *    کاربر باز کرد» کش می‌شوند (runtime caching).
+ *  - embeddings.json (پایگاه‌دادهٔ جست‌وجو) و خودِ index.htm به‌صورت
+ *    "network-first با بازگشت به کش".
+ *  - درخواست‌های خارج از همین سایت (تماس با Worker برای گفتگو/جست‌وجوی
+ *    معنایی) دست‌نخورده می‌مانند؛ فقط کتابخانه‌های نسخه‌دارِ CDN کش
+ *    می‌شوند.
+ *
+ * نکته: این فایل باید در ریشهٔ سایت (کنار index.htm) باشد.
+ */
+
+// Item جدید (به‌روزرسانی خودکار): این مقدار با هر تغییری در index.htm،
+// search-widget.js یا in-page-search.js، توسط workflow
+// .github/workflows/update-sw-version.yml خودکار به‌روزرسانی می‌شود.
+const CACHE_VERSION = "roohbakhsh-cache-06b79f55";
+const SHELL_CACHE = `${CACHE_VERSION}-shell`;
+const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
+
+// کش فونت‌های گوگل (وزیرمتن). عمداً پیشوند «roohbakhsh-cache-» ندارد تا
+// در activate با تغییر نسخه پاک نشود و فونت‌ها فقط یک‌بار دانلود شوند.
+const FONT_CACHE = "roohbakhsh-fonts-v1";
+const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
+
+// آدرس‌هایی که همین حالا (در لحظهٔ نصب) کش می‌شوند - پوستهٔ اصلی سایت.
+const SHELL_FILES = [
+  "./",
+  "index.htm",
+  "search-widget.js",
+  "in-page-search.js",
+];
+
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(SHELL_CACHE).then(cache =>
+      Promise.all(
+        SHELL_FILES.map(url =>
+          cache.add(url).catch(err => console.warn("cache install skip:", url, err))
+        )
+      )
+    )
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key.startsWith("roohbakhsh-cache-") && key !== SHELL_CACHE && key !== RUNTIME_CACHE)
+          .map(key => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+function isNetworkFirstUrl(url) {
+  return url.pathname.endsWith("/index.htm") ||
+    url.pathname === "/" ||
+    url.pathname.endsWith("/embeddings.json") ||
+    url.pathname.endsWith("/embeddings-version.json") ||
+    // صفحه‌ی آمار یک پنل مدیریتی‌ست که همیشه باید نسخه‌ی تازه‌اش لود
+    // بشود، پس هیچ‌وقت نباید cache-first باشد.
+    url.pathname.endsWith("/stats.html");
+}
+
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request, { cache: "no-store" });
+    if (response && response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    throw new Error("آفلاین و نسخهٔ کش‌شده‌ای هم موجود نیست");
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+
+  const response = await fetch(request);
+  if (response && response.ok) {
+    const cache = await caches.open(RUNTIME_CACHE);
+    cache.put(request, response.clone());
+  }
+  return response;
+}
+
+// فونت‌ها: cache-first (فایل‌های gstatic نسخه‌دار و تغییرناپذیرند) و برای
+// CSS گوگل stale-while-revalidate. پاسخ‌های opaque هم ذخیره می‌شوند چون
+// تگ <link rel="stylesheet"> بدون crossorigin است.
+async function fontStrategy(request, url) {
+  const cache = await caches.open(FONT_CACHE);
+  const cached = await cache.match(request);
+  const isCss = url.hostname === "fonts.googleapis.com";
+
+  const fetchAndStore = fetch(request).then(response => {
+    if (response && (response.ok || response.type === "opaque")) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  });
+
+  if (cached) {
+    if (isCss) fetchAndStore.catch(() => {});
+    return cached;
+  }
+  return fetchAndStore;
+}
+
+self.addEventListener("fetch", event => {
+  const request = event.request;
+
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+
+  if (FONT_HOSTS.includes(url.hostname)) {
+    event.respondWith(fontStrategy(request, url));
+    return;
+  }
+
+  const isVersionedCdnAsset = !isSameOrigin && /\/\d+\.\d+\.\d+\//.test(url.pathname);
+
+  if (!isSameOrigin && !isVersionedCdnAsset) {
+    return;
+  }
+
+  if (isVersionedCdnAsset) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  if (isNetworkFirstUrl(url)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  event.respondWith(cacheFirst(request));
+});

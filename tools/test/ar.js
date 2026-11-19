@@ -1,0 +1,4 @@
+const {chromium}=require('/opt/node22/lib/node_modules/playwright');
+(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1280,height:800}});
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(5000);
+console.log(await pg.evaluate(()=>{const a=document.querySelector('#back-to-top-link');const c=getComputedStyle(a);const p=a.parentNode;const pc=getComputedStyle(p);const r=a.getBoundingClientRect(),pr=p.getBoundingClientRect();return JSON.stringify({disp:c.display,fl:c.float,pos:c.position,dir:c.direction,ml:c.marginLeft,mr:c.marginRight,style:a.getAttribute('style'),ptag:p.tagName+'.'+p.className,pdir:pc.direction,pdisp:pc.display,ptext:pc.textAlign,arrowL:Math.round(r.left),pL:Math.round(pr.left),pR:Math.round(pr.right),kids:[...p.children].map(k=>k.tagName+'.'+k.className.toString().slice(0,20)+':'+getComputedStyle(k).display)})}));await b.close()})();
